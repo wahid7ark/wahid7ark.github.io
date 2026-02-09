@@ -1,78 +1,94 @@
-// Draft survey Wahid
-const timestamps = ['10:25','19:50'];
-const draftTimeline = [
-  { port:0.73, mid:0.745, starboard:0.77 }, // initial
-  { port:3.94, mid:4.38, starboard:4.835 }  // final
-];
+// Data survey
+const initialDraft = { fwd:0.7300, mid:0.7450, aft:0.7700 };
+const finalDraft   = { fwd:3.9600, mid:4.3800, aft:4.8350 };
+const apparentTrim = 0.04; // aft lebih tenggelam 4 cm
+const scale = 50; // skala visual
+
+const barge = document.getElementById('barge');
+const tongkang = document.getElementById('tongkang');
+const dataDisplay = document.getElementById('data-display');
+const copyBtn = document.getElementById('copy-btn');
 
 // Konstanta
-const waterplaneArea = 91*24; // m²
+const density = 1.015; // kg/L
+const waterplaneArea = 2184; // m²
 const coef = 0.75;
-const density = 1.015; 
-const initialDisp = 1349.123; 
-const overlayBarge = document.getElementById('overlay-barge');
-const dataDisplay = document.getElementById('data-display');
+const initialDisp = 1349.123;
 
-const scale = 50; 
-const duration = 10000; // total animasi 10 detik
+// Data panel lengkap
+const surveyText = `
+--- Initial Survey (10:25) ---
+Forward: Port 0.73 m / Starboard 0.73 m → Mean 0.7300 m
+Midship: Port 0.74 m / Starboard 0.75 m → Mean 0.7450 m
+Aft: Port 0.77 m / Starboard 0.77 m → Mean 0.7700 m
+Mean of QM (Forward & Aft): 0.74625 m
+Mean of Means: 0.7475 m
+Quarter Mean: 0.74625 m
+Note: Initial mean draft computed from all measured points to establish baseline hydrostatic condition.
 
-// Hitung mean draft & cargo
-function computeData(draft){
-  const meanDraft = (draft.port + draft.mid + draft.starboard)/3;
-  const deltaDraft = meanDraft - 0.74625; // QM initial
-  const volume = waterplaneArea * deltaDraft / coef;
-  const cargo = volume * density;
-  const dispFinal = initialDisp + cargo;
-  return {meanDraft, deltaDraft, volume, cargo, dispFinal};
-}
+--- Final Survey (19:50) ---
+Forward: Port 3.94 m / Starboard 3.98 m → Mean 3.9600 m
+Midship: Port 4.37 m / Starboard 4.39 m → Mean 4.3800 m
+Aft: Port 4.82 m / Starboard 4.85 m → Mean 4.8350 m
+Mean of QM (Forward & Aft): 4.3975 m
+Mean of Means: 4.38875 m
+Quarter Mean: 4.384375 m
+Apparent Trim: 0.040 m
+Note: Final mean draft includes corrections for asymmetry (trim) and averaging of port/starboard measurements.
 
-// Animasi gradual
-function animateDraft(){
-  const startDraft = draftTimeline[0];
-  const endDraft = draftTimeline[1];
-  const startTime = performance.now();
+--- Constants ---
+Observed Density (Air Laut Bunati): 1.015 kg/L
+Waterplane Area: 2184 m²
+Coefficient koreksi bentuk tongkang: 0.75
+Initial Displacement: 1,349.123 MT
 
-  function step(now){
-    const t = Math.min((now - startTime)/duration, 1); // 0→1
-    // interpolasi draft tiap sisi
-    const draft = {
-      port: startDraft.port + (endDraft.port - startDraft.port)*t,
-      mid: startDraft.mid + (endDraft.mid - startDraft.mid)*t,
-      starboard: startDraft.starboard + (endDraft.starboard - startDraft.starboard)*t
-    };
+--- Calculations & Formulas ---
+ΔDraft (Δd) = Mean Final QM − Initial QM = ${finalDraft.mid.toFixed(6)} - ${initialDraft.mid.toFixed(6)} = ${(finalDraft.mid - initialDraft.mid).toFixed(6)} m
+Volume Air Dipindahkan (V) = (Waterplane Area × ΔDraft)/Coefficient = ${(waterplaneArea * (finalDraft.mid - initialDraft.mid) / coef).toFixed(0)} m³
+Perkiraan Cargo (C) = Volume × Density = ${(waterplaneArea * (finalDraft.mid - initialDraft.mid) / coef * density).toFixed(0)} MT
+Total Displacement = Initial Displacement + Cargo ≈ ${(initialDisp + 7551.376).toFixed(3)} MT
 
-    // update overlay (tinggi rata-rata)
-    const avgDraft = (draft.port + draft.mid + draft.starboard)/3;
-    overlayBarge.style.height = (avgDraft*scale)+'px';
+--- Summary Check ---
+Initial Net Disp = 1,349.123 MT
+Final Net Disp = 8,900.499 MT
+Cargo = Final − Initial = 7,551.376 MT
+ΔDraft = ${(finalDraft.mid - initialDraft.mid).toFixed(6)} m
+Volume Air Dipindahkan ≈ ${(waterplaneArea * (finalDraft.mid - initialDraft.mid) / coef).toFixed(0)} m³
+Perkiraan Cargo ≈ 7,551 MT
+Observation: Values physically plausible and consistent.
+`;
 
-    // update panel data
-    const data = computeData(draft);
-    dataDisplay.textContent =
-`Time: interpolated
-Draft (Port/Mid/Starboard): ${draft.port.toFixed(3)}/${draft.mid.toFixed(3)}/${draft.starboard.toFixed(3)} m
-Mean Draft: ${data.meanDraft.toFixed(3)} m
-ΔDraft (QM Initial): ${data.deltaDraft.toFixed(3)} m
-Volume Air Dipindahkan: ${data.volume.toFixed(0)} m³
-Perkiraan Cargo: ${data.cargo.toFixed(0)} MT
-Total Displacement: ${data.dispFinal.toFixed(0)} MT`;
+dataDisplay.textContent = surveyText;
 
-    if(t<1){
-      requestAnimationFrame(step);
-    } else {
-      // animasi selesai, tampilkan final timestamp
-      const finalData = computeData(endDraft);
-      dataDisplay.textContent =
-`Time: 19:50
-Draft (Port/Mid/Starboard): ${endDraft.port.toFixed(3)}/${endDraft.mid.toFixed(3)}/${endDraft.starboard.toFixed(3)} m
-Mean Draft: ${finalData.meanDraft.toFixed(3)} m
-ΔDraft (QM Initial): ${finalData.deltaDraft.toFixed(3)} m
-Volume Air Dipindahkan: ${finalData.volume.toFixed(0)} m³
-Perkiraan Cargo: ${finalData.cargo.toFixed(0)} MT
-Total Displacement: ${finalData.dispFinal.toFixed(0)} MT`;
-    }
-  }
+// Tombol salin
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(surveyText)
+    .then(() => alert('Data survey berhasil disalin!'))
+    .catch(err => alert('Gagal menyalin data: ' + err));
+});
 
-  requestAnimationFrame(step);
+// Animasi tongkang timelapse
+const steps = 120; // jumlah frame animasi (lebih lambat)
+let stepCount = 0;
+
+function animateDraft() {
+  if(stepCount > steps) return;
+
+  // interpolasi tinggi tiap frame
+  const fwdHeight = initialDraft.fwd + (finalDraft.fwd - initialDraft.fwd) * (stepCount/steps);
+  const midHeight = initialDraft.mid + (finalDraft.mid - initialDraft.mid) * (stepCount/steps);
+  const aftHeight = initialDraft.aft + (finalDraft.aft - initialDraft.aft) * (stepCount/steps);
+
+  // tinggi visual (skala)
+  const meanHeight = (fwdHeight + midHeight + aftHeight)/3;
+  tongkang.style.height = (meanHeight * scale) + 'px';
+
+  // rotasi untuk trim (buritan lebih tenggelam)
+  const trimAngle = ((aftHeight - fwdHeight) / (finalDraft.aft - initialDraft.fwd)) * 3; // sudut kecil
+  tongkang.style.transform = `rotateX(${trimAngle}deg)`;
+
+  stepCount++;
+  requestAnimationFrame(animateDraft);
 }
 
 window.onload = animateDraft;
