@@ -1,0 +1,64 @@
+/* ===== Reset & Basic Styling ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f8f4f0; /* soft background */
+  color: #333;
+  padding: 50px;
+}
+
+/* ===== Heading ===== */
+h1 {
+  font-size: 2.5em;
+  color: #b22222; /* carnelian red */
+  margin-bottom: 20px;
+}
+
+/* ===== Paragraph ===== */
+p {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+}
+
+/* ===== Button ===== */
+button {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #b22222; /* same carnelian color */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #ff6347; /* lighter red on hover */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  p {
+    font-size: 1em;
+  }
+
+  button {
+    width: 100%;
+    padding: 15px 0;
+  }
+}
