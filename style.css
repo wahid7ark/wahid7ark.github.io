@@ -7,9 +7,7 @@ body {
   padding: 20px;
 }
 
-h2 {
-  margin-bottom: 20px;
-}
+h2 { margin-bottom: 20px; text-align: center; }
 
 .water {
   width: 600px;
@@ -46,8 +44,8 @@ h2 {
   background: white;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.3);
-  margin-bottom: 20px;
+  box-shadow:0 0 5px rgba(0,0,0,0.3);
+  margin-bottom:20px;
   white-space: pre-wrap;
   font-family: monospace;
 }
@@ -62,6 +60,4 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #1f5bb5;
-}
+button:hover { background: #1f5bb5; }
