@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TB. ARK DAN / BG CARNELIAN Draft & Cargo</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>TB. ARK DAN / BG CARNELIAN Draft & Cargo</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>TB. ARK DAN / BG CARNELIAN - Draft & Cargo Simulation</h2>
+<h2>TB. ARK DAN / BG CARNELIAN - Draft & Cargo Simulation</h2>
 
-  <div class="water">
-    <div class="waterline"></div>
-    <div class="barge">
-      <div class="forward"></div>
-      <div class="midship"></div>
-      <div class="aft"></div>
+<div class="water">
+  <div class="waterline"></div>
+  <div class="barge">
+    <div class="section forward">
       <div class="water-overlay" id="overlay-forward"></div>
+    </div>
+    <div class="section midship">
       <div class="water-overlay" id="overlay-midship"></div>
+    </div>
+    <div class="section aft">
       <div class="water-overlay" id="overlay-aft"></div>
     </div>
   </div>
+</div>
 
-  <div class="data-panel">
-    <pre id="data-display"></pre>
-  </div>
+<div class="data-panel">
+  <pre id="data-display"></pre>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
