@@ -1,4 +1,4 @@
-// Draft survey Wahid (Initial → Final)
+// Draft survey Wahid
 const timestamps = ['10:25','19:50'];
 const draftTimeline = [
   { port:0.73, mid:0.745, starboard:0.77 }, // initial
@@ -7,14 +7,14 @@ const draftTimeline = [
 
 // Konstanta
 const waterplaneArea = 91*24; // m²
-const coef = 0.75;            // koreksi bentuk tongkang
-const density = 1.015;        // kg/L air laut Bunati
-const initialDisp = 1349.123; // MT
-const scale = 50;             // scaling overlay visual
-
-// DOM Elements
+const coef = 0.75;
+const density = 1.015; 
+const initialDisp = 1349.123; 
 const overlayBarge = document.getElementById('overlay-barge');
 const dataDisplay = document.getElementById('data-display');
+
+const scale = 50; 
+const duration = 10000; // total animasi 10 detik
 
 // Hitung mean draft & cargo
 function computeData(draft){
@@ -26,29 +26,53 @@ function computeData(draft){
   return {meanDraft, deltaDraft, volume, cargo, dispFinal};
 }
 
-// Animasi step
-let index=0;
-function step(){
-  if(index >= draftTimeline.length) return;
-  const d = draftTimeline[index];
+// Animasi gradual
+function animateDraft(){
+  const startDraft = draftTimeline[0];
+  const endDraft = draftTimeline[1];
+  const startTime = performance.now();
 
-  // Naikkan overlay sesuai rata-rata port-mid-starboard
-  const avgDraft = (d.port + d.mid + d.starboard)/3;
-  overlayBarge.style.height = avgDraft*scale + 'px';
+  function step(now){
+    const t = Math.min((now - startTime)/duration, 1); // 0→1
+    // interpolasi draft tiap sisi
+    const draft = {
+      port: startDraft.port + (endDraft.port - startDraft.port)*t,
+      mid: startDraft.mid + (endDraft.mid - startDraft.mid)*t,
+      starboard: startDraft.starboard + (endDraft.starboard - startDraft.starboard)*t
+    };
 
-  // Update panel data
-  const data = computeData(d);
-  dataDisplay.textContent =
-`Time: ${timestamps[index]}
-Draft (Port/Mid/Starboard): ${d.port.toFixed(3)}/${d.mid.toFixed(3)}/${d.starboard.toFixed(3)} m
+    // update overlay (tinggi rata-rata)
+    const avgDraft = (draft.port + draft.mid + draft.starboard)/3;
+    overlayBarge.style.height = (avgDraft*scale)+'px';
+
+    // update panel data
+    const data = computeData(draft);
+    dataDisplay.textContent =
+`Time: interpolated
+Draft (Port/Mid/Starboard): ${draft.port.toFixed(3)}/${draft.mid.toFixed(3)}/${draft.starboard.toFixed(3)} m
 Mean Draft: ${data.meanDraft.toFixed(3)} m
 ΔDraft (QM Initial): ${data.deltaDraft.toFixed(3)} m
 Volume Air Dipindahkan: ${data.volume.toFixed(0)} m³
 Perkiraan Cargo: ${data.cargo.toFixed(0)} MT
 Total Displacement: ${data.dispFinal.toFixed(0)} MT`;
 
-  index++;
-  setTimeout(step, 2000); // 2 detik per step
+    if(t<1){
+      requestAnimationFrame(step);
+    } else {
+      // animasi selesai, tampilkan final timestamp
+      const finalData = computeData(endDraft);
+      dataDisplay.textContent =
+`Time: 19:50
+Draft (Port/Mid/Starboard): ${endDraft.port.toFixed(3)}/${endDraft.mid.toFixed(3)}/${endDraft.starboard.toFixed(3)} m
+Mean Draft: ${finalData.meanDraft.toFixed(3)} m
+ΔDraft (QM Initial): ${finalData.deltaDraft.toFixed(3)} m
+Volume Air Dipindahkan: ${finalData.volume.toFixed(0)} m³
+Perkiraan Cargo: ${finalData.cargo.toFixed(0)} MT
+Total Displacement: ${finalData.dispFinal.toFixed(0)} MT`;
+    }
+  }
+
+  requestAnimationFrame(step);
 }
 
-window.onload = step;
+window.onload = animateDraft;
