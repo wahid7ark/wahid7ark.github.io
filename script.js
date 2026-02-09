@@ -1,4 +1,3 @@
-const scale = 50;
 const timestamps = ['08:00','12:00','16:00','19:50'];
 const draftTimeline = [
   {forward:0.73, midship:0.745, aft:0.77},
@@ -6,19 +5,18 @@ const draftTimeline = [
   {forward:2.7, midship:3.2, aft:3.5},
   {forward:3.96, midship:4.38, aft:4.835}
 ];
+
 const observedDensity = 1.015;
 const waterplaneArea = 91*24;
 const coef = 0.75;
 const initialDisp = 1349.123;
 
-const forward = document.getElementById('forward');
-const midship = document.getElementById('midship');
-const aft = document.getElementById('aft');
-const fwdLabel = document.getElementById('fwd-label');
-const midLabel = document.getElementById('mid-label');
-const aftLabel = document.getElementById('aft-label');
+const overlayF = document.getElementById('overlay-forward');
+const overlayM = document.getElementById('overlay-midship');
+const overlayA = document.getElementById('overlay-aft');
 const dataDisplay = document.getElementById('data-display');
-const barge = document.getElementById('barge');
+
+const scale = 50;
 
 function computeData(draft){
   const meanDraft = (draft.forward + draft.midship + draft.aft)/3;
@@ -29,46 +27,29 @@ function computeData(draft){
   return {meanDraft, deltaDraft, volume, cargo, dispFinal};
 }
 
-let index=0;
+let index = 0;
 function step(){
   if(index >= draftTimeline.length) return;
-  let d = draftTimeline[index];
 
-  setTimeout(()=>{
-    forward.style.height = d.forward*scale + 'px';
-    midship.style.height = d.midship*scale + 'px';
-    aft.style.height = d.aft*scale + 'px';
+  const d = draftTimeline[index];
 
-    forward.style.background = `rgb(${50+index*50},80,100)`;
-    midship.style.background = `rgb(${80+index*40},100,120)`;
-    aft.style.background = `rgb(${100+index*30},120,140)`;
+  overlayF.style.height = d.forward*scale + 'px';
+  overlayM.style.height = d.midship*scale + 'px';
+  overlayA.style.height = d.aft*scale + 'px';
 
-    let trimAngle = (d.aft - d.forward)*10;
-    barge.style.transform = `rotateX(${trimAngle}deg)`;
-
-    fwdLabel.textContent = d.forward.toFixed(2)+'m';
-    midLabel.textContent = d.midship.toFixed(2)+'m';
-    aftLabel.textContent = d.aft.toFixed(2)+'m';
-
-    const data = computeData(d);
-    dataDisplay.textContent =
+  const data = computeData(d);
+  dataDisplay.textContent =
 `Time: ${timestamps[index]}
 Draft (Fwd/Mid/Aft): ${d.forward.toFixed(2)}/${d.midship.toFixed(2)}/${d.aft.toFixed(2)} m
 Mean Draft: ${data.meanDraft.toFixed(3)} m
-Delta Draft (from initial QM): ${data.deltaDraft.toFixed(3)} m
+Delta Draft (from QM): ${data.deltaDraft.toFixed(3)} m
 Volume Air Dipindahkan: ${data.volume.toFixed(0)} m³
 Density Air Laut Bunati: ${observedDensity} kg/L
 Perkiraan Cargo: ${data.cargo.toFixed(0)} MT
-Total Displacement: ${data.dispFinal.toFixed(0)} MT
-Catatan: bentuk tongkang tidak kotak → koreksi koefisien ${coef}`;
+Total Displacement: ${data.dispFinal.toFixed(0)} MT`;
 
-    index++;
-    step();
-  }, 500);
+  index++;
+  setTimeout(step, 1000);
 }
 
-forward.style.height = '0px';
-midship.style.height = '0px';
-aft.style.height = '0px';
-
-window.onload = function(){ step(); };
+window.onload = step;
