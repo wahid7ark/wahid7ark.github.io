@@ -1,56 +1,48 @@
-body {
-background:#111;
-color:#eee;
-font-family:Arial;
-margin:0;
-padding:0;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BG ARK CARNELIAN - Draft Survey</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-.container {
-max-width:800px;
-margin:auto;
-padding:20px;
-}
+<div class="container">
+<h1>BG ARK CARNELIAN</h1>
+<h2>Draft Survey Calculator</h2>
 
-h1 {
-text-align:center;
-color:#4da6ff;
-}
+<div class="section">
+<h3>Initial Draft</h3>
+<input id="i_fp" placeholder="Fwd Port">
+<input id="i_fs" placeholder="Fwd Stbd">
+<input id="i_mp" placeholder="Mid Port">
+<input id="i_ms" placeholder="Mid Stbd">
+<input id="i_ap" placeholder="Aft Port">
+<input id="i_as" placeholder="Aft Stbd">
+</div>
 
-.section {
-margin-bottom:20px;
-padding:15px;
-background:#1a1a1a;
-border-radius:8px;
-}
+<div class="section">
+<h3>Final Draft</h3>
+<input id="f_fp" placeholder="Fwd Port">
+<input id="f_fs" placeholder="Fwd Stbd">
+<input id="f_mp" placeholder="Mid Port">
+<input id="f_ms" placeholder="Mid Stbd">
+<input id="f_ap" placeholder="Aft Port">
+<input id="f_as" placeholder="Aft Stbd">
+</div>
 
-input {
-width:120px;
-margin:5px;
-padding:6px;
-background:#222;
-color:#fff;
-border:1px solid #333;
-border-radius:4px;
-}
+<div class="section">
+<h3>Water Density</h3>
+<input id="density" placeholder="Default 1.025">
+</div>
 
-button {
-padding:10px 20px;
-background:#4da6ff;
-border:none;
-border-radius:5px;
-cursor:pointer;
-font-weight:bold;
-}
+<button onclick="calculate()">CALCULATE</button>
 
-button:hover {
-background:#3399ff;
-}
+<pre id="output"></pre>
 
-pre {
-background:#000;
-padding:15px;
-border-radius:8px;
-margin-top:20px;
-white-space:pre-wrap;
-}
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
