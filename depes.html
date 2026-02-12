@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Mr. W">
+<meta name="description" content="Cyber Art Page">
+<title>Cyber Art | Mr. W</title>
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/x-icon">
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css?family=Iceland" rel="stylesheet">
+
+<style>
+/* Body & Background */
+body, html {
+    margin:0; padding:0;
+    height:100%; width:100%;
+    background-color:#121212;
+    color:white;
+    font-family: 'Iceland', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+/* Glitch Text */
+.glitch {
+    position: relative;
+    font-size: 50px;
+    color: #00FF00; /* hijau radar */
+    text-align:center;
+    animation: noise-3 1s linear infinite;
+}
+.glitch::after {
+    content:"CYBER ARMY";
+    position:absolute;
+    top:0; left:0;
+    color:#00FF00;
+    font-size:80px;
+    opacity:0.6;
+    animation: noise-1 0.2s linear infinite;
+}
+
+/* Glitch Text Animations */
+@keyframes noise-1 {0%,20%,40%,60%,70%,90%{opacity:0}10%{opacity:0.1}50%{opacity:0.5; left:-6px}80%{opacity:0.3}100%{opacity:0.6; left:2px}}
+@keyframes noise-3 {0%,3%,5%,42%,44%,100%{opacity:1; transform:scaleY(1);}4.3%{opacity:1; transform:scaleY(4);}43%{opacity:1; transform:scaleX(10) rotate(60deg);}}
+
+/* Gambar diam dengan kilatan glitch */
+.glitch-img-wrapper {
+    position: relative;
+    width: 300px;
+    margin-bottom: 30px;
+}
+.glitch-img-wrapper img {
+    width: 100%;
+    display: block;
+}
+
+/* Kilatan glitch horizontal */
+.glitch-img-wrapper::before,
+.glitch-img-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0,255,0,0.1) 0%, rgba(0,255,0,0.6) 50%, rgba(0,255,0,0.1) 100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.glitch-img-wrapper::before {
+    animation: glitch-flicker 1.5s infinite;
+}
+.glitch-img-wrapper::after {
+    animation: glitch-flicker 2s infinite;
+    animation-delay: 0.5s;
+}
+
+@keyframes glitch-flicker {
+    0% {left: -100%; opacity:0;}
+    10% {left: -50%; opacity:0.5;}
+    20% {left:0%; opacity:1;}
+    30% {left:50%; opacity:0.3;}
+    40% {left:100%; opacity:0;}
+    100% {left:100%; opacity:0;}
+}
+
+/* Footer */
+.footer {
+    font-size:14px;
+    color:#aaa;
+    text-align:center;
+    margin-top:40px;
+}
+
+/* Paragraph */
+p {
+    text-align:center;
+    max-width:600px;
+    margin-top:20px;
+    line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<!-- Gambar dengan Glitch Kilatan -->
+<div class="glitch-img-wrapper">
+    <img src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/369.png" alt="Logo">
+</div>
+
+<!-- Glitch Text -->
+<div class="glitch">CYBER ART</div>
+
+<!-- Puitis Text -->
+<p>
+I am here to explore the beauty of code and digital chaos.<br>
+Every glitch teaches me, every pixel has a story.<br>
+This is my canvas — a space for creativity, not destruction.
+</p>
+
+<!-- Footer -->
+<div class="footer">
+- Mr. W - <br>
+Contact: nullfbook@gmail.com
+</div>
+
+</body>
+</html>
