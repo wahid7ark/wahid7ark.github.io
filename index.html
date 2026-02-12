@@ -10,92 +10,89 @@
 
 <div class="container">
 
-  <header>
-    <h1>BG ARK CARNELIAN</h1>
-    <p>Professional Draft Survey System</p>
-    <small>Coder: Wahid (ARK DAN)</small>
-  </header>
+<header>
+  <h1>BG ARK CARNELIAN</h1>
+  <p>Professional Draft Survey System</p>
+  <small>Coder: Wahid (ARK DAN)</small>
+</header>
 
-  <!-- FOTO TONGKANG -->
-  <section class="photo-section">
-    <img src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/1770848760316.jpg">
-  </section>
+<section class="photo-section">
+  <img src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/1770848760316.jpg">
+</section>
 
-  <!-- MUSIK AUTOPLAY -->
-  <audio autoplay loop>
-    <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/HARRY_PARINTANG_-_ADA_RINDU__NEW_SINGLE_2021_(251).mp3" type="audio/mpeg">
-  </audio>
+<audio autoplay loop>
+  <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/HARRY_PARINTANG_-_ADA_RINDU__NEW_SINGLE_2021_(251).mp3" type="audio/mpeg">
+</audio>
 
-  <!-- MODE SWITCH -->
-  <section>
-    <h2>Select Mode</h2>
-    <select id="mode" onchange="switchMode()">
-      <option value="surveyor">Surveyor Mode (Quick Entry)</option>
-      <option value="full">Full Observation Mode</option>
-    </select>
-  </section>
+<section>
+  <h2>Select Mode</h2>
+  <select id="mode" onchange="switchMode()">
+    <option value="surveyor">Surveyor Mode</option>
+    <option value="full">Full Observation Mode</option>
+  </select>
+</section>
 
-  <!-- HYDRO TYPE -->
-  <section>
-    <h2>Hydrostatic Type</h2>
-    <select id="hydroType">
-      <option value="moulded">Moulded</option>
-      <option value="extreme">Extreme</option>
-    </select>
-  </section>
+<section>
+  <h2>Hydrostatic Type</h2>
+  <select id="hydroType">
+    <option value="moulded">Moulded</option>
+    <option value="extreme">Extreme</option>
+  </select>
+</section>
 
-  <!-- QUICK MODE -->
-  <section id="quickMode">
-    <h2>Draft Input (Surveyor Mode)</h2>
-    <div class="grid">
-      <div>
-        <label>Forward</label>
-        <input type="number" id="fwd">
-      </div>
-      <div>
-        <label>Midship</label>
-        <input type="number" id="mid">
-      </div>
-      <div>
-        <label>Aft</label>
-        <input type="number" id="aft">
-      </div>
-    </div>
-  </section>
+<!-- INITIAL -->
+<section>
+  <h2>Initial Survey</h2>
 
-  <!-- FULL MODE -->
-  <section id="fullMode" style="display:none;">
-    <h2>Draft Observation (Full Mode)</h2>
-    <div class="grid">
-      <div><label>FP</label><input type="number" id="fp"></div>
-      <div><label>FS</label><input type="number" id="fs"></div>
-      <div><label>MP</label><input type="number" id="mp"></div>
-      <div><label>MS</label><input type="number" id="ms"></div>
-      <div><label>AP</label><input type="number" id="ap"></div>
-      <div><label>AS</label><input type="number" id="as"></div>
-    </div>
-  </section>
+  <div id="quickInitial">
+    F <input type="number" id="i_fwd">
+    M <input type="number" id="i_mid">
+    A <input type="number" id="i_aft">
+  </div>
 
-  <!-- DENSITY -->
-  <section>
-    <h2>Observed Density</h2>
-    <input type="number" id="density" value="1.025" step="0.001">
-  </section>
+  <div id="fullInitial" style="display:none;">
+    FP <input type="number" id="i_fp">
+    FS <input type="number" id="i_fs">
+    MP <input type="number" id="i_mp">
+    MS <input type="number" id="i_ms">
+    AP <input type="number" id="i_ap">
+    AS <input type="number" id="i_as">
+  </div>
 
-  <button onclick="calculate()">CALCULATE</button>
+  Density <input type="number" id="i_density" value="1.025" step="0.001">
+</section>
 
-  <!-- RESULT -->
-  <section class="result">
-    <h2>Results</h2>
-    <p>Forward Avg: <span id="resF">-</span></p>
-    <p>Mid Avg: <span id="resM">-</span></p>
-    <p>Aft Avg: <span id="resA">-</span></p>
-    <p>Trim (A-F): <span id="trim">-</span></p>
-    <p>Quarter Mean Draft: <span id="meanDraft">-</span></p>
-    <p>Displacement: <span id="disp">-</span> MT</p>
-    <p>TPC: <span id="tpc">-</span> MT/cm</p>
-    <p>Density Corrected Disp: <span id="dispCorr">-</span> MT</p>
-  </section>
+<!-- FINAL -->
+<section>
+  <h2>Final Survey</h2>
+
+  <div id="quickFinal">
+    F <input type="number" id="f_fwd">
+    M <input type="number" id="f_mid">
+    A <input type="number" id="f_aft">
+  </div>
+
+  <div id="fullFinal" style="display:none;">
+    FP <input type="number" id="f_fp">
+    FS <input type="number" id="f_fs">
+    MP <input type="number" id="f_mp">
+    MS <input type="number" id="f_ms">
+    AP <input type="number" id="f_ap">
+    AS <input type="number" id="f_as">
+  </div>
+
+  Density <input type="number" id="f_density" value="1.025" step="0.001">
+</section>
+
+<button onclick="calculate()">CALCULATE CARGO</button>
+
+<section class="result">
+  <h2>Results</h2>
+  <p>Initial Disp Corr: <span id="resInitial">-</span></p>
+  <p>Final Disp Corr: <span id="resFinal">-</span></p>
+  <hr>
+  <h3>CARGO: <span id="resCargo">-</span> MT</h3>
+</section>
 
 </div>
 
