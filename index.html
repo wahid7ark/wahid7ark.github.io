@@ -27,8 +27,10 @@
 </audio>
 
 <!-- ================= INITIAL SURVEY ================= -->
-<section class="survey">
+<section class="survey-section">
 <h2>INITIAL SURVEY</h2>
+
+<div class="form-grid">
 
 <div class="form-row">
 <label for="i_fp">Forward Port</label>
@@ -60,15 +62,19 @@
 <input type="number" id="i_as" step="0.001">
 </div>
 
-<p style="margin-top:10px; font-size:13px; color:#aaa;">
+</div>
+
+<p class="note">
 Initial Displacement will be calculated automatically from hydrostatic table.
 </p>
 
 </section>
 
 <!-- ================= FINAL SURVEY ================= -->
-<section class="survey">
+<section class="survey-section">
 <h2>FINAL SURVEY</h2>
+
+<div class="form-grid">
 
 <div class="form-row">
 <label for="f_fp">Forward Port</label>
@@ -100,11 +106,14 @@ Initial Displacement will be calculated automatically from hydrostatic table.
 <input type="number" id="f_as" step="0.001">
 </div>
 
+</div>
 </section>
 
 <!-- ================= CONSTANTS ================= -->
-<section class="constants">
+<section class="constants-section">
 <h2>CONSTANTS</h2>
+
+<div class="constants-grid">
 
 <div class="form-row">
 <label for="waterplane">Waterplane Area (m²)</label>
@@ -121,6 +130,7 @@ Initial Displacement will be calculated automatically from hydrostatic table.
 <input type="number" id="density" value="1.025" step="0.001">
 </div>
 
+</div>
 </section>
 
 <button id="calcBtn" type="button">CALCULATE CARGO</button>
