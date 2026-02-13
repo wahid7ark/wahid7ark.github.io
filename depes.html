@@ -131,5 +131,22 @@ This is my canvas — a space for creativity, not destruction.
 Contact: nullfbook@gmail.com
 </div>
 
+<!-- MUSIC (added) -->
+<audio id="bgmusic" autoplay loop>
+    <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/hammerfall.mp3" type="audio/mpeg">
+</audio>
+
+<!-- AUTOPLAY FIX (added) -->
+<script>
+function startMusic(){
+    var audio = document.getElementById("bgmusic");
+    if(audio){
+        audio.play().catch(()=>{});
+    }
+}
+document.addEventListener("click", startMusic, {once:true});
+document.addEventListener("touchstart", startMusic, {once:true});
+</script>
+
 </body>
 </html>
