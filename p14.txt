@@ -95,4 +95,4 @@ Draft (m) | DISP (MT) | LCB (m) | VCB (m) | TPC | LCF (m) | deg trim | KML | KMT
 4.950 | 10,246.45 | 45.926f | 2.569 | 22.22 | 44.466f | 26107 | 145.97  | 13.059
 5.000 | 10,357.59 | 45.910f | 2.595 | 22.22 | 44.466f | 26117 | 144.46  | 12.972
 Distance in METERS.-----Specific Gravity = 1.025.-----------Moment in M.-MT.
-Draft is from Baseline.
+Draft is from Baseline. Digitalisasi by Mr.W
