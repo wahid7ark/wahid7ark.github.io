@@ -95,50 +95,46 @@
     <script src="script.js"></script>
 
     <!-- ===============================
-         SURVEYOR CARGO PATCH
-         Override perhitungan cargo agar sesuai metode surveyor
-         =============================== -->
-    <script>
-        function calculateSurveyorCargo() {
-            // Ambil nilai draft dari form (Initial / Final)
-            let iF = parseFloat(document.getElementById("ifp").value) || 0;
-            let iA = parseFloat(document.getElementById("iap").value) || 0;
-            let fF = parseFloat(document.getElementById("ffp").value) || 0;
-            let fA = parseFloat(document.getElementById("fap").value) || 0;
+     SURVEYOR CARGO PATCH
+     Perhitungan cargo mengikuti metode surveyor
+     =============================== -->
+<script>
+function calculateSurveyorCargo() {
+    // Ambil nilai draft dari form (Initial / Final)
+    let iF = parseFloat(document.getElementById("ifp").value) || 0;
+    let iA = parseFloat(document.getElementById("iap").value) || 0;
+    let fF = parseFloat(document.getElementById("ffp").value) || 0;
+    let fA = parseFloat(document.getElementById("fap").value) || 0;
 
-            // Hitung Quarter Mean (Forward & Aft)
-            let initialQM = (iF + iA) / 2;
-            let finalQM = (fF + fA) / 2;
+    // Hitung Quarter Mean (Forward & Aft)
+    let initialQM = (iF + iA) / 2;
+    let finalQM = (fF + fA) / 2;
 
-            // Delta draft
-            let deltaDraft = finalQM - initialQM;
+    // Delta draft
+    let deltaDraft = finalQM - initialQM;
 
-            // Konstanta surveyor
-            const waterplaneArea = 2184;      // m² (91 × 24)
-            const shapeCoeff = 0.75;          // Koefisien koreksi bentuk tongkang
-            const observedDensity = 1.015;    // kg/L (Air laut Bunati)
-            const initialDisp = 1349.123;     // MT, sesuai data awal survey
+    // Konstanta surveyor
+    const waterplaneArea = 2184;    // m² (91 × 24)
+    const observedDensity = 1.015;  // kg/L (Air laut Bunati)
+    const initialDisp = 1349.123;   // MT, sesuai data awal survey
 
-            // Hitung volume dipindahkan
-            let volumeMoved = (waterplaneArea * deltaDraft) / shapeCoeff;
+    // Hitung perkiraan cargo (langsung mengikuti surveyor)
+    let cargoMT = deltaDraft * waterplaneArea * observedDensity;
 
-            // Perkiraan cargo
-            let cargoMT = volumeMoved * observedDensity;
+    // Total displacement akhir
+    let finalDisp = initialDisp + cargoMT;
 
-            // Total displacement akhir
-            let finalDisp = initialDisp + cargoMT;
+    // Update hasil ke HTML
+    document.getElementById("result").innerHTML =
+        `<strong>Perkiraan Cargo:</strong> ${cargoMT.toFixed(3)} MT<br>
+         <strong>Total Displacement Final:</strong> ${finalDisp.toFixed(3)} MT`;
 
-            // Update hasil ke HTML
-            document.getElementById("result").innerHTML =
-                `<strong>Perkiraan Cargo:</strong> ${cargoMT.toFixed(3)} MT<br>
-                 <strong>Total Displacement Final:</strong> ${finalDisp.toFixed(3)} MT`;
+    return { cargo: cargoMT, totalDisp: finalDisp };
+}
 
-            return { cargo: cargoMT, totalDisp: finalDisp };
-        }
-
-        // Nonaktifkan fungsi lama agar tidak mengganggu
-        // function calculate() { /* lama */ }
-    </script>
+// Nonaktifkan fungsi lama agar tidak mengganggu
+// function calculate() { /* lama */ }
+</script>
 
 </body>
 
