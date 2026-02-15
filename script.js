@@ -134,15 +134,13 @@ function getSurvey(prefix) {
     if (!hydro) { alert("Draft outside hydrostatic table"); return; }
 
     let trim = A - F;
-    let LBP = 92.0; // Length Between Perpendiculars
 
     // Draft dikoreksi LCF
-    let draftLCF = Q + (trim * hydro.lcf / LBP);
+    let draftLCF = Q + (trim * hydro.lcf / 92.0); // LBP tetap dipakai untuk posisi LCF
     let hydroLCF = interpolate(draftLCF);
 
-    // Koreksi trim dengan formula standar agar selisih cargo tidak berlebihan
-    let trimCorr = trim * hydroLCF.tpc * (hydroLCF.lcf / LBP); 
-    let dispCorrected = hydroLCF.disp + trimCorr;
+    // Hanya pakai displacement dari hydroLCF tanpa koreksi trim tambahan
+    let dispCorrected = hydroLCF.disp;
 
     // Koreksi densitas
     let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
