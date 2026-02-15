@@ -138,7 +138,7 @@ function getSurvey(prefix) {
     let draftLCF = Q + (trim * hydro.lcf / LBP);
     let hydroLCF = interpolate(draftLCF);
 
-    let trimCorr = (trim * 100 * hydroLCF.tpc * hydroLCF.lcf) / hydroLCF.mct;
+    let trimCorr = trim * hydroLCF.tpc * (hydroLCF.lcf / LBP); // Koreksi trim agar displacement lebih akurat
     let dispCorrected = hydroLCF.disp + trimCorr;
 
     let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
