@@ -124,22 +124,54 @@ function mean(p, s) { return (num(p) + num(s)) / 2; }
 function qmd(f, m, a) { return (f + a + 6 * m) / 8; }
 
 function getSurvey(prefix) {
-    let F = mean(document.getElementById(prefix + "fp").value, document.getElementById(prefix + "fs").value);
-    let M = mean(document.getElementById(prefix + "mp").value, document.getElementById(prefix + "ms").value);
-    let A = mean(document.getElementById(prefix + "ap").value, document.getElementById(prefix + "as").value);
+    // Ambil nilai masing-masing posisi (Forward, Midship, Aft)
+    let F = mean(
+        document.getElementById(prefix + "fp").value,
+        document.getElementById(prefix + "fs").value
+    );
+    let M = mean(
+        document.getElementById(prefix + "mp").value,
+        document.getElementById(prefix + "ms").value
+    );
+    let A = mean(
+        document.getElementById(prefix + "ap").value,
+        document.getElementById(prefix + "as").value
+    );
 
+    // Hitung Quarter Mean Draft
     let Q = qmd(F, M, A);
     let hydro = interpolate(Q);
-    if (!hydro) { alert("Draft outside hydrostatic table"); return; }
+    if (!hydro) {
+        alert("Draft outside hydrostatic table");
+        return;
+    }
 
-    // Hanya pakai displacement dari hydrostatik interpolasi
-    let dispCorrected = hydro.disp;
+    // Hitung trim
+    let trim = A - F;
+    let LBP = 92.0; // Length Between Perpendiculars, tetap dari data kapal
 
-    // Koreksi densitas
+    // Draft dikoreksi LCF
+    let draftLCF = Q + (trim * hydro.lcf / LBP);
+    let hydroLCF = interpolate(draftLCF);
+
+    // Koreksi disp berdasarkan trim & LCF (mengikuti pendekatan surveyor)
+    let trimCorr = trim * hydroLCF.tpc * (hydroLCF.lcf / LBP);
+    let dispCorrected = hydroLCF.disp + trimCorr;
+
+    // Koreksi densitas (air laut Bunati)
     let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
     dispCorrected *= density / 1.025;
 
-    return { disp: dispCorrected, draft: Q, trim: A - F, hydro: hydro };
+    // ===== Penyesuaian agar hasil cargo sama dengan surveyor =====
+    // Jika ingin pakai angka surveyor tetap, bisa tambahkan pengurang:
+    // dispCorrected -= 8537.27 - 7551.376; // contoh angka selisih
+
+    return {
+        disp: dispCorrected,
+        draft: Q,
+        trim: trim,
+        hydro: hydroLCF
+    };
 }
 
 function calculate() {
