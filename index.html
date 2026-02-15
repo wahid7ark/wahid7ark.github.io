@@ -65,22 +65,12 @@
             <input id="densF" value="1.025" placeholder="1.025">
         </div>
 
-        <!-- Tombol Calculate -->
         <button onclick="calculateSurveyorCargo()">CALCULATE</button>
         <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
 
-        <!-- Hasil -->
         <div class="card">
             <div id="result">Awaiting Calculation...</div>
             <div id="process"></div>
-            <div>
-                <label>Cargo (MT): </label>
-                <input id="cargoOutput" readonly>
-            </div>
-            <div>
-                <label>Total Displacement (MT): </label>
-                <input id="dispOutput" readonly>
-            </div>
         </div>
 
     </div>
@@ -101,13 +91,13 @@
         <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
     </footer>
 
-    <!-- Script utama lama -->
+    <!-- Script utama -->
     <script src="script.js"></script>
 
     <!-- ===============================
-        SURVEYOR CARGO PATCH
-        Override perhitungan cargo agar sesuai metode surveyor
-        =============================== -->
+         SURVEYOR CARGO PATCH
+         Override perhitungan cargo agar sesuai metode surveyor
+         =============================== -->
     <script>
         function calculateSurveyorCargo() {
             // Ambil nilai draft dari form (Initial / Final)
@@ -138,21 +128,10 @@
             // Total displacement akhir
             let finalDisp = initialDisp + cargoMT;
 
-            // Tampilkan hasil di console
-            console.log("=== SURVEYOR METHOD RESULT ===");
-            console.log("Initial QM Draft:          " + initialQM.toFixed(4) + " m");
-            console.log("Final QM Draft:            " + finalQM.toFixed(4) + " m");
-            console.log("Delta Draft:               " + deltaDraft.toFixed(4) + " m");
-            console.log("Volume dipindahkan:        " + volumeMoved.toFixed(2) + " m³");
-            console.log("Perkiraan Cargo:           " + cargoMT.toFixed(3) + " MT");
-            console.log("Total Displacement Final:  " + finalDisp.toFixed(3) + " MT");
-
             // Update hasil ke HTML
-            document.getElementById("cargoOutput").value = cargoMT.toFixed(3);
-            document.getElementById("dispOutput").value = finalDisp.toFixed(3);
-
-            // Update div result (opsional)
-            document.getElementById("result").innerText = "Cargo: " + cargoMT.toFixed(3) + " MT | Total Disp: " + finalDisp.toFixed(3) + " MT";
+            document.getElementById("result").innerHTML =
+                `<strong>Perkiraan Cargo:</strong> ${cargoMT.toFixed(3)} MT<br>
+                 <strong>Total Displacement Final:</strong> ${finalDisp.toFixed(3)} MT`;
 
             return { cargo: cargoMT, totalDisp: finalDisp };
         }
@@ -162,4 +141,5 @@
     </script>
 
 </body>
+
 </html>
