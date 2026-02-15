@@ -1,147 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BG ARK CARNELIAN - Draft Survey System</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Survey Assistant Officer</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <audio autoplay loop>
+        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
+    </audio>
 
-<div class="overlay"></div>
-
-<div class="container">
-
-<header>
     <h1>BG ARK CARNELIAN</h1>
-    <h3>Professional Draft Survey System</h3>
-    <p>Coder: Wahid (ARK DAN)</p>
-</header>
+    <img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
 
-<section class="photo">
-    <img src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg" alt="BG ARK CARNELIAN">
-</section>
+    <div class="container">
 
-<audio autoplay loop>
-  <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
-</audio>
+        <!-- INITIAL SURVEY -->
+        <div class="card">
+            <h3>INITIAL SURVEY</h3>
+            <h4>Forward</h4>
+            <div class="row">
+                <input id="ifp" placeholder="Port (m)">
+                <input id="ifs" placeholder="Stbd (m)">
+            </div>
+            <h4>Midship</h4>
+            <div class="row">
+                <input id="imp" placeholder="Port (m)">
+                <input id="ims" placeholder="Stbd (m)">
+            </div>
+            <h4>Aft</h4>
+            <div class="row">
+                <input id="iap" placeholder="Port (m)">
+                <input id="ias" placeholder="Stbd (m)">
+            </div>
+            <h4>Density</h4>
+            <input id="densI" value="1.025" placeholder="1.025">
+        </div>
 
-<!-- ================= INITIAL SURVEY ================= -->
-<section class="survey-section">
-<h2>INITIAL SURVEY</h2>
+        <!-- FINAL SURVEY -->
+        <div class="card">
+            <h3>FINAL SURVEY</h3>
+            <h4>Forward</h4>
+            <div class="row">
+                <input id="ffp" placeholder="Port (m)">
+                <input id="ffs" placeholder="Stbd (m)">
+            </div>
+            <h4>Midship</h4>
+            <div class="row">
+                <input id="fmp" placeholder="Port (m)">
+                <input id="fms" placeholder="Stbd (m)">
+            </div>
+            <h4>Aft</h4>
+            <div class="row">
+                <input id="fap" placeholder="Port (m)">
+                <input id="fas" placeholder="Stbd (m)">
+            </div>
+            <h4>Density</h4>
+            <input id="densF" value="1.025" placeholder="1.025">
+        </div>
 
-<div class="form-grid">
+        <button onclick="calculate()">CALCULATE</button>
+        <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
 
-<div class="form-row">
-<label for="i_fp">Forward Port</label>
-<input type="number" id="i_fp" step="0.001">
-</div>
+        <div class="card">
+            <div id="result">Awaiting Calculation...</div>
+            <div id="process"></div>
+        </div>
 
-<div class="form-row">
-<label for="i_fs">Forward Starboard</label>
-<input type="number" id="i_fs" step="0.001">
-</div>
+    </div>
 
-<div class="form-row">
-<label for="i_mp">Mid Port</label>
-<input type="number" id="i_mp" step="0.001">
-</div>
+    <!-- ABOUT MODAL -->
+    <div id="aboutBox">
+        <div id="aboutContent">
+            <span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span>
+            <h3>Draft Survey Assistant Officer</h3>
+            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi densitas, dan interpolasi hidrostatik.</p>
+            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil Pengembang</a></p>
+        </div>
+    </div>
 
-<div class="form-row">
-<label for="i_ms">Mid Starboard</label>
-<input type="number" id="i_ms" step="0.001">
-</div>
+    <footer>
+        <span class="coder">Coder: Mr. Wolf (ARK DAN)</span>
+        <span class="copy">©</span><span class="year" id="year"></span>
+        <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
+    </footer>
 
-<div class="form-row">
-<label for="i_ap">Aft Port</label>
-<input type="number" id="i_ap" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="i_as">Aft Starboard</label>
-<input type="number" id="i_as" step="0.001">
-</div>
-
-</div>
-
-<p class="note">
-Initial Displacement will be calculated automatically from hydrostatic table.
-</p>
-
-</section>
-
-<!-- ================= FINAL SURVEY ================= -->
-<section class="survey-section">
-<h2>FINAL SURVEY</h2>
-
-<div class="form-grid">
-
-<div class="form-row">
-<label for="f_fp">Forward Port</label>
-<input type="number" id="f_fp" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="f_fs">Forward Starboard</label>
-<input type="number" id="f_fs" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="f_mp">Mid Port</label>
-<input type="number" id="f_mp" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="f_ms">Mid Starboard</label>
-<input type="number" id="f_ms" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="f_ap">Aft Port</label>
-<input type="number" id="f_ap" step="0.001">
-</div>
-
-<div class="form-row">
-<label for="f_as">Aft Starboard</label>
-<input type="number" id="f_as" step="0.001">
-</div>
-
-</div>
-</section>
-
-<!-- ================= CONSTANTS ================= -->
-<section class="constants-section">
-<h2>CONSTANTS</h2>
-
-<div class="constants-grid">
-
-<div class="form-row">
-<label for="waterplane">Waterplane Area (m²)</label>
-<input type="number" id="waterplane" value="2184">
-</div>
-
-<div class="form-row">
-<label for="coef">Form Coefficient</label>
-<input type="number" id="coef" value="0.75" step="0.01">
-</div>
-
-<div class="form-row">
-<label for="density">Observed Density</label>
-<input type="number" id="density" value="1.025" step="0.001">
-</div>
-
-</div>
-</section>
-
-<button id="calcBtn" type="button">CALCULATE CARGO</button>
-
-<section class="results">
-<h2>RESULTS</h2>
-<div id="output"></div>
-</section>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
