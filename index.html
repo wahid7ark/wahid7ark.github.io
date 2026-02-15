@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Draft Survey Assistant Officer</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
+    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png"
+        type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -13,7 +14,8 @@
 
 <body>
     <audio autoplay loop>
-        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
+        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3"
+            type="audio/mpeg">
     </audio>
 
     <h1>BG ARK CARNELIAN</h1>
@@ -80,8 +82,10 @@
         <div id="aboutContent">
             <span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span>
             <h3>Draft Survey Assistant Officer</h3>
-            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi densitas, dan interpolasi hidrostatik.</p>
-            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil Pengembang</a></p>
+            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi
+                densitas, dan interpolasi hidrostatik.</p>
+            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil
+                    Pengembang</a></p>
         </div>
     </div>
 
@@ -92,65 +96,71 @@
     </footer>
 
     <script src="script.js"></script>
-    /* ===============================
-   SURVEYOR CARGO PATCH
-   Override perhitungan cargo agar sesuai metode surveyor
-   =============================== */
 
-function calculateSurveyorCargo() {
-    // Ambil nilai draft dari form (Initial / Final)
-    let iF = parseFloat(document.getElementById("ifp").value);
-    let iM = parseFloat(document.getElementById("imp").value);
-    let iA = parseFloat(document.getElementById("iap").value);
+    <!-- ===============================
+    SURVEYOR CARGO PATCH
+    Override perhitungan cargo agar sesuai metode surveyor
+    =============================== -->
+    <script>
+        function calculateSurveyorCargo() {
+            // Ambil nilai draft dari form (Initial / Final)
+            let iF = parseFloat(document.getElementById("ifp").value) || 0;
+            let iM = parseFloat(document.getElementById("imp").value) || 0;
+            let iA = parseFloat(document.getElementById("iap").value) || 0;
 
-    let fF = parseFloat(document.getElementById("ffp").value);
-    let fM = parseFloat(document.getElementById("fmp").value);
-    let fA = parseFloat(document.getElementById("fap").value);
+            let fF = parseFloat(document.getElementById("ffp").value) || 0;
+            let fM = parseFloat(document.getElementById("fmp").value) || 0;
+            let fA = parseFloat(document.getElementById("fap").value) || 0;
 
-    // Hitung Quarter Mean (Forward & Aft)
-    let initialQM = (iF + iA) / 2;
-    let finalQM = (fF + fA) / 2;
+            // Hitung Quarter Mean (Forward & Aft)
+            let initialQM = (iF + iA) / 2;
+            let finalQM = (fF + fA) / 2;
 
-    // Delta draft
-    let deltaDraft = finalQM - initialQM;
+            // Delta draft
+            let deltaDraft = finalQM - initialQM;
 
-    // Konstanta surveyor
-    const waterplaneArea = 2184;      // m² (91 × 24)
-    const shapeCoeff = 0.75;          // Koefisien koreksi bentuk tongkang
-    const observedDensity = 1.015;    // kg/L (Air laut Bunati)
-    const initialDisp = 1349.123;     // MT, sesuai data awal survey
+            // Konstanta surveyor
+            const waterplaneArea = 2184;      // m² (91 × 24)
+            const shapeCoeff = 0.75;          // Koefisien koreksi bentuk tongkang
+            const observedDensity = 1.015;    // kg/L (Air laut Bunati)
+            const initialDisp = 1349.123;     // MT, sesuai data awal survey
 
-    // Hitung volume dipindahkan
-    let volumeMoved = (waterplaneArea * deltaDraft) / shapeCoeff;
+            // Hitung volume dipindahkan
+            let volumeMoved = (waterplaneArea * deltaDraft) / shapeCoeff;
 
-    // Perkiraan cargo
-    let cargoMT = volumeMoved * observedDensity;
+            // Perkiraan cargo
+            let cargoMT = volumeMoved * observedDensity;
 
-    // Total displacement akhir
-    let finalDisp = initialDisp + cargoMT;
+            // Total displacement akhir
+            let finalDisp = initialDisp + cargoMT;
 
-    // Tampilkan hasil di console
-    console.log("=== SURVEYOR METHOD RESULT ===");
-    console.log("Initial QM Draft:       " + initialQM.toFixed(4) + " m");
-    console.log("Final QM Draft:         " + finalQM.toFixed(4) + " m");
-    console.log("Delta Draft:            " + deltaDraft.toFixed(4) + " m");
-    console.log("Volume dipindahkan:     " + volumeMoved.toFixed(2) + " m³");
-    console.log("Perkiraan Cargo:        " + cargoMT.toFixed(3) + " MT");
-    console.log("Total Displacement Final: " + finalDisp.toFixed(3) + " MT");
+            // Tampilkan hasil di div #result
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `
+                <b>=== SURVEYOR METHOD RESULT ===</b><br>
+                Initial QM Draft: ${initialQM.toFixed(4)} m<br>
+                Final QM Draft: ${finalQM.toFixed(4)} m<br>
+                Delta Draft: ${deltaDraft.toFixed(4)} m<br>
+                Volume dipindahkan: ${volumeMoved.toFixed(2)} m³<br>
+                Perkiraan Cargo: ${cargoMT.toFixed(3)} MT<br>
+                Total Displacement Final: ${finalDisp.toFixed(3)} MT
+            `;
 
-    // Optional: update ke input/output di HTML
-    if (document.getElementById("cargoOutput")) {
-        document.getElementById("cargoOutput").value = cargoMT.toFixed(3);
-    }
+            // Optional: update ke input/output hidden jika ada
+            if (document.getElementById("cargoOutput")) {
+                document.getElementById("cargoOutput").value = cargoMT.toFixed(3);
+            }
+            if (document.getElementById("dispOutput")) {
+                document.getElementById("dispOutput").value = finalDisp.toFixed(3);
+            }
 
-    if (document.getElementById("dispOutput")) {
-        document.getElementById("dispOutput").value = finalDisp.toFixed(3);
-    }
+            return { cargo: cargoMT, totalDisp: finalDisp };
+        }
 
-    return { cargo: cargoMT, totalDisp: finalDisp };
-}
+        // Nonaktifkan fungsi lama agar tidak mengganggu
+        // function calculate() { /* lama */ }
+    </script>
 
-// Nonaktifkan fungsi lama agar tidak mengganggu
-// function calculate() { /* lama */ }
 </body>
+
 </html>
