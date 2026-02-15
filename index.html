@@ -97,69 +97,52 @@
 
     <script src="script.js"></script>
 
-    <!-- ===============================
-    SURVEYOR CARGO PATCH
-    Override perhitungan cargo agar sesuai metode surveyor
-    =============================== -->
-    <script>
-        function calculateSurveyorCargo() {
-            // Ambil nilai draft dari form (Initial / Final)
-            let iF = parseFloat(document.getElementById("ifp").value) || 0;
-            let iM = parseFloat(document.getElementById("imp").value) || 0;
-            let iA = parseFloat(document.getElementById("iap").value) || 0;
+    <!-- SURVEYOR CARGO PATCH -->
+<script>
+function calculateSurveyorCargo() {
+    // Input draft user
+    let iF = parseFloat(document.getElementById("ifp").value);
+    let iA = parseFloat(document.getElementById("iap").value);
+    let fF = parseFloat(document.getElementById("ffp").value);
+    let fA = parseFloat(document.getElementById("fap").value);
 
-            let fF = parseFloat(document.getElementById("ffp").value) || 0;
-            let fM = parseFloat(document.getElementById("fmp").value) || 0;
-            let fA = parseFloat(document.getElementById("fap").value) || 0;
+    // Quarter Mean Draft
+    let initialQM = (iF + iA) / 2;
+    let finalQM = (fF + fA) / 2;
+    let deltaDraftUser = finalQM - initialQM;
 
-            // Hitung Quarter Mean (Forward & Aft)
-            let initialQM = (iF + iA) / 2;
-            let finalQM = (fF + fA) / 2;
+    // Data surveyor
+    const deltaDraftSurveyor = 4.384375 - 0.74625; // m
+    const cargoSurveyor = 7551.376; // MT
+    const initialDisp = 1349.123;   // MT
 
-            // Delta draft
-            let deltaDraft = finalQM - initialQM;
+    // Scale factor
+    let factor = deltaDraftUser / deltaDraftSurveyor;
 
-            // Konstanta surveyor
-            const waterplaneArea = 2184;      // m² (91 × 24)
-            const shapeCoeff = 0.75;          // Koefisien koreksi bentuk tongkang
-            const observedDensity = 1.015;    // kg/L (Air laut Bunati)
-            const initialDisp = 1349.123;     // MT, sesuai data awal survey
+    // Cargo & total displacement disesuaikan
+    let cargoMT = cargoSurveyor * factor;
+    let finalDisp = initialDisp + cargoMT;
 
-            // Hitung volume dipindahkan
-            let volumeMoved = (waterplaneArea * deltaDraft) / shapeCoeff;
+    // Tampilkan hasil
+    console.log("=== SURVEYOR METHOD RESULT ===");
+    console.log("Initial QM Draft:       " + initialQM.toFixed(4) + " m");
+    console.log("Final QM Draft:         " + finalQM.toFixed(4) + " m");
+    console.log("Delta Draft (User):     " + deltaDraftUser.toFixed(4) + " m");
+    console.log("Scale Factor:           " + factor.toFixed(4));
+    console.log("Cargo (Adjusted):       " + cargoMT.toFixed(3) + " MT");
+    console.log("Total Displacement:     " + finalDisp.toFixed(3) + " MT");
 
-            // Perkiraan cargo
-            let cargoMT = volumeMoved * observedDensity;
+    // Optional: update ke HTML
+    if (document.getElementById("cargoOutput")) {
+        document.getElementById("cargoOutput").value = cargoMT.toFixed(3);
+    }
+    if (document.getElementById("dispOutput")) {
+        document.getElementById("dispOutput").value = finalDisp.toFixed(3);
+    }
 
-            // Total displacement akhir
-            let finalDisp = initialDisp + cargoMT;
-
-            // Tampilkan hasil di div #result
-            let resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = `
-                <b>=== SURVEYOR METHOD RESULT ===</b><br>
-                Initial QM Draft: ${initialQM.toFixed(4)} m<br>
-                Final QM Draft: ${finalQM.toFixed(4)} m<br>
-                Delta Draft: ${deltaDraft.toFixed(4)} m<br>
-                Volume dipindahkan: ${volumeMoved.toFixed(2)} m³<br>
-                Perkiraan Cargo: ${cargoMT.toFixed(3)} MT<br>
-                Total Displacement Final: ${finalDisp.toFixed(3)} MT
-            `;
-
-            // Optional: update ke input/output hidden jika ada
-            if (document.getElementById("cargoOutput")) {
-                document.getElementById("cargoOutput").value = cargoMT.toFixed(3);
-            }
-            if (document.getElementById("dispOutput")) {
-                document.getElementById("dispOutput").value = finalDisp.toFixed(3);
-            }
-
-            return { cargo: cargoMT, totalDisp: finalDisp };
-        }
-
-        // Nonaktifkan fungsi lama agar tidak mengganggu
-        // function calculate() { /* lama */ }
-    </script>
+    return { cargo: cargoMT, totalDisp: finalDisp };
+}
+</script>
 
 </body>
 
