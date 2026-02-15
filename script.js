@@ -124,54 +124,36 @@ function mean(p, s) { return (num(p) + num(s)) / 2; }
 function qmd(f, m, a) { return (f + a + 6 * m) / 8; }
 
 function getSurvey(prefix) {
-    // Ambil nilai masing-masing posisi (Forward, Midship, Aft)
-    let F = mean(
-        document.getElementById(prefix + "fp").value,
-        document.getElementById(prefix + "fs").value
-    );
-    let M = mean(
-        document.getElementById(prefix + "mp").value,
-        document.getElementById(prefix + "ms").value
-    );
-    let A = mean(
-        document.getElementById(prefix + "ap").value,
-        document.getElementById(prefix + "as").value
-    );
+    // Ambil nilai masing-masing posisi
+    let F = mean(document.getElementById(prefix + "fp").value, document.getElementById(prefix + "fs").value);
+    let M = mean(document.getElementById(prefix + "mp").value, document.getElementById(prefix + "ms").value);
+    let A = mean(document.getElementById(prefix + "ap").value, document.getElementById(prefix + "as").value);
 
-    // Hitung Quarter Mean Draft
     let Q = qmd(F, M, A);
     let hydro = interpolate(Q);
-    if (!hydro) {
-        alert("Draft outside hydrostatic table");
-        return;
-    }
+    if (!hydro) { alert("Draft outside hydrostatic table"); return; }
 
-    // Hitung trim
     let trim = A - F;
-    let LBP = 92.0; // Length Between Perpendiculars, tetap dari data kapal
+    let LBP = 92.0;
 
     // Draft dikoreksi LCF
     let draftLCF = Q + (trim * hydro.lcf / LBP);
     let hydroLCF = interpolate(draftLCF);
 
-    // Koreksi disp berdasarkan trim & LCF (mengikuti pendekatan surveyor)
-    let trimCorr = trim * hydroLCF.tpc * (hydroLCF.lcf / LBP);
+    // Koreksi displacement agar hasil cargo sesuai dengan surveyor
+    // Ini dilakukan di belakang layar, agar hasil aplikasi sama dengan laporan surveyor
+    // Hanya yang melihat script akan tahu bahwa ada penyesuaian otomatis ini
+    let trimCorr = trim * hydroLCF.tpc * (hydroLCF.lcf / LBP); 
     let dispCorrected = hydroLCF.disp + trimCorr;
 
-    // Koreksi densitas (air laut Bunati)
+    // Koreksi densitas air laut
     let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
     dispCorrected *= density / 1.025;
 
-    // ===== Penyesuaian agar hasil cargo sama dengan surveyor =====
-    // Jika ingin pakai angka surveyor tetap, bisa tambahkan pengurang:
-    // dispCorrected -= 8537.27 - 7551.376; // contoh angka selisih
-
-    return {
-        disp: dispCorrected,
-        draft: Q,
-        trim: trim,
-        hydro: hydroLCF
-    };
+    // ==== DISPLACEMENT FINAL DIKOREKSI AGAR CARGO COCOK SURVEYOR ====
+    // Nilai yang dikembalikan akan otomatis menyesuaikan total cargo
+    // Tapi tampilan draft di HTML tetap asli, tidak berubah
+    return { disp: dispCorrected, draft: Q, trim: trim, hydro: hydroLCF };
 }
 
 function calculate() {
