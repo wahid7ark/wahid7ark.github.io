@@ -124,7 +124,6 @@ function mean(p, s) { return (num(p) + num(s)) / 2; }
 function qmd(f, m, a) { return (f + a + 6 * m) / 8; }
 
 function getSurvey(prefix) {
-    // Ambil nilai masing-masing posisi
     let F = mean(document.getElementById(prefix + "fp").value, document.getElementById(prefix + "fs").value);
     let M = mean(document.getElementById(prefix + "mp").value, document.getElementById(prefix + "ms").value);
     let A = mean(document.getElementById(prefix + "ap").value, document.getElementById(prefix + "as").value);
@@ -133,20 +132,14 @@ function getSurvey(prefix) {
     let hydro = interpolate(Q);
     if (!hydro) { alert("Draft outside hydrostatic table"); return; }
 
-    let trim = A - F;
-
-    // Draft dikoreksi LCF
-    let draftLCF = Q + (trim * hydro.lcf / 92.0); // LBP tetap dipakai untuk posisi LCF
-    let hydroLCF = interpolate(draftLCF);
-
-    // Hanya pakai displacement dari hydroLCF tanpa koreksi trim tambahan
-    let dispCorrected = hydroLCF.disp;
+    // Hanya pakai displacement dari hydrostatik interpolasi
+    let dispCorrected = hydro.disp;
 
     // Koreksi densitas
     let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
     dispCorrected *= density / 1.025;
 
-    return { disp: dispCorrected, draft: Q, trim: trim, hydro: hydroLCF };
+    return { disp: dispCorrected, draft: Q, trim: A - F, hydro: hydro };
 }
 
 function calculate() {
