@@ -1,177 +1,109 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Draft Survey Assistant Officer</title><link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png"><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><link rel="stylesheet" href="style.css">
-</head><body><audio autoplay loop>
+
+<title>Draft Survey Assistant Officer</title>
+
+<link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<audio autoplay loop>
 <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
-</audio><h1>BG ARK CARNELIAN</h1><img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg"><div class="container"><!-- INITIAL SURVEY --><div class="card">
-<h3>INITIAL SURVEY</h3><h4>Forward</h4>
+</audio>
+
+<h1>BG ARK CARNELIAN</h1>
+<img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
+
+<div class="container">
+
+<!-- INITIAL -->
+<div class="card">
+<h3>INITIAL SURVEY</h3>
+
+<h4>Forward</h4>
 <div class="row">
 <input id="ifp" placeholder="Port (m)">
 <input id="ifs" placeholder="Stbd (m)">
-</div><h4>Midship</h4>
+</div>
+
+<h4>Midship</h4>
 <div class="row">
 <input id="imp" placeholder="Port (m)">
 <input id="ims" placeholder="Stbd (m)">
-</div><h4>Aft</h4>
+</div>
+
+<h4>Aft</h4>
 <div class="row">
 <input id="iap" placeholder="Port (m)">
 <input id="ias" placeholder="Stbd (m)">
-</div><h4>Density</h4>
-<input id="densI" value="1.025" placeholder="1.025">
-</div><!-- FINAL SURVEY --><div class="card">
-<h3>FINAL SURVEY</h3><h4>Forward</h4>
+</div>
+
+<h4>Density</h4>
+<input id="densI" value="1.025">
+</div>
+
+
+<!-- FINAL -->
+<div class="card">
+<h3>FINAL SURVEY</h3>
+
+<h4>Forward</h4>
 <div class="row">
 <input id="ffp" placeholder="Port (m)">
 <input id="ffs" placeholder="Stbd (m)">
-</div><h4>Midship</h4>
+</div>
+
+<h4>Midship</h4>
 <div class="row">
 <input id="fmp" placeholder="Port (m)">
 <input id="fms" placeholder="Stbd (m)">
-</div><h4>Aft</h4>
+</div>
+
+<h4>Aft</h4>
 <div class="row">
 <input id="fap" placeholder="Port (m)">
 <input id="fas" placeholder="Stbd (m)">
-</div><h4>Density</h4>
-<input id="densF" value="1.025" placeholder="1.025">
-</div><button onclick="calculateSurveyorCargo()">CALCULATE</button>
-<button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
+</div>
+
+<h4>Density</h4>
+<input id="densF" value="1.025">
+</div>
+
+
+<button id="calcBtn">CALCULATE</button>
+<button id="exportBtn">EXPORT REPORT</button>
 
 <div class="card">
 <div id="result">Awaiting Calculation...</div>
 <div id="process"></div>
-</div></div><!-- ABOUT --><div id="aboutBox">
-<div id="aboutContent">
-<span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span><h3>Draft Survey Assistant Officer</h3>
-<p>Quarter Mean Draft • Trim Correction • LCF • MCT • Density Correction • Hydrostatic Interpolation</p><p>
-<a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">
-Developer Profile
-</a>
-</p></div>
-</div><footer>
+</div>
+
+</div>
+
+<footer>
 <span class="coder">Coder: Mr. W (ARK DAN)</span>
-<span class="copy">©</span><span class="year" id="year"></span><button class="aboutMini" onclick="showAbout()">
+<span class="copy">©</span>
+<span class="year" id="year"></span>
+
+<button class="aboutMini" onclick="showAbout()">
 <span class="material-icons">info</span>ABOUT
 </button>
-</footer><script src="script.js"></script><script>
-document.getElementById("year").innerText = new Date().getFullYear();
+</footer>
 
-function showAbout(){
-document.getElementById("aboutBox").style.display="block";
-}
-</script>
-  
+<script src="script.js"></script>
+
 <script>
-
-/* ================= HYDROSTATIC INTERPOLATION ================ */
-function interpolateHydro(draft){
-
-for(let i=0;i<hydroTable.length-1;i++){
-let a=hydroTable[i];
-let b=hydroTable[i+1];
-
-if(draft>=a.draft && draft<=b.draft){
-let r=(draft-a.draft)/(b.draft-a.draft);
-return{
-disp:a.disp+r*(b.disp-a.disp),
-tpc:a.tpc+r*(b.tpc-a.tpc),
-lcf:a.lcf+r*(b.lcf-a.lcf),
-mct:a.mct+r*(b.mct-a.mct),
-kml:a.kml+r*(b.kml-a.kml),
-kmt:a.kmt+r*(b.kmt-a.kmt)
-};
-}
-}
-return null;
-}
-
-
-/* ================= SURVEYOR METHOD ================= */
-function calculateSurveyorCargo(){
-
-/* ===== INPUT ===== */
-const ifp=parseFloat(document.getElementById("ifp").value)||0;
-const ifs=parseFloat(document.getElementById("ifs").value)||0;
-const imp=parseFloat(document.getElementById("imp").value)||0;
-const ims=parseFloat(document.getElementById("ims").value)||0;
-const iap=parseFloat(document.getElementById("iap").value)||0;
-const ias=parseFloat(document.getElementById("ias").value)||0;
-
-const ffp=parseFloat(document.getElementById("ffp").value)||0;
-const ffs=parseFloat(document.getElementById("ffs").value)||0;
-const fmp=parseFloat(document.getElementById("fmp").value)||0;
-const fms=parseFloat(document.getElementById("fms").value)||0;
-const fap=parseFloat(document.getElementById("fap").value)||0;
-const fas=parseFloat(document.getElementById("fas").value)||0;
-
-const densI=parseFloat(document.getElementById("densI").value)||1.025;
-const densF=parseFloat(document.getElementById("densF").value)||1.025;
-
-
-/* ===== MEAN ===== */
-let iF=(ifp+ifs)/2;
-let iM=(imp+ims)/2;
-let iA=(iap+ias)/2;
-
-let fF=(ffp+ffs)/2;
-let fM=(fmp+fms)/2;
-let fA=(fap+fas)/2;
-
-
-/* ===== QUARTER MEAN ===== */
-let iQM=(iF+6*iM+iA)/8;
-let fQM=(fF+6*fM+fA)/8;
-
-
-/* ===== TRIM ===== */
-let iTrim=iA-iF;
-let fTrim=fA-fF;
-
-
-/* ===== HYDROSTATIC ===== */
-let iHyd=interpolateHydro(iQM);
-let fHyd=interpolateHydro(fQM);
-
-if(!iHyd||!fHyd){
-alert("Draft diluar tabel hydrostatic!");
-return;
-}
-
-
-/* ===== TRIM CORRECTION (MCT 1cm) ===== */
-const LBP=82; // panjang barge
-
-let iCorr=(iTrim*100*iHyd.mct)/LBP;
-let fCorr=(fTrim*100*fHyd.mct)/LBP;
-
-
-/* ===== DISPLACEMENT ===== */
-let iDisp=iHyd.disp+iCorr;
-let fDisp=fHyd.disp+fCorr;
-
-
-/* ===== DENSITY ===== */
-iDisp=iDisp*(densI/1.025);
-fDisp=fDisp*(densF/1.025);
-
-
-/* ===== CARGO ===== */
-let cargo=fDisp-iDisp;
-
-
-/* ===== OUTPUT ===== */
-document.getElementById("result").innerHTML=`
-Initial QM : ${iQM.toFixed(3)} m<br>
-Final QM : ${fQM.toFixed(3)} m<br><br>
-Initial Disp : ${iDisp.toFixed(2)} MT<br>
-Final Disp : ${fDisp.toFixed(2)} MT<br><br>
-<b>CARGO LOADED : ${cargo.toFixed(2)} MT</b>
-`;
-
-}
-
+document.getElementById("year").innerText=new Date().getFullYear();
 </script>
-  
+
 </body>
 </html>
