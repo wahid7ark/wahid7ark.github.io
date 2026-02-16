@@ -1,259 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft Survey Assistant Officer</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Draft Survey Assistant Officer</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(#03121c, #000814);
-            color: white;
-            text-align: center;
-        }
+<link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        h1 {
-            margin: 12px 0;
-            letter-spacing: 2px;
-        }
-
-        #barge {
-            width: 95%;
-            max-width: 720px;
-            border-radius: 14px;
-            box-shadow: 0 0 25px #00eaff55;
-        }
-
-        .container {
-            display: grid;
-            gap: 14px;
-            padding: 14px;
-        }
-
-        .card {
-            background: #021019;
-            padding: 15px;
-            border-radius: 14px;
-            box-shadow: 0 0 15px #00ffd533 inset;
-        }
-
-        h4 {
-            margin: 8px 0 4px 0;
-            color: #7fd3ff;
-        }
-
-        .row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .row input {
-            width: 100%;
-        }
-
-        input {
-            width: 92%;
-            padding: 11px;
-            margin: 6px;
-            border-radius: 8px;
-            border: none;
-            background: #000c14;
-            color: white;
-            text-align: center;
-            font-size: 15px;
-        }
-
-        button {
-            padding: 12px;
-            margin: 8px;
-            border: none;
-            border-radius: 12px;
-            background: #0a2a3a;
-            color: #9fe9ff;
-            font-weight: bold;
-            font-size: 15px;
-            box-shadow: 0 0 10px #00eaff33 inset;
-            cursor: pointer;
-        }
-
-        #exportBtn {
-            background: #00ff88;
-            color: black;
-        }
-
-        #result {
-            font-size: 21px;
-            color: #00ffd5;
-            margin-top: 10px;
-        }
-
-        #process {
-            text-align: left;
-            white-space: pre-line;
-            font-size: 13px;
-            color: #bffcf3;
-            margin-top: 12px;
-        }
-
-        /* ABOUT MODAL */
-        #aboutBox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000c;
-            display: none;
-        }
-
-        #aboutContent {
-            background: #021019;
-            margin: 15% auto;
-            padding: 20px;
-            width: 85%;
-            border-radius: 12px;
-            position: relative;
-        }
-
-        #closeAbout {
-            position: absolute;
-            right: 18px;
-            top: 12px;
-            font-size: 20px;
-            color: #7feaff;
-            cursor: pointer;
-        }
-
-        footer {
-            padding: 12px;
-            font-size: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .coder {
-            color: #7feaff;
-            font-size: 12px;
-            margin-right: 6px;
-        }
-
-        .copy {
-            color: #00ff7b;
-        }
-
-        .year {
-            color: #999;
-        }
-
-        .aboutMini {
-            padding: 3px 10px;
-            font-size: 11px;
-            background: transparent;
-            border: 1px solid #00eaff;
-            color: #7feaff;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .material-icons {
-            vertical-align: middle;
-        }
-    </style>
+<style>
+body{
+margin:0;
+font-family:'Orbitron',sans-serif;
+background:linear-gradient(#03121c,#000814);
+color:white;
+text-align:center;
+}
+h1{margin:12px 0;letter-spacing:2px;}
+#barge{width:95%;max-width:720px;border-radius:14px;box-shadow:0 0 25px #00eaff55;}
+.container{display:grid;gap:14px;padding:14px;}
+.card{background:#021019;padding:15px;border-radius:14px;box-shadow:0 0 15px #00ffd533 inset;}
+h4{margin:8px 0 4px;color:#7fd3ff;}
+.row{display:flex;gap:8px;}
+.row input{width:100%;}
+input{width:92%;padding:11px;margin:6px;border-radius:8px;border:none;background:#000c14;color:white;text-align:center;font-size:15px;}
+button{padding:12px;margin:8px;border:none;border-radius:12px;background:#0a2a3a;color:#9fe9ff;font-weight:bold;box-shadow:0 0 10px #00eaff33 inset;cursor:pointer;}
+#exportBtn{background:#00ff88;color:black;}
+#result{font-size:21px;color:#00ffd5;margin-top:10px;}
+#process{text-align:left;white-space:pre-line;font-size:13px;color:#bffcf3;margin-top:12px;}
+</style>
 </head>
 
 <body>
-    <audio autoplay loop>
-        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
-    </audio>
 
-    <h1>BG ARK CARNELIAN</h1>
-    <img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
+<h1>BG ARK CARNELIAN</h1>
+<img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
 
-    <div class="container">
+<div class="container">
 
-        <!-- INITIAL SURVEY -->
-        <div class="card">
-            <h3>INITIAL SURVEY</h3>
-            <h4>Forward</h4>
-            <div class="row">
-                <input id="ifp" placeholder="Port (m)">
-                <input id="ifs" placeholder="Stbd (m)">
-            </div>
-            <h4>Midship</h4>
-            <div class="row">
-                <input id="imp" placeholder="Port (m)">
-                <input id="ims" placeholder="Stbd (m)">
-            </div>
-            <h4>Aft</h4>
-            <div class="row">
-                <input id="iap" placeholder="Port (m)">
-                <input id="ias" placeholder="Stbd (m)">
-            </div>
-            <h4>Density</h4>
-            <input id="densI" value="1.025" placeholder="1.025">
-        </div>
+<div class="card">
+<h3>INITIAL SURVEY</h3>
+<h4>Forward</h4>
+<div class="row">
+<input id="ifp" placeholder="Port (m)">
+<input id="ifs" placeholder="Stbd (m)">
+</div>
+<h4>Midship</h4>
+<div class="row">
+<input id="imp">
+<input id="ims">
+</div>
+<h4>Aft</h4>
+<div class="row">
+<input id="iap">
+<input id="ias">
+</div>
+<h4>Density</h4>
+<input id="densI" value="1.025">
+</div>
 
-        <!-- FINAL SURVEY -->
-        <div class="card">
-            <h3>FINAL SURVEY</h3>
-            <h4>Forward</h4>
-            <div class="row">
-                <input id="ffp" placeholder="Port (m)">
-                <input id="ffs" placeholder="Stbd (m)">
-            </div>
-            <h4>Midship</h4>
-            <div class="row">
-                <input id="fmp" placeholder="Port (m)">
-                <input id="fms" placeholder="Stbd (m)">
-            </div>
-            <h4>Aft</h4>
-            <div class="row">
-                <input id="fap" placeholder="Port (m)">
-                <input id="fas" placeholder="Stbd (m)">
-            </div>
-            <h4>Density</h4>
-            <input id="densF" value="1.025" placeholder="1.025">
-        </div>
+<div class="card">
+<h3>FINAL SURVEY</h3>
+<h4>Forward</h4>
+<div class="row">
+<input id="ffp">
+<input id="ffs">
+</div>
+<h4>Midship</h4>
+<div class="row">
+<input id="fmp">
+<input id="fms">
+</div>
+<h4>Aft</h4>
+<div class="row">
+<input id="fap">
+<input id="fas">
+</div>
+<h4>Density</h4>
+<input id="densF" value="1.025">
+</div>
 
-        <button onclick="calculate()">CALCULATE</button>
-        <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
+<!-- MODE TOGGLE -->
+<div>
+<button id="modeBtn" onclick="toggleMode()">MODE: SURVEYOR</button>
+</div>
 
-        <div class="card">
-            <div id="result">Awaiting Calculation...</div>
-            <div id="process"></div>
-        </div>
+<button onclick="calculate()">CALCULATE</button>
+<button id="exportBtn">EXPORT REPORT</button>
 
-    </div>
+<div class="card">
+<div id="result">Awaiting Calculation...</div>
+<div id="process"></div>
+</div>
 
-    <!-- ABOUT MODAL -->
-    <div id="aboutBox">
-        <div id="aboutContent">
-            <span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span>
-            <h3>Draft Survey Assistant Officer</h3>
-            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi densitas, dan interpolasi hidrostatik.</p>
-            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil Pengembang</a></p>
-        </div>
-    </div>
+</div>
 
-    <footer>
-        <span class="coder">Coder: Mr. Wolf (ARK DAN)</span>
-        <span class="copy">©</span><span class="year" id="year"></span>
-        <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
-    </footer>
+<script>
 
-    <script>
-        // Set current year in footer
-        document.getElementById("year").innerText = new Date().getFullYear();
+// ================= MODE SYSTEM =================
+let calcMode="surveyor";
+
+function toggleMode(){
+if(calcMode==="surveyor"){
+calcMode="naval";
+modeBtn.innerText="MODE: NAVAL ARCH";
+}else{
+calcMode="surveyor";
+modeBtn.innerText="MODE: SURVEYOR";
+}
+}
 
         // ========== FULL HYDROSTATIC TABLE – BG ARK CARNELIAN ==========
 const hydroTable = [
@@ -350,87 +206,71 @@ const hydroTable = [
   {draft:5.000, disp:10357.59, lcb:45.910, vcb:2.595, tpc:22.22, lcf:44.466, degTrim:26117, kml:144.46, kmt:12.972}
 ];
 
-        // Number parser helper
-        function num(x) { return parseFloat(String(x).replace(",", ".") || 0); }
+// ========= UTIL =========
+function num(v){return parseFloat(v)||0;}
+function mean(a,b){return (num(a)+num(b))/2;}
+function qmd(F,M,A){return (F+6*M+A)/8;}
 
-        // Linear interpolation
-        function interpolate(draft) {
-            for (let i = 0; i < hydroTable.length - 1; i++) {
-                let a = hydroTable[i];
-                let b = hydroTable[i + 1];
-                if (draft >= a.draft && draft <= b.draft) {
-                    let r = (draft - a.draft) / (b.draft - a.draft);
-                    return {
-                        disp: a.disp + (b.disp - a.disp) * r,
-                        tpc: a.tpc + (b.tpc - a.tpc) * r,
-                        lcf: a.lcf + (b.lcf - a.lcf) * r,
-                        mct: a.degTrim + (b.degTrim - a.degTrim) * r,
-                        vcb: a.vcb + (b.vcb - a.vcb) * r,
-                        kml: a.kml + (b.kml - a.kml) * r,
-                        kmt: a.kmt + (b.kmt - a.kmt) * r
-                    };
-                }
-            }
-            return null;
-        }
+function interpolate(d){
+for(let i=0;i<hydroTable.length-1;i++){
+let a=hydroTable[i];
+let b=hydroTable[i+1];
+if(d>=a.draft && d<=b.draft){
+let r=(d-a.draft)/(b.draft-a.draft);
+return{
+disp:a.disp+r*(b.disp-a.disp),
+tpc:a.tpc+r*(b.tpc-a.tpc),
+lcf:a.lcf+r*(b.lcf-a.lcf)
+};
+}}
+return hydroTable[hydroTable.length-1];
+}
 
-        function mean(p, s) { return (num(p) + num(s)) / 2; }
-        function qmd(f, m, a) { return (f + a + 6 * m) / 8; }
+// ===== SURVEYOR METHOD =====
+function calcSurveyor(Q,trim,density){
+let hydro=interpolate(Q);
+let disp=hydro.disp;
+disp*=density/1.025;
+return disp;
+}
 
-        function getSurvey(prefix) {
-            let F = mean(document.getElementById(prefix + "fp").value, document.getElementById(prefix + "fs").value);
-            let M = mean(document.getElementById(prefix + "mp").value, document.getElementById(prefix + "ms").value);
-            let A = mean(document.getElementById(prefix + "ap").value, document.getElementById(prefix + "as").value);
+// ===== NAVAL ARCHITECT METHOD =====
+function calcNaval(Q,trim,density){
+const LBP=92;
+let hydro=interpolate(Q);
+let draftLCF=Q+(trim*hydro.lcf/LBP);
+let hydroLCF=interpolate(draftLCF);
+let trimCorr=(trim*100*hydroLCF.tpc*hydroLCF.lcf)/hydroLCF.tpc;
+let disp=hydroLCF.disp+trimCorr;
+disp*=density/1.025;
+return disp;
+}
 
-            let Q = qmd(F, M, A);
-            let hydro = interpolate(Q);
-            if (!hydro) { alert("Draft outside hydrostatic table"); return; }
+function getSurvey(prefix){
+let F=mean(prefix+"fp",prefix+"fs");
+let M=mean(prefix+"mp",prefix+"ms");
+let A=mean(prefix+"ap",prefix+"as");
+F=mean(document.getElementById(prefix+"fp").value,document.getElementById(prefix+"fs").value);
+M=mean(document.getElementById(prefix+"mp").value,document.getElementById(prefix+"ms").value);
+A=mean(document.getElementById(prefix+"ap").value,document.getElementById(prefix+"as").value);
+let Q=qmd(F,M,A);
+let trim=A-F;
+let density=num(document.getElementById(prefix==="i"?"densI":"densF").value);
 
-            let trim = A - F;
-            let LBP = 92.0;
+if(calcMode==="surveyor") return calcSurveyor(Q,trim,density);
+else return calcNaval(Q,trim,density);
+}
 
-            let draftLCF = Q + (trim * hydro.lcf / LBP);
-            let hydroLCF = interpolate(draftLCF);
+function calculate(){
+let initial=getSurvey("i");
+let final=getSurvey("f");
+let cargo=final-initial;
 
-            let trimCorr = (trim * 100 * hydroLCF.tpc * hydroLCF.lcf) / hydroLCF.mct;
-            let dispCorrected = hydroLCF.disp + trimCorr;
+result.innerHTML=
+`Cargo: <b>${cargo.toFixed(2)} MT</b><br>
+Mode: ${calcMode.toUpperCase()}`;
+}
 
-            let density = num(document.getElementById(prefix == "i" ? "densI" : "densF").value);
-            dispCorrected *= density / 1.025;
-
-            return { disp: dispCorrected, draft: Q, trim: trim, hydro: hydroLCF };
-        }
-
-        function calculate() {
-            let I = getSurvey("i");
-            let F = getSurvey("f");
-            if (!I || !F) return;
-
-            let cargo = F.disp - I.disp;
-
-            document.getElementById("result").innerHTML = "<b>CARGO WEIGHT : " + cargo.toFixed(2) + " MT</b>";
-
-            document.getElementById("process").innerText =
-                "INITIAL DISPLACEMENT : " + I.disp.toFixed(2) + " MT\n" +
-                "FINAL DISPLACEMENT   : " + F.disp.toFixed(2) + " MT\n\n" +
-                "INITIAL DRAFT : " + I.draft.toFixed(3) + " m\n" +
-                "FINAL DRAFT   : " + F.draft.toFixed(3) + " m\n\n" +
-                "TPC : " + F.hydro.tpc.toFixed(3) + "\nLCF : " + F.hydro.lcf.toFixed(3) +
-                "\nMCT : " + F.hydro.mct.toFixed(2) + "\nVCB : " + F.hydro.vcb.toFixed(3) +
-                "\nKML : " + F.hydro.kml.toFixed(2) + "\nKMT : " + F.hydro.kmt.toFixed(2);
-        }
-
-        function exportReport() {
-            let text = document.getElementById("result").innerText + "\n\n" + document.getElementById("process").innerText;
-            let blob = new Blob([text], { type: "text/plain" });
-            let a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "DraftSurvey_Report.txt";
-            a.click();
-        }
-
-        function showAbout() { aboutBox.style.display = "block"; }
-    </script>
+</script>
 </body>
-
 </html>
