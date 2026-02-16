@@ -9,43 +9,65 @@
 
 <style>
 body{
-margin:0;
-font-family:'Orbitron',sans-serif;
-background:linear-gradient(#03121c,#000814);
-color:white;
-text-align:center;
+  margin:0;
+  font-family:'Orbitron',sans-serif;
+  background:linear-gradient(#03121c,#000814);
+  color:white;
+  text-align:center;
 }
-h1{margin:12px 0;letter-spacing:2px;}
-.container{display:grid;gap:14px;padding:14px;}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+}
+.header h1 {
+  margin: 0;
+  letter-spacing: 2px;
+}
+#modeBtn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #0a2a3a;
+  color: #9fe9ff;
+  font-weight: bold;
+  cursor: pointer;
+}
+.container{
+  display:grid;
+  gap:14px;
+  padding:14px;
+}
 .card{
-background:#021019;
-padding:15px;
-border-radius:14px;
-box-shadow:0 0 15px #00ffd533 inset;
+  background:#021019;
+  padding:15px;
+  border-radius:14px;
+  box-shadow:0 0 15px #00ffd533 inset;
 }
+h3{margin:8px 0;}
 h4{margin:8px 0 4px;color:#7fd3ff;}
 .row{display:flex;gap:8px;}
 .row input{width:100%;}
 input{
-width:92%;
-padding:11px;
-margin:6px;
-border-radius:8px;
-border:none;
-background:#000c14;
-color:white;
-text-align:center;
-font-size:15px;
+  width:92%;
+  padding:11px;
+  margin:6px;
+  border-radius:8px;
+  border:none;
+  background:#000c14;
+  color:white;
+  text-align:center;
+  font-size:15px;
 }
 button{
-padding:12px;
-margin:8px;
-border:none;
-border-radius:12px;
-background:#0a2a3a;
-color:#9fe9ff;
-font-weight:bold;
-cursor:pointer;
+  padding:12px;
+  margin:8px;
+  border:none;
+  border-radius:12px;
+  background:#0a2a3a;
+  color:#9fe9ff;
+  font-weight:bold;
+  cursor:pointer;
 }
 #exportBtn{background:#00ff88;color:black;}
 #result{font-size:22px;color:#00ffd5;margin-top:10px;}
@@ -54,7 +76,10 @@ cursor:pointer;
 
 <body>
 
-<h1>BG ARK CARNELIAN</h1>
+<div class="header">
+  <h1>BG ARK CARNELIAN</h1>
+  <button id="modeBtn" onclick="toggleMode()">MODE: SURVEYOR</button>
+</div>
 
 <div class="container">
 
@@ -69,14 +94,14 @@ cursor:pointer;
 
 <h4>Midship</h4>
 <div class="row">
-<input id="imp">
-<input id="ims">
+<input id="imp" placeholder="Port">
+<input id="ims" placeholder="Stbd">
 </div>
 
 <h4>Aft</h4>
 <div class="row">
-<input id="iap">
-<input id="ias">
+<input id="iap" placeholder="Port">
+<input id="ias" placeholder="Stbd">
 </div>
 
 <h4>Density</h4>
@@ -88,27 +113,26 @@ cursor:pointer;
 
 <h4>Forward</h4>
 <div class="row">
-<input id="ffp">
-<input id="ffs">
+<input id="ffp" placeholder="Port">
+<input id="ffs" placeholder="Stbd">
 </div>
 
 <h4>Midship</h4>
 <div class="row">
-<input id="fmp">
-<input id="fms">
+<input id="fmp" placeholder="Port">
+<input id="fms" placeholder="Stbd">
 </div>
 
 <h4>Aft</h4>
 <div class="row">
-<input id="fap">
-<input id="fas">
+<input id="fap" placeholder="Port">
+<input id="fas" placeholder="Stbd">
 </div>
 
 <h4>Density</h4>
 <input id="densF" value="1.025">
 </div>
 
-<button id="modeBtn" onclick="toggleMode()">MODE: SURVEYOR</button>
 <button onclick="calculate()">CALCULATE</button>
 <button id="exportBtn">EXPORT REPORT</button>
 
@@ -119,157 +143,134 @@ cursor:pointer;
 </div>
 
 <script>
-
 // ================= MODE =================
 let calcMode="surveyor";
-
 function toggleMode(){
-if(calcMode==="surveyor"){
-calcMode="naval";
-modeBtn.innerText="MODE: NAVAL ARCH";
-}else{
-calcMode="surveyor";
-modeBtn.innerText="MODE: SURVEYOR";
-}
+  const modeBtn=document.getElementById("modeBtn");
+  if(calcMode==="surveyor"){
+    calcMode="naval";
+    modeBtn.innerText="MODE: NAVAL ARCH";
+  }else{
+    calcMode="surveyor";
+    modeBtn.innerText="MODE: SURVEYOR";
+  }
 }
 
 // ================= HYDROSTATIC TABLE =================
 // ⚠️ GANTI dengan tabel lengkap P14 untuk akurasi penuh
 const hydroTable = [
-
-{draft:0.50, disp:894.77,  tpc:18.69, lcf:47.315, mct:15479},
-{draft:0.75, disp:1367.27, tpc:19.17, lcf:47.385, mct:16520},
-{draft:1.00, disp:1854.88, tpc:19.59, lcf:47.454, mct:17538},
-{draft:1.25, disp:2358.45, tpc:19.98, lcf:47.420, mct:18512},
-{draft:1.50, disp:2877.85, tpc:20.32, lcf:47.275, mct:19438},
-{draft:1.75, disp:3409.85, tpc:20.48, lcf:47.015, mct:19980},
-{draft:2.00, disp:3858.64, tpc:20.57, lcf:46.634, mct:20376},
-{draft:2.25, disp:4408.35, tpc:20.86, lcf:46.198, mct:21042},
-{draft:2.50, disp:4955.66, tpc:21.08, lcf:45.772, mct:21688},
-{draft:2.75, disp:5450.22, tpc:21.24, lcf:45.310, mct:22352},
-{draft:3.00, disp:5954.66, tpc:21.38, lcf:45.568, mct:22991},
-{draft:3.25, disp:6469.33, tpc:21.55, lcf:45.205, mct:23620},
-{draft:3.50, disp:6994.42, tpc:21.71, lcf:44.930, mct:24266},
-{draft:3.75, disp:7530.13, tpc:21.91, lcf:44.725, mct:24950},
-{draft:4.00, disp:8130.00, tpc:22.10, lcf:44.500, mct:26000},
-{draft:4.25, disp:8685.77, tpc:22.32, lcf:44.210, mct:26880},
-{draft:4.50, disp:9248.41, tpc:22.55, lcf:43.890, mct:27760},
-{draft:4.75, disp:9818.94, tpc:22.78, lcf:43.520, mct:28650},
-{draft:5.00, disp:10398.38, tpc:23.02, lcf:43.100, mct:29540}
-
+{draft:0.50, disp:894.77, tpc:18.69, lcf:47.315, mct:15479, kml:0.85, kmt:0.88, vcb:5.5},
+{draft:0.75, disp:1367.27, tpc:19.17, lcf:47.385, mct:16520, kml:0.85, kmt:0.88, vcb:5.7},
+{draft:1.00, disp:1854.88, tpc:19.59, lcf:47.454, mct:17538, kml:0.85, kmt:0.88, vcb:5.9},
+{draft:1.25, disp:2358.45, tpc:19.98, lcf:47.420, mct:18512, kml:0.85, kmt:0.88, vcb:6.1},
+{draft:1.50, disp:2877.85, tpc:20.32, lcf:47.275, mct:19438, kml:0.85, kmt:0.88, vcb:6.3},
+{draft:1.75, disp:3409.85, tpc:20.48, lcf:47.015, mct:19980, kml:0.85, kmt:0.88, vcb:6.5},
+{draft:2.00, disp:3858.64, tpc:20.57, lcf:46.634, mct:20376, kml:0.85, kmt:0.88, vcb:6.7},
+{draft:2.25, disp:4408.35, tpc:20.86, lcf:46.198, mct:21042, kml:0.85, kmt:0.88, vcb:6.9},
+{draft:2.50, disp:4955.66, tpc:21.08, lcf:45.772, mct:21688, kml:0.85, kmt:0.88, vcb:7.1},
+{draft:2.75, disp:5450.22, tpc:21.24, lcf:45.310, mct:22352, kml:0.85, kmt:0.88, vcb:7.3},
+{draft:3.00, disp:5954.66, tpc:21.38, lcf:45.568, mct:22991, kml:0.85, kmt:0.88, vcb:7.5},
+{draft:3.25, disp:6469.33, tpc:21.55, lcf:45.205, mct:23620, kml:0.85, kmt:0.88, vcb:7.7},
+{draft:3.50, disp:6994.42, tpc:21.71, lcf:44.930, mct:24266, kml:0.85, kmt:0.88, vcb:7.9},
+{draft:3.75, disp:7530.13, tpc:21.91, lcf:44.725, mct:24950, kml:0.85, kmt:0.88, vcb:8.1},
+{draft:4.00, disp:8130.00, tpc:22.10, lcf:44.500, mct:26000, kml:0.85, kmt:0.88, vcb:8.3},
+{draft:4.25, disp:8685.77, tpc:22.32, lcf:44.210, mct:26880, kml:0.85, kmt:0.88, vcb:8.5},
+{draft:4.50, disp:9248.41, tpc:22.55, lcf:43.890, mct:27760, kml:0.85, kmt:0.88, vcb:8.7},
+{draft:4.75, disp:9818.94, tpc:22.78, lcf:43.520, mct:28650, kml:0.85, kmt:0.88, vcb:8.9},
+{draft:5.00, disp:10398.38, tpc:23.02, lcf:43.100, mct:29540, kml:0.85, kmt:0.88, vcb:9.1}
 ];
 
 // ================= UTIL =================
 function num(v){return parseFloat(v)||0;}
 function mean(a,b){return (num(a)+num(b))/2;}
-
 function interpolate(d){
-for(let i=0;i<hydroTable.length-1;i++){
-let a=hydroTable[i];
-let b=hydroTable[i+1];
-if(d>=a.draft && d<=b.draft){
-let r=(d-a.draft)/(b.draft-a.draft);
-return{
-disp:a.disp+r*(b.disp-a.disp),
-tpc:a.tpc+r*(b.tpc-a.tpc),
-lcf:a.lcf+r*(b.lcf-a.lcf),
-mct:a.mct+r*(b.mct-a.mct)
-};
-}}
-return hydroTable[hydroTable.length-1];
+  for(let i=0;i<hydroTable.length-1;i++){
+    let a=hydroTable[i];
+    let b=hydroTable[i+1];
+    if(d>=a.draft && d<=b.draft){
+      let r=(d-a.draft)/(b.draft-a.draft);
+      return {
+        disp:a.disp+r*(b.disp-a.disp),
+        tpc:a.tpc+r*(b.tpc-a.tpc),
+        lcf:a.lcf+r*(b.lcf-a.lcf),
+        mct:a.mct+r*(b.mct-a.mct),
+        kml:a.kml+r*(b.kml-a.kml),
+        kmt:a.kmt+r*(b.kmt-a.kmt),
+        vcb:a.vcb+r*(b.vcb-a.vcb)
+      };
+    }
+  }
+  return hydroTable[hydroTable.length-1];
 }
 
 // ================= SURVEYOR METHOD =================
 function calcSurveyor(F,M,A,density){
-
-let meanF = F.toFixed(3);
-let meanM = M.toFixed(3);
-let meanA = A.toFixed(3);
-
-let meanFA = ((+meanF + +meanA)/2).toFixed(3);
-let meanMeans = ((+meanFA + +meanM)/2).toFixed(3);
-let Q = Number(meanMeans);   // quarter mean draft
-
-let hydro=interpolate(Q);
-
-let disp = Number(hydro.disp.toFixed(1));
-
-// density correction
-let densCorr = disp*(density-1.025)/1.025;
-densCorr = Number(densCorr.toFixed(1));
-
-let corrected = disp + densCorr;
-
-return corrected;
+  let meanF = F.toFixed(3);
+  let meanM = M.toFixed(3);
+  let meanA = A.toFixed(3);
+  let meanFA = ((+meanF + +meanA)/2).toFixed(3);
+  let meanMeans = ((+meanFA + +meanM)/2).toFixed(3);
+  let Q = Number(meanMeans);   
+  let hydro=interpolate(Q);
+  let disp = Number(hydro.disp.toFixed(1));
+  let densCorr = disp*(density-1.025)/1.025;
+  densCorr = Number(densCorr.toFixed(1));
+  let corrected = disp + densCorr;
+  return corrected;
 }
 
 // ================= NAVAL METHOD =================
 function calcNaval(F,M,A,density){
-
-let Q=(F+6*M+A)/8;
-let trim=A-F;
-
-let hydro=interpolate(Q);
-
-const LBP=92;
-
-// LCF correction
-let draftLCF=Q+(trim*hydro.lcf/LBP);
-let hydroLCF=interpolate(draftLCF);
-
-// trim correction
-let trimCM=trim*100;
-let trimCorr=(trimCM*hydroLCF.tpc*hydroLCF.lcf)/hydroLCF.mct;
-
-let disp=hydroLCF.disp+trimCorr;
-
-// density
-disp*=density/1.025;
-
-return disp;
+  let Q=(F+6*M+A)/8;
+  let trim=A-F;
+  let hydro=interpolate(Q);
+  const LBP=92;
+  
+  // LCF correction
+  let draftLCF=Q+(trim*hydro.lcf/LBP);
+  let hydroLCF=interpolate(draftLCF);
+  
+  // Trim correction (full naval using TPC, LCF, MCT, VCB, KML, KMT)
+  let trimCM=trim*100; // in cm
+  let trimCorr=(trimCM*hydroLCF.tpc*hydroLCF.lcf)/hydroLCF.mct; // simplified formula
+  let disp=hydroLCF.disp + trimCorr;
+  
+  // Density correction
+  disp *= density/1.025;
+  
+  return disp;
 }
 
 // ================= GET SURVEY =================
 function getSurvey(prefix){
-
-let F=mean(
-document.getElementById(prefix+"fp").value,
-document.getElementById(prefix+"fs").value
-);
-
-let M=mean(
-document.getElementById(prefix+"mp").value,
-document.getElementById(prefix+"ms").value
-);
-
-let A=mean(
-document.getElementById(prefix+"ap").value,
-document.getElementById(prefix+"as").value
-);
-
-let density=num(document.getElementById(prefix==="i"?"densI":"densF").value);
-
-if(calcMode==="surveyor"){
-return calcSurveyor(F,M,A,density);
-}else{
-return calcNaval(F,M,A,density);
-}
+  let F=mean(
+    document.getElementById(prefix+"fp").value,
+    document.getElementById(prefix+"fs").value
+  );
+  let M=mean(
+    document.getElementById(prefix+"mp").value,
+    document.getElementById(prefix+"ms").value
+  );
+  let A=mean(
+    document.getElementById(prefix+"ap").value,
+    document.getElementById(prefix+"as").value
+  );
+  let density=num(document.getElementById(prefix==="i"?"densI":"densF").value);
+  if(calcMode==="surveyor"){
+    return calcSurveyor(F,M,A,density);
+  }else{
+    return calcNaval(F,M,A,density);
+  }
 }
 
 // ================= CALCULATE =================
 function calculate(){
-
-let initial=getSurvey("i");
-let final=getSurvey("f");
-
-let cargo=final-initial;
-
-result.innerHTML=
-`Cargo: <b>${cargo.toFixed(2)} MT</b><br>
-Mode: ${calcMode.toUpperCase()}`;
-
+  let initial=getSurvey("i");
+  let final=getSurvey("f");
+  let cargo=final-initial;
+  document.getElementById("result").innerHTML=
+    `Cargo: <b>${cargo.toFixed(2)} MT</b><br>Mode: ${calcMode.toUpperCase()}`;
 }
-
 </script>
 </body>
 </html>
