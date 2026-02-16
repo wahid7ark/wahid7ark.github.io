@@ -442,7 +442,7 @@ const hydroTable = [
             // ================== NAVAL ARCH MODE ==================
             else if (mode === "navalArch") {
                 let trim = A - F;
-                let LBP = 92.0;
+                let LBP = 87.86;
                 let draftLCF = Q + (trim * hydro.lcf / LBP);
                 let hydroLCF = interpolate(draftLCF);
                 if (!hydroLCF) return null;
