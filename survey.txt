@@ -1,0 +1,126 @@
+DRAUGHT SURVEY CALCULATION
+BARGE: ARK CARNELIAN
+
+================================
+1. PEMBACAAN DRAFT LAPANGAN
+================================
+
+INITIAL
+Forward = 0.730 m
+Midship = 0.745 m
+Aft     = 0.770 m
+
+FINAL
+Forward = 3.360 m
+Midship = 4.380 m
+Aft     = 4.035 m
+
+
+================================
+2. MEAN OF MEANS
+================================
+Mean of Means = (F + M + A) / 3
+
+Initial:
+= (0.730 + 0.745 + 0.770) / 3
+= 0.7475 m
+
+Final:
+= (3.360 + 4.380 + 4.035) / 3
+= 4.38875 m
+
+
+================================
+3. QUARTER MEAN DRAFT
+(draft referensi barge)
+================================
+QM = (F + 6M + A) / 8
+
+Initial:
+= (0.730 + 6×0.745 + 0.770) / 8
+= 0.74625 m
+
+Final:
+= (3.360 + 6×4.380 + 4.035) / 8
+= 4.384375 m
+
+
+================================
+4. TRIM
+================================
+Trim = Aft − Forward
+
+Initial:
+= 0.770 − 0.730
+= 0.040 m
+
+Final:
+= 4.035 − 3.360
+= 0.875 m
+
+
+================================
+5. DISPLACEMENT DARI HYDROSTATIC TABLE
+(interpolasi)
+================================
+
+INITIAL (draft 0.746 m)
+0.70 m = 1273.65 MT
+0.75 m = 1369.61 MT
+
+D = 1273.65 + ((0.746−0.70)/0.05) × (1369.61−1273.65)
+D ≈ 1362.715 MT
+
+
+FINAL (draft 4.384 m)
+4.35 m = 8911.67 MT
+4.40 m = 9022.97 MT
+
+D ≈ 8388.109 MT
+
+
+================================
+6. TRIM CORRECTION
+================================
+Dilakukan karena barge trim.
+
+Metode umum:
+Trim Correction ≈ (Trim × TPC × LCF) / LBP
+atau menggunakan Moment to Change Trim (MCTC).
+
+Nilai koreksi sudah dimasukkan surveyor.
+
+
+================================
+7. DENSITY CORRECTION
+================================
+Hydrostatic table density = 1.025
+Observed density = 1.015
+
+Rumus:
+Corrected Disp = Observed Disp × (Density_obs / 1.025)
+
+
+INITIAL:
+1362.715 → 1349.123 MT
+
+FINAL:
+≈ 8388.109 → 8900.499 MT
+
+
+================================
+8. NET DISPLACEMENT
+================================
+Net Disp = Corrected Disp
+
+
+================================
+9. TOTAL CARGO LOADED
+================================
+Cargo = Final Disp − Initial Disp
+
+= 8900.499
+− 1349.123
+
+TOTAL CARGO = 7,551.376 MT
+================================
