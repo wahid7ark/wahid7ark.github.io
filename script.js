@@ -99,9 +99,7 @@ const hydroTable = [
 {d:5.00,disp:10357.59,LCB:45.910,VCB:2.595,TPC:22.22,LCF:44.466,MCT:26117,KML:144.46,KMT:12.972}
 ];
 
-// ======================================================
-// INTERPOLATION (linear — sama seperti surveyor manual)
-// ======================================================
+// ================== INTERPOLASI ==================
 function interpolate(draft){
 
 let low=null, high=null;
@@ -114,98 +112,81 @@ break;
 }
 }
 
-if(!low||!high) return null;
+if(!low||!high){
+alert("Draft diluar tabel hidrostatik");
+return null;
+}
 
-let ratio=(draft-low.d)/(high.d-low.d);
+let r=(draft-low.d)/(high.d-low.d);
 
 return{
-disp: low.disp + ratio*(high.disp-low.disp),
-tpc:  low.tpc  + ratio*(high.tpc-low.tpc),
-lcf:  low.lcf  + ratio*(high.lcf-low.lcf),
-mct:  low.mct  + ratio*(high.mct-low.mct)
+disp: low.disp + r*(high.disp-low.disp),
+tpc:  low.TPC  + r*(high.TPC-low.TPC),
+lcf:  low.LCF  + r*(high.LCF-low.LCF),
+mct:  low.MCT  + r*(high.MCT-low.MCT)
 };
 }
 
-// ======================================================
-// MAIN CALCULATION
-// ======================================================
-window.calculateSurveyorCargo=function(){
 
-// ---------- ambil input ----------
-function val(id){return parseFloat(document.getElementById(id).value)||0;}
+// ================== HITUNG ==================
+document.getElementById("calcBtn").addEventListener("click",function(){
 
-let ifp=val("ifp"), ifs=val("ifs");
-let imp=val("imp"), ims=val("ims");
-let iap=val("iap"), ias=val("ias");
-let densI=val("densI")||1.025;
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
 
-let ffp=val("ffp"), ffs=val("ffs");
-let fmp=val("fmp"), fms=val("fms");
-let fap=val("fap"), fas=val("fas");
-let densF=val("densF")||1.025;
+// initial mean
+let iF=(v("ifp")+v("ifs"))/2;
+let iM=(v("imp")+v("ims"))/2;
+let iA=(v("iap")+v("ias"))/2;
+let densI=v("densI")||1.025;
 
-// ---------- rata kiri kanan ----------
-function mean(a,b){return (a+b)/2;}
+// final mean
+let fF=(v("ffp")+v("ffs"))/2;
+let fM=(v("fmp")+v("fms"))/2;
+let fA=(v("fap")+v("fas"))/2;
+let densF=v("densF")||1.025;
 
-let iF=mean(ifp,ifs);
-let iM=mean(imp,ims);
-let iA=mean(iap,ias);
 
-let fF=mean(ffp,ffs);
-let fM=mean(fmp,fms);
-let fA=mean(fap,fas);
+// QUARTER MEAN
+let iQM=(iF+6*iM+iA)/8;
+let fQM=(fF+6*fM+fA)/8;
 
-// ---------- QUARTER MEAN DRAFT ----------
-let iQM=(iF+6iM+iA)/8;
-let fQM=(fF+6fM+fA)/8;
 
-// ---------- TRIM ----------
+// TRIM
 let iTrim=iA-iF;
 let fTrim=fA-fF;
 
-// ---------- HYDROSTATIC ----------
+
+// HYDRO
 let iHyd=interpolate(iQM);
 let fHyd=interpolate(fQM);
+if(!iHyd||!fHyd) return;
 
-if(!iHyd||!fHyd){
-alert("Draft diluar tabel hidrostatik");
-return;
-}
 
-// ---------- TRIM CORRECTION (INI YANG DULU HILANG) ----------
-function trimCorrection(trim,hydro){
-
-// convert meter -> centimeter
+// TRIM CORRECTION (MCT method)
+function trimCorr(trim,hyd){
 let trim_cm=trim*100;
-
-// MCT unit: moment per 1cm
-// correction displacement:
-return (trim_cm * hydro.tpc * hydro.lcf) / hydro.mct;
+return (trim_cm*hyd.tpc*hyd.lcf)/hyd.mct;
 }
 
-let iTrimCorr=trimCorrection(iTrim,iHyd);
-let fTrimCorr=trimCorrection(fTrim,fHyd);
+let iDisp=iHyd.disp+trimCorr(iTrim,iHyd);
+let fDisp=fHyd.disp+trimCorr(fTrim,fHyd);
 
-// ---------- DISPLACEMENT SETELAH TRIM ----------
-let iDisp=iHyd.disp + iTrimCorr;
-let fDisp=fHyd.disp + fTrimCorr;
 
-// ---------- DENSITY CORRECTION ----------
+// DENSITY
 iDisp=iDisp*(densI/1.025);
 fDisp=fDisp*(densF/1.025);
 
-// ---------- CARGO ----------
+
+// CARGO
 let cargo=fDisp-iDisp;
 
-// ---------- OUTPUT DETAIL ----------
-document.getElementById("result").innerHTML=`
-<b>Initial QM:</b> ${iQM.toFixed(3)} m<br>
-<b>Final QM:</b> ${fQM.toFixed(3)} m<br><br>
 
-<b>Initial Disp (corr):</b> ${iDisp.toFixed(2)} MT<br>
-<b>Final Disp (corr):</b> ${fDisp.toFixed(2)} MT<br><br>
+// OUTPUT
+document.getElementById("result").innerHTML=
+"Initial QM : "+iQM.toFixed(3)+" m<br>"+
+"Final QM : "+fQM.toFixed(3)+" m<br><br>"+
+"Initial Disp : "+iDisp.toFixed(2)+" MT<br>"+
+"Final Disp : "+fDisp.toFixed(2)+" MT<br><br>"+
+"<b style='font-size:22px;color:#7CFFB2'>CARGO : "+cargo.toFixed(2)+" MT</b>";
 
-<b style="font-size:20px">CARGO WEIGHT: ${cargo.toFixed(2)} MT</b>
-`;
-
-}
+});
