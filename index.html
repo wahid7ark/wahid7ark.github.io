@@ -65,8 +65,8 @@
             <input id="densF" value="1.025" placeholder="1.025">
         </div>
 
-        <button id="calcBtn">CALCULATE</button>
-        <button id="exportBtn">EXPORT REPORT</button>
+        <button onclick="calculateSurveyorCargo()">CALCULATE</button>
+        <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
 
         <div class="card">
             <div id="result">Awaiting Calculation...</div>
@@ -86,7 +86,7 @@
     </div>
 
     <footer>
-        <span class="coder">Coder: Mr. Wolf (ARK DAN)</span>
+        <span class="coder">Coder: Mr. W (ARK DAN)</span>
         <span class="copy">©</span><span class="year" id="year"></span>
         <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
     </footer>
@@ -95,82 +95,53 @@
     <script src="script.js"></script>
 
     <script>
-    // Nonaktifkan calculate asli
-    if (window.calculate) window.calculate = function() { console.log("Original calculate disabled."); };
+        // Set current year in footer
+        document.getElementById("year").innerText = new Date().getFullYear();
 
-    // ================= SURVEYOR PATCH =================
-    document.getElementById("calcBtn").addEventListener("click", function () {
-        // Ambil input initial
-        const iF = parseFloat(document.getElementById("ifp").value) || 0;
-        const iM = parseFloat(document.getElementById("imp").value) || 0;
-        const iA = parseFloat(document.getElementById("iap").value) || 0;
-        const densI = parseFloat(document.getElementById("densI").value) || 1.025;
+        // ========== SURVEYOR CALCULATION PATCH ==========
+        window.calculateSurveyorCargo = function() {
+            const ifp = parseFloat(document.getElementById("ifp").value) || 0;
+            const ims = parseFloat(document.getElementById("ims").value) || 0;
+            const imp = parseFloat(document.getElementById("imp").value) || 0;
+            const ias = parseFloat(document.getElementById("ias").value) || 0;
+            const iap = parseFloat(document.getElementById("iap").value) || 0;
+            const ifs = parseFloat(document.getElementById("ifs").value) || 0;
+            const densI = parseFloat(document.getElementById("densI").value) || 1.025;
 
-        // Ambil input final
-        const fF = parseFloat(document.getElementById("ffp").value) || 0;
-        const fM = parseFloat(document.getElementById("fmp").value) || 0;
-        const fA = parseFloat(document.getElementById("fap").value) || 0;
-        const densF = parseFloat(document.getElementById("densF").value) || 1.025;
+            const ffp = parseFloat(document.getElementById("ffp").value) || 0;
+            const fmp = parseFloat(document.getElementById("fmp").value) || 0;
+            const fap = parseFloat(document.getElementById("fap").value) || 0;
+            const ffs = parseFloat(document.getElementById("ffs").value) || 0;
+            const fms = parseFloat(document.getElementById("fms").value) || 0;
+            const fas = parseFloat(document.getElementById("fas").value) || 0;
+            const densF = parseFloat(document.getElementById("densF").value) || 1.025;
 
-        // Quarter Mean Draft
-        const QI = (iF + 6*iM + iA)/8;
-        const QF = (fF + 6*fM + fA)/8;
+            // Quarter Mean Draft
+            const initialQM = ((ifp + ifs) + 6*((imp + ims)/2) + (iap + ias))/8;
+            const finalQM   = ((ffp + ffs) + 6*((fmp + fms)/2) + (fap + fas))/8;
 
-        // TPC Surveyor
-        const TPC = 18.69; // bisa diganti sesuai tabel surveyor
+            // Interpolasi hydroTable lama
+            const initialHydro = interpolate(initialQM);
+            const finalHydro   = interpolate(finalQM);
 
-        // Displacement dari QMD
-        const initialDisp = QI * TPC * 100 * (densI/1.025);
-        const finalDisp   = QF * TPC * 100 * (densF/1.025);
-        const cargoMT     = finalDisp - initialDisp;
-
-        // Interpolasi LCF, VCB, MCT dari hydroTable
-        function interpolateHydro(draft){
-            for(let i=0;i<hydroTable.length-1;i++){
-                let low = hydroTable[i], up = hydroTable[i+1];
-                if(draft >= low.draft && draft <= up.draft){
-                    let r = (draft - low.draft)/(up.draft - low.draft);
-                    return {
-                        lcf: low.lcf + r*(up.lcf - low.lcf),
-                        vcb: low.vcb + r*(up.vcb - low.vcb),
-                        mct: low.degTrim + r*(up.degTrim - low.degTrim),
-                        kml: low.kml + r*(up.kml - low.kml),
-                        kmt: low.kmt + r*(up.kmt - low.kmt)
-                    };
-                }
+            if(!initialHydro || !finalHydro){
+                alert("Draft outside hydrostatic table");
+                return;
             }
-            let last = hydroTable[hydroTable.length-1];
-            return {lcf:last.lcf, vcb:last.vcb, mct:last.degTrim, kml:last.kml, kmt:last.kmt};
-        }
 
-        const hydroF = interpolateHydro(QF);
+            // Koreksi densitas
+            const initialDisp = initialHydro.disp * (densI/1.025);
+            const finalDisp   = finalHydro.disp   * (densF/1.025);
 
-        // Tampilkan hasil
-        document.getElementById("result").innerHTML =
-            `<b>CARGO WEIGHT:</b> ${cargoMT.toFixed(2)} MT`;
+            const cargo = finalDisp - initialDisp;
 
-        document.getElementById("process").innerHTML =
-            `INITIAL DISPLACEMENT : ${initialDisp.toFixed(2)} MT<br>` +
-            `FINAL DISPLACEMENT   : ${finalDisp.toFixed(2)} MT<br><br>` +
-            `INITIAL DRAFT : ${QI.toFixed(3)} m<br>` +
-            `FINAL DRAFT   : ${QF.toFixed(3)} m<br><br>` +
-            `TPC : ${TPC.toFixed(2)}<br>` +
-            `LCF : ${hydroF.lcf.toFixed(3)}<br>` +
-            `MCT : ${hydroF.mct.toFixed(2)}<br>` +
-            `VCB : ${hydroF.vcb.toFixed(3)}<br>` +
-            `KML : ${hydroF.kml.toFixed(2)}<br>` +
-            `KMT : ${hydroF.kmt.toFixed(2)}`;
-    });
-
-    // EXPORT
-    document.getElementById("exportBtn").addEventListener("click", function(){
-        let text = document.getElementById("result").innerText + "\n\n" + document.getElementById("process").innerText;
-        let blob = new Blob([text], {type:"text/plain"});
-        let a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "DraftSurvey_Report.txt";
-        a.click();
-    });
+            document.getElementById("result").innerHTML =
+                `<b>Initial Disp:</b> ${initialDisp.toFixed(2)} MT<br>` +
+                `<b>Final Disp:</b> ${finalDisp.toFixed(2)} MT<br>` +
+                `<b>CARGO WEIGHT:</b> ${cargo.toFixed(2)} MT`;
+        };
     </script>
+
 </body>
+
 </html>
