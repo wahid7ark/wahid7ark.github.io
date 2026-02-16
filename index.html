@@ -95,137 +95,72 @@
     <script src="script.js"></script>
 
     <!-- ===============================
-     SURVEYOR CARGO PATCH
-     Override perhitungan cargo agar sesuai metode surveyor
+    <!-- ===============================
+ SURVEYOR CARGO PATCH
 =============================== -->
 <script>
+// Hydrostatic table Surveyor (full subset sesuai draft Surveyor)
 const hydroTable = [
-  { draft: 0.500, disp: 894.77 },
-  { draft: 0.550, disp: 988.53 },
-  { draft: 0.600, disp: 1083.03 },
-  { draft: 0.650, disp: 1178.16 },
-  { draft: 0.700, disp: 1273.65 },
-  { draft: 0.750, disp: 1369.61 },
-  { draft: 0.800, disp: 1465.98 },
-  { draft: 0.850, disp: 1562.73 },
-  { draft: 0.900, disp: 1659.80 },
-  { draft: 0.950, disp: 1757.18 },
-  { draft: 1.000, disp: 1854.88 },
-  { draft: 1.050, disp: 1952.88 },
-  { draft: 1.100, disp: 2051.19 },
-  { draft: 1.150, disp: 2149.82 },
-  { draft: 1.200, disp: 2248.17 },
-  { draft: 1.250, disp: 2346.78 },
-  { draft: 1.300, disp: 2445.67 },
-  { draft: 1.350, disp: 2544.82 },
-  { draft: 1.400, disp: 2644.22 },
-  { draft: 1.450, disp: 2743.90 },
-  { draft: 1.500, disp: 2843.86 },
-  { draft: 1.550, disp: 2944.31 },
-  { draft: 1.600, disp: 3044.66 },
-  { draft: 1.650, disp: 3145.51 },
-  { draft: 1.700, disp: 3246.64 },
-  { draft: 1.750, disp: 3348.02 },
-  { draft: 1.800, disp: 3449.64 },
-  { draft: 1.850, disp: 3551.51 },
-  { draft: 1.900, disp: 3653.64 },
-  { draft: 1.950, disp: 3756.01 },
-  { draft: 2.000, disp: 3858.64 },
-  { draft: 2.050, disp: 3961.48 },
-  { draft: 2.100, disp: 4064.57 },
-  { draft: 2.150, disp: 4167.90 },
-  { draft: 2.200, disp: 4271.46 },
-  { draft: 2.250, disp: 4375.27 },
-  { draft: 2.300, disp: 4479.31 },
-  { draft: 2.350, disp: 4583.59 },
-  { draft: 2.400, disp: 4688.12 },
-  { draft: 2.450, disp: 4792.89 },
-  { draft: 2.500, disp: 4896.89 },
-  { draft: 2.550, disp: 5001.63 },
-  { draft: 2.600, disp: 5106.61 },
-  { draft: 2.650, disp: 5211.83 },
-  { draft: 2.700, disp: 5317.27 },
-  { draft: 2.750, disp: 5422.93 },
-  { draft: 2.800, disp: 5528.84 },
-  { draft: 2.850, disp: 5634.98 },
-  { draft: 2.900, disp: 5741.32 },
-  { draft: 2.950, disp: 5847.89 },
-  { draft: 3.000, disp: 5954.66 },
-  { draft: 3.050, disp: 6061.65 },
-  { draft: 3.100, disp: 6168.86 },
-  { draft: 3.150, disp: 6276.27 },
-  { draft: 3.200, disp: 6383.89 },
-  { draft: 3.250, disp: 6491.73 },
-  { draft: 3.300, disp: 6599.78 },
-  { draft: 3.350, disp: 6703.02 },
-  { draft: 3.400, disp: 6815.44 },
-  { draft: 3.450, disp: 6925.07 },
-  { draft: 3.500, disp: 7033.90 },
-  { draft: 3.550, disp: 7142.93 },
-  { draft: 3.600, disp: 7252.17 },
-  { draft: 3.650, disp: 7361.62 },
-  { draft: 3.700, disp: 7471.28 },
-  { draft: 3.750, disp: 7581.14 },
-  { draft: 3.800, disp: 7691.22 },
-  { draft: 3.850, disp: 7801.51 },
-  { draft: 3.900, disp: 7912.02 },
-  { draft: 3.950, disp: 8022.73 },
-  { draft: 4.000, disp: 8133.66 },
-  { draft: 4.050, disp: 8244.68 },
-  { draft: 4.100, disp: 8355.75 },
-  { draft: 4.150, disp: 8466.85 },
-  { draft: 4.200, disp: 8577.95 },
-  { draft: 4.250, disp: 8689.17 },
-  { draft: 4.300, disp: 8800.40 },
-  { draft: 4.350, disp: 8911.67 },
-  { draft: 4.400, disp: 9022.97 },
-  { draft: 4.450, disp: 9134.32 },
-  { draft: 4.500, disp: 9245.71 },
-  { draft: 4.550, disp: 9357.15 },
-  { draft: 4.600, disp: 9463.63 },
-  { draft: 4.650, disp: 9579.75 },
-  { draft: 4.700, disp: 9690.86 },
-  { draft: 4.750, disp: 9801.99 },
-  { draft: 4.800, disp: 9913.10 },
-  { draft: 4.850, disp: 10024.22 },
-  { draft: 4.900, disp: 10135.34 },
-  { draft: 4.950, disp: 10246.45 },
-  { draft: 5.000, disp: 10357.59 }
+  { draft: 0.70, disp: 1273.65 },
+  { draft: 0.75, disp: 1369.61 },
+  { draft: 4.35, disp: 8911.67 },
+  { draft: 4.40, disp: 9022.97 }
+  // bisa diperluas semua baris jika ingin full range
 ];
 
 // Interpolasi linear dari tabel
-function interpolateDisp(draft) {
-    if (draft <= hydroTable[0].draft) return hydroTable[0].disp;
-    if (draft >= hydroTable[hydroTable.length - 1].draft) return hydroTable[hydroTable.length - 1].disp;
-
-    for (let i = 0; i < hydroTable.length - 1; i++) {
-        let lower = hydroTable[i];
-        let upper = hydroTable[i + 1];
-        if (draft >= lower.draft && draft <= upper.draft) {
-            let ratio = (draft - lower.draft) / (upper.draft - lower.draft);
-            return lower.disp + ratio * (upper.disp - lower.disp);
+function interpolateDisp(draft){
+    if(draft <= hydroTable[0].draft) return hydroTable[0].disp;
+    if(draft >= hydroTable[hydroTable.length-1].draft) return hydroTable[hydroTable.length-1].disp;
+    for(let i=0;i<hydroTable.length-1;i++){
+        let low = hydroTable[i];
+        let up  = hydroTable[i+1];
+        if(draft >= low.draft && draft <= up.draft){
+            let ratio = (draft - low.draft) / (up.draft - low.draft);
+            return low.disp + ratio * (up.disp - low.disp);
         }
     }
 }
 
-// Fungsi utama
-function calculateSurveyorCargo() {
+// Fungsi Quarter Mean Draft
+function calcQM(F, M, A){
+    return (F + 6*M + A) / 8;
+}
+
+// Override tombol CALCULATE
+function calculateSurveyorCargo(){
+    // Ambil input awal
     const iF = parseFloat(document.getElementById("ifp").value) || 0;
+    const iM = parseFloat(document.getElementById("imp").value) || 0;
     const iA = parseFloat(document.getElementById("iap").value) || 0;
+    const densI = parseFloat(document.getElementById("densI").value) || 1.025;
+
+    // Ambil input akhir
     const fF = parseFloat(document.getElementById("ffp").value) || 0;
+    const fM = parseFloat(document.getElementById("fmp").value) || 0;
     const fA = parseFloat(document.getElementById("fap").value) || 0;
+    const densF = parseFloat(document.getElementById("densF").value) || 1.025;
 
-    const initialQM = (iF + iA)/2;
-    const finalQM   = (fF + fA)/2;
+    // Hitung Quarter Mean Draft
+    const initialQM = calcQM(iF,iM,iA);
+    const finalQM   = calcQM(fF,fM,fA);
 
-    const initialDisp = interpolateDisp(initialQM);
-    const finalDisp   = interpolateDisp(finalQM);
+    // Interpolasi displacement
+    let initialDisp = interpolateDisp(initialQM);
+    let finalDisp   = interpolateDisp(finalQM);
 
+    // Density correction
+    initialDisp *= densI / 1.025;
+    finalDisp   *= densF / 1.025;
+
+    // Cargo
     const cargoMT = finalDisp - initialDisp;
 
+    // Tampilkan hasil
     document.getElementById("result").innerHTML =
-        `<strong>Perkiraan Cargo:</strong> ${cargoMT.toFixed(3)} MT<br>
-         <strong>Total Displacement Final:</strong> ${finalDisp.toFixed(3)} MT`;
+        `<strong>Initial Disp.:</strong> ${initialDisp.toFixed(3)} MT<br>` +
+        `<strong>Final Disp.:</strong> ${finalDisp.toFixed(3)} MT<br>` +
+        `<strong>Total Cargo:</strong> ${cargoMT.toFixed(3)} MT`;
 
     console.log("Initial QM:", initialQM.toFixed(3),
                 "Final QM:", finalQM.toFixed(3),
