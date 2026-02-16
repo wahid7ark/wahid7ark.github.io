@@ -65,7 +65,7 @@
             <input id="densF" value="1.025" placeholder="1.025">
         </div>
 
-        <button onclick="calculate()">CALCULATE</button>
+        <button onclick="calculateSurveyorCargo()">CALCULATE</button>
         <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
 
         <div class="card">
@@ -95,58 +95,78 @@
     <script src="script.js"></script>
 
     <script>
-// ========== SURVEYOR CALCULATION PATCH ==========
-window.calculateSurveyorCargo = function() {
-    // Ambil input initial
-    const iF = parseFloat(document.getElementById("ifp").value) || 0;
-    const iM = parseFloat(document.getElementById("imp").value) || 0;
-    const iA = parseFloat(document.getElementById("iap").value) || 0;
-    const densI = parseFloat(document.getElementById("densI").value) || 1.025;
-
-    // Ambil input final
-    const fF = parseFloat(document.getElementById("ffp").value) || 0;
-    const fM = parseFloat(document.getElementById("fmp").value) || 0;
-    const fA = parseFloat(document.getElementById("fap").value) || 0;
-    const densF = parseFloat(document.getElementById("densF").value) || 1.025;
-
-    // Quarter Mean Draft
-    const initialQM = (iF + 6*iM + iA)/8;
-    const finalQM   = (fF + 6*fM + fA)/8;
-
-    // Interpolasi displacement dari hydroTable lama
-    function interpolateDisp(draft){
-        if(draft <= hydroTable[0].draft) return hydroTable[0].disp;
-        if(draft >= hydroTable[hydroTable.length-1].draft) return hydroTable[hydroTable.length-1].disp;
-
-        for(let i=0;i<hydroTable.length-1;i++){
-            let low = hydroTable[i], up = hydroTable[i+1];
-            if(draft >= low.draft && draft <= up.draft){
-                let ratio = (draft - low.draft)/(up.draft - low.draft);
-                return low.disp + ratio*(up.disp - low.disp);
-            }
-        }
-        return 0;
+    // ============================
+    // NONAKTIFKAN perhitungan lama
+    // ============================
+    if (window.calculate) {
+        window.calculate = function () {
+            console.log("Perhitungan lama dinonaktifkan. Gunakan calculateSurveyorCargo().");
+            return;
+        };
     }
 
-    // Hitung displacement dengan koreksi densitas
-    const initialDisp = interpolateDisp(initialQM) * (densI/1.025);
-    const finalDisp   = interpolateDisp(finalQM) * (densF/1.025);
-    const cargoMT = finalDisp - initialDisp;
+    // ============================
+    // FUNGSI SURVEYOR (HTML tetap sama)
+    // ============================
+    window.calculateSurveyorCargo = function () {
+        // Ambil input Initial
+        const iF = parseFloat(document.getElementById("ifp").value) || 0;
+        const iM = parseFloat(document.getElementById("imp").value) || 0;
+        const iA = parseFloat(document.getElementById("iap").value) || 0;
+        const densI = parseFloat(document.getElementById("densI").value) || 1.025;
 
-    // Tampilkan hasil
-    document.getElementById("result").innerHTML =
-        `<strong>Initial Disp.:</strong> ${initialDisp.toFixed(3)} MT<br>`+
-        `<strong>Final Disp.:</strong> ${finalDisp.toFixed(3)} MT<br>`+
-        `<strong>Total Cargo:</strong> ${cargoMT.toFixed(3)} MT`;
+        // Ambil input Final
+        const fF = parseFloat(document.getElementById("ffp").value) || 0;
+        const fM = parseFloat(document.getElementById("fmp").value) || 0;
+        const fA = parseFloat(document.getElementById("fap").value) || 0;
+        const densF = parseFloat(document.getElementById("densF").value) || 1.025;
 
-    console.log("Initial QM:", initialQM.toFixed(3),
-                "Final QM:", finalQM.toFixed(3),
-                "Initial Disp:", initialDisp.toFixed(3),
-                "Final Disp:", finalDisp.toFixed(3),
-                "Cargo:", cargoMT.toFixed(3));
-};
-</script>
-                
+        // Quarter Mean Draft
+        const initialQM = (iF + 6 * iM + iA) / 8;
+        const finalQM = (fF + 6 * fM + fA) / 8;
+
+        // ============================
+        // Interpolasi displacement dari hydroTable JS lama
+        // ============================
+        function interpolateDisp(draft) {
+            if (!window.hydroTable) {
+                alert("Hydrostatic table tidak ditemukan!");
+                return 0;
+            }
+            if (draft <= hydroTable[0].draft) return hydroTable[0].disp;
+            if (draft >= hydroTable[hydroTable.length - 1].draft) return hydroTable[hydroTable.length - 1].disp;
+
+            for (let i = 0; i < hydroTable.length - 1; i++) {
+                let low = hydroTable[i], up = hydroTable[i + 1];
+                if (draft >= low.draft && draft <= up.draft) {
+                    let ratio = (draft - low.draft) / (up.draft - low.draft);
+                    return low.disp + ratio * (up.disp - low.disp);
+                }
+            }
+            return 0;
+        }
+
+        const initialDisp = interpolateDisp(initialQM) * (densI / 1.025);
+        const finalDisp = interpolateDisp(finalQM) * (densF / 1.025);
+        const cargoMT = finalDisp - initialDisp;
+
+        // Tampilkan hasil
+        document.getElementById("result").innerHTML =
+            `<strong>Initial Disp.:</strong> ${initialDisp.toFixed(3)} MT<br>` +
+            `<strong>Final Disp.:</strong> ${finalDisp.toFixed(3)} MT<br>` +
+            `<strong>Total Cargo:</strong> ${cargoMT.toFixed(3)} MT`;
+
+        document.getElementById("process").innerText =
+            `Initial QM: ${initialQM.toFixed(3)} m\nFinal QM: ${finalQM.toFixed(3)} m`;
+
+        console.log("Initial QM:", initialQM.toFixed(3),
+            "Final QM:", finalQM.toFixed(3),
+            "Initial Disp:", initialDisp.toFixed(3),
+            "Final Disp:", finalDisp.toFixed(3),
+            "Cargo:", cargoMT.toFixed(3));
+    };
+    </script>
+
 </body>
 
 </html>
