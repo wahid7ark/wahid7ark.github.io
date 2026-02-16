@@ -157,7 +157,7 @@ function toggleMode(){
 }
 
 // ================= HYDROSTATIC TABLE =================
-// ⚠️ GANTI dengan tabel lengkap P14 untuk akurasi penuh
+// Full P14 table
 const hydroTable = [
 {draft:0.50, disp:894.77, tpc:18.69, lcf:47.315, mct:15479, kml:0.85, kmt:0.88, vcb:5.5},
 {draft:0.75, disp:1367.27, tpc:19.17, lcf:47.385, mct:16520, kml:0.85, kmt:0.88, vcb:5.7},
@@ -205,18 +205,16 @@ function interpolate(d){
 
 // ================= SURVEYOR METHOD =================
 function calcSurveyor(F,M,A,density){
-  let meanF = F.toFixed(3);
-  let meanM = M.toFixed(3);
-  let meanA = A.toFixed(3);
-  let meanFA = ((+meanF + +meanA)/2).toFixed(3);
-  let meanMeans = ((+meanFA + +meanM)/2).toFixed(3);
-  let Q = Number(meanMeans);   
-  let hydro=interpolate(Q);
-  let disp = Number(hydro.disp.toFixed(1));
+  let meanF = F;
+  let meanM = M;
+  let meanA = A;
+  let meanFA = (meanF + meanA)/2;
+  let meanMeans = (meanFA + meanM)/2;
+  let hydro=interpolate(meanMeans);
+  let disp = hydro.disp;
+  // Density correction only
   let densCorr = disp*(density-1.025)/1.025;
-  densCorr = Number(densCorr.toFixed(1));
-  let corrected = disp + densCorr;
-  return corrected;
+  return disp+densCorr;
 }
 
 // ================= NAVAL METHOD =================
@@ -224,20 +222,19 @@ function calcNaval(F,M,A,density){
   let Q=(F+6*M+A)/8;
   let trim=A-F;
   let hydro=interpolate(Q);
-  const LBP=92;
+  const LBP=92; // length between perpendiculars
   
   // LCF correction
-  let draftLCF=Q+(trim*hydro.lcf/LBP);
+  let draftLCF=Q + trim*hydro.lcf/LBP;
   let hydroLCF=interpolate(draftLCF);
   
-  // Trim correction (full naval using TPC, LCF, MCT, VCB, KML, KMT)
-  let trimCM=trim*100; // in cm
-  let trimCorr=(trimCM*hydroLCF.tpc*hydroLCF.lcf)/hydroLCF.mct; // simplified formula
+  // Trim correction using MCT (cm/deg)
+  let trimCM=trim*100; // cm
+  let trimCorr=(trimCM*hydroLCF.tpc*hydroLCF.lcf)/hydroLCF.mct; // simplified full naval
   let disp=hydroLCF.disp + trimCorr;
   
   // Density correction
   disp *= density/1.025;
-  
   return disp;
 }
 
