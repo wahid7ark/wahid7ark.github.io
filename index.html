@@ -1,109 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Draft Survey Assistant Officer</title>
-
-<link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draft Survey Assistant Officer</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- ================= AUDIO ================= -->
+    <audio autoplay loop>
+        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
+    </audio>
 
-<audio autoplay loop>
-<source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
-</audio>
+    <h1>BG ARK CARNELIAN</h1>
+    <img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
 
-<h1>BG ARK CARNELIAN</h1>
-<img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
+    <!-- ================= MODE TOGGLE ================= -->
+    <div class="container">
+        <div class="modeToggle card">
+            <label for="modeSelect">Mode:</label>
+            <select id="modeSelect">
+                <option value="surveyor">Surveyor</option>
+                <option value="navalArch">Naval Arch</option>
+                <option value="supervisor">Supervisor 🔒</option>
+            </select>
+        </div>
 
-<div class="container">
+        <!-- ================= SURVEY INPUTS ================= -->
+        <div class="card" id="initialSurvey">
+            <h3>INITIAL SURVEY</h3>
+            <h4>Forward</h4>
+            <div class="row">
+                <input id="ifp" placeholder="Port (m)">
+                <input id="ifs" placeholder="Stbd (m)">
+            </div>
+            <h4>Midship</h4>
+            <div class="row">
+                <input id="imp" placeholder="Port (m)">
+                <input id="ims" placeholder="Stbd (m)">
+            </div>
+            <h4>Aft</h4>
+            <div class="row">
+                <input id="iap" placeholder="Port (m)">
+                <input id="ias" placeholder="Stbd (m)">
+            </div>
+            <h4>Density</h4>
+            <input id="densI" value="1.025" placeholder="1.025">
+        </div>
 
-<!-- INITIAL -->
-<div class="card">
-<h3>INITIAL SURVEY</h3>
+        <div class="card" id="finalSurvey">
+            <h3>FINAL SURVEY</h3>
+            <h4>Forward</h4>
+            <div class="row">
+                <input id="ffp" placeholder="Port (m)">
+                <input id="ffs" placeholder="Stbd (m)">
+            </div>
+            <h4>Midship</h4>
+            <div class="row">
+                <input id="fmp" placeholder="Port (m)">
+                <input id="fms" placeholder="Stbd (m)">
+            </div>
+            <h4>Aft</h4>
+            <div class="row">
+                <input id="fap" placeholder="Port (m)">
+                <input id="fas" placeholder="Stbd (m)">
+            </div>
+            <h4>Density</h4>
+            <input id="densF" value="1.025" placeholder="1.025">
+        </div>
 
-<h4>Forward</h4>
-<div class="row">
-<input id="ifp" placeholder="Port (m)">
-<input id="ifs" placeholder="Stbd (m)">
-</div>
+        <!-- ================= BUTTONS ================= -->
+        <button onclick="calculate()">CALCULATE</button>
+        <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
 
-<h4>Midship</h4>
-<div class="row">
-<input id="imp" placeholder="Port (m)">
-<input id="ims" placeholder="Stbd (m)">
-</div>
+        <!-- ================= RESULT & GRAPH ================= -->
+        <div class="card" id="resultCard">
+            <div id="result">Awaiting Calculation...</div>
+            <div id="process"></div>
+            <canvas id="chartContainer"></canvas>
+            <div id="formulaAnim"></div>
+        </div>
+    </div>
 
-<h4>Aft</h4>
-<div class="row">
-<input id="iap" placeholder="Port (m)">
-<input id="ias" placeholder="Stbd (m)">
-</div>
+    <!-- ================= ABOUT MODAL ================= -->
+    <div id="aboutBox">
+        <div id="aboutContent">
+            <span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span>
+            <h3>Draft Survey Assistant Officer</h3>
+            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi densitas, dan interpolasi hidrostatik.</p>
+            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil Pengembang</a></p>
+        </div>
+    </div>
 
-<h4>Density</h4>
-<input id="densI" value="1.025">
-</div>
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <span class="coder">Coder: Mr. Wolf (ARK DAN)</span>
+        <span class="copy">©</span><span class="year" id="year"></span>
+        <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
+    </footer>
 
-
-<!-- FINAL -->
-<div class="card">
-<h3>FINAL SURVEY</h3>
-
-<h4>Forward</h4>
-<div class="row">
-<input id="ffp" placeholder="Port (m)">
-<input id="ffs" placeholder="Stbd (m)">
-</div>
-
-<h4>Midship</h4>
-<div class="row">
-<input id="fmp" placeholder="Port (m)">
-<input id="fms" placeholder="Stbd (m)">
-</div>
-
-<h4>Aft</h4>
-<div class="row">
-<input id="fap" placeholder="Port (m)">
-<input id="fas" placeholder="Stbd (m)">
-</div>
-
-<h4>Density</h4>
-<input id="densF" value="1.025">
-</div>
-
-
-<button id="calcBtn">CALCULATE</button>
-<button id="exportBtn">EXPORT REPORT</button>
-
-<div class="card">
-<div id="result">Awaiting Calculation...</div>
-<div id="process"></div>
-</div>
-
-</div>
-
-<footer>
-<span class="coder">Coder: Mr. W (ARK DAN)</span>
-<span class="copy">©</span>
-<span class="year" id="year"></span>
-
-<button class="aboutMini" onclick="showAbout()">
-<span class="material-icons">info</span>ABOUT
-</button>
-</footer>
-
-<script src="script.js"></script>
-
-<script>
-document.getElementById("year").innerText=new Date().getFullYear();
-</script>
-
+    <script src="script.js"></script>
 </body>
+
 </html>
