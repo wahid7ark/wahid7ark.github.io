@@ -1,3 +1,4 @@
+/* ================== GLOBAL & BODY ================== */
 body {
     margin: 0;
     font-family: 'Orbitron', sans-serif;
@@ -11,7 +12,7 @@ h1 {
     letter-spacing: 2px;
 }
 
-#barge {
+img#barge {
     width: 95%;
     max-width: 720px;
     border-radius: 14px;
@@ -31,6 +32,10 @@ h1 {
     box-shadow: 0 0 15px #00ffd533 inset;
 }
 
+h3 {
+    margin: 10px 0;
+}
+
 h4 {
     margin: 8px 0 4px 0;
     color: #7fd3ff;
@@ -39,10 +44,6 @@ h4 {
 .row {
     display: flex;
     gap: 8px;
-}
-
-.row input {
-    width: 100%;
 }
 
 input {
@@ -76,9 +77,11 @@ button {
 }
 
 #result {
-    font-size: 21px;
+    font-size: 18px;
     color: #00ffd5;
     margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 #process {
@@ -87,6 +90,21 @@ button {
     font-size: 13px;
     color: #bffcf3;
     margin-top: 12px;
+}
+
+/* MODE TOGGLE */
+.modeToggle {
+    margin: 12px 0;
+}
+
+select {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    background: #001122;
+    color: #7fd3ff;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* ABOUT MODAL */
@@ -118,6 +136,7 @@ button {
     cursor: pointer;
 }
 
+/* FOOTER */
 footer {
     padding: 12px;
     font-size: 12px;
@@ -155,4 +174,17 @@ footer {
 
 .material-icons {
     vertical-align: middle;
+}
+
+/* GRAPHICS & ANIMATIONS */
+#chartContainer {
+    width: 100%;
+    height: 150px;
+    margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+    #result {
+        max-height: 400px;
+    }
 }
