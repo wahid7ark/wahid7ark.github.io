@@ -309,56 +309,55 @@ function calculateCPA(){
     document.getElementById('cpaResult').textContent = `Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status}`;
 }
 
-function interpolateWMM(year, lat, lon) {
-    // Convert to radians
-    const phi = lat * Math.PI / 180;   // geodetic latitude
-    const lambda = lon * Math.PI / 180; // longitude
+function toDecimal(latDeg, latMin, hem) {
+    let val = Math.abs(Number(latDeg)) + (Number(latMin) || 0)/60;
+    if (hem === "S" || hem === "W") val *= -1;
+    return val;
+}
 
-    const dt = year - 2025; // yearly adjustment
+function interpolateWMM(lat, lon, year) {
+    const phi = lat * Math.PI/180;
+    const lambda = lon * Math.PI/180;
+    const dt = year - 2025;
 
-    // Initialize components
     let X = 0, Y = 0;
 
-    for (const c of WMM2025) {
-        const n = c.n, m = c.m;
-        const g = c.g + dt * c.g_dot;
-        const h = c.h + dt * c.h_dot;
-
-        // Schmidt semi-normalized associated Legendre polynomials (simplified)
-        const Pnm = Math.pow(Math.sin(phi), m); // very simplified for demo
-        if (m === 0) {
-            X += g * Pnm;
+    for(const c of WMM2025){
+        const n=c.n, m=c.m;
+        const g=c.g+dt*c.g_dot, h=c.h+dt*c.h_dot;
+        const Pnm = Math.pow(Math.sin(phi), m); // simplified
+        if(m===0){
+            X += g*Pnm;
         } else {
-            X += g * Pnm * Math.cos(m * lambda) + h * Pnm * Math.sin(m * lambda);
-            Y += m * (-g * Pnm * Math.sin(m * lambda) + h * Pnm * Math.cos(m * lambda));
+            X += g*Pnm*Math.cos(m*lambda) + h*Pnm*Math.sin(m*lambda);
+            Y += m * (-g*Pnm*Math.sin(m*lambda) + h*Pnm*Math.cos(m*lambda));
         }
     }
 
-    // Declination D
-    const D = Math.atan2(Y, X) * 180 / Math.PI; // degrees
-    return D;
+    const declination = Math.atan2(Y, X) * 180/Math.PI;
+    return declination;
 }
 
 function calculateMVFull(){
-    const dt = new Date(document.getElementById('mvDate').value + "T" + document.getElementById('mvTime').value);
-    const year = decimalYearLT(dt);
+    const dt = new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
+    const year = dt.getFullYear() + (dt.getMonth()*30 + dt.getDate())/365.25;
 
     const latMin = getMinutes(document.getElementById('latMinW').value, document.getElementById('latMinD').value);
     const lonMin = getMinutes(document.getElementById('lonMinW').value, document.getElementById('lonMinD').value);
     const lat = toDecimal(document.getElementById('latDeg').value, latMin, document.getElementById('latHem').value);
     const lon = toDecimal(document.getElementById('lonDeg').value, lonMin, document.getElementById('lonHem').value);
 
-    const mv = interpolateWMM(year, lat, lon);
-    const mvNext = interpolateWMM(year + 1, lat, lon);
+    const mv = interpolateWMM(lat, lon, year);
+    const mvNext = interpolateWMM(lat, lon, year+1);
     const annual = mvNext - mv;
 
-    document.getElementById('mvResult').textContent = mv.toFixed(2) + "° " + (mv >= 0 ? "E" : "W");
-    document.getElementById('mvAnnual').textContent = "Annual change " + annual.toFixed(2) + "°/yr";
+    document.getElementById('mvResult').textContent = mv.toFixed(2) + "° " + (mv>=0?"E":"W");
+    document.getElementById('mvAnnual').textContent = "Annual change "+annual.toFixed(2)+"°/yr";
 
     const th = parseFloat(document.getElementById('trueHDG').value) || 0;
     const cr = parseFloat(document.getElementById('compassRDG').value) || 0;
     const compErr = cr - (th + mv);
-    document.getElementById('compErrorResult').textContent = "Compass Error: " + compErr.toFixed(2) + "°";
+    document.getElementById('compErrorResult').textContent = "Compass Error: "+compErr.toFixed(2)+"°";
 }
 </script>
 </body>
