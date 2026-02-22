@@ -348,7 +348,7 @@ function calculateETA(){
 
     const distance = parseFloat(document.getElementById('etaDistance').value);
     const speed = parseFloat(document.getElementById('etaSpeed').value);
-    if(isNaN(distance) || isNaN(speed) || speed<=0){
+    if(isNaN(distance) || isNaN(speed) || speed <= 0){
         document.getElementById('etaResult').textContent = "Please enter valid distance & speed (>0)";
         return;
     }
@@ -356,19 +356,14 @@ function calculateETA(){
     const hoursTravel = distance / speed;
     const eta = new Date(dep.getTime() + hoursTravel*3600*1000);
 
-    const totalMinutes = Math.round(hoursTravel*60);
-    const days = Math.floor(totalMinutes / (24*60));
-    const hours = Math.floor((totalMinutes % (24*60)) / 60);
-    const minutes = totalMinutes % 60;
+    // Selisih waktu
+    const diffMs = eta - dep;
+    const days = Math.floor(diffMs / 86400000);
+    const hours = Math.floor((diffMs % 86400000) / 3600000);
+    const minutes = Math.floor((diffMs % 3600000) / 60000);
 
-    const day = eta.getDate().toString().padStart(2,'0');
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const month = monthNames[eta.getMonth()];
-    const year = eta.getFullYear();
-    const etaHours = eta.getHours().toString().padStart(2,'0');
-    const etaMinutes = eta.getMinutes().toString().padStart(2,'0');
-
-    document.getElementById('etaResult').textContent = `${day} ${month} ${year} ${etaHours}:${etaMinutes} LT | ${days} d ${hours} h ${minutes} m`;
+    const etaStr = eta.toLocaleString('en-US', {hour12:false});
+    document.getElementById('etaResult').textContent = `${days} d ${hours} h ${minutes} m | Arrival: ${etaStr} LT`;
 }
 </script>
 </body>
