@@ -309,59 +309,65 @@ function calculateCPA(){
     document.getElementById('cpaResult').textContent = `Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status}`;
 }
 
-// Konversi DD + MM.mmm + Hemisfer ke decimal degrees
-function toDecimal(deg, minWhole, minDec, hem) {
-    let minutes = parseInt(minWhole)||0 + (parseInt(minDec)||0)/1000;
-    let dec = Math.abs(parseFloat(deg)) + minutes/60;
-    if (hem==='S' || hem==='W') dec *= -1;
-    return dec;
+// Konversi derajat + menit + hemisphere ke desimal
+function toDecimal(deg, min, hem) {
+    const val = Math.abs(Number(deg)) + Number(min)/60;
+    if (hem === 'S' || hem === 'W') return -val;
+    return val;
 }
 
-// Konversi Date ke decimal year
-function decimalYearLT(date){
+// Ambil menit dari input whole + decimal
+function getMinutes(w, d) {
+    w = parseInt(w)||0;
+    d = d === '' ? 0 : parseInt(d);
+    return w + d/1000;
+}
+
+// Konversi tanggal LT menjadi decimal year
+function decimalYearLT(date) {
     const start = new Date(date.getFullYear(),0,1);
     const end = new Date(date.getFullYear()+1,0,1);
     return date.getFullYear() + (date - start)/(end - start);
 }
 
-// Fungsi interpolasi WMM (versi sederhana, hanya untuk demo)
-function interpolateWMM(year, lat, lon){
-    // Ini placeholder, hanya contoh linear approximation
-    // Dalam implementasi penuh pakai spherical harmonics
-    const dt = year - 2025;
-    // misal MV = f(lat, lon) sederhana
-    let mv = 1.2*lat - 0.5*lon + 0.01*dt; // dummy formula
-    return mv; // derajat
+// Ambil waktu sekarang untuk MV input
+function setMVNow() {
+    const n = new Date();
+    document.getElementById('mvDate').value = n.toISOString().slice(0,10);
+    document.getElementById('mvTime').value = n.toTimeString().slice(0,8);
 }
 
-// Hitung MV + Annual Change + Compass Error
-function calculateMVFull(latDeg, latMinW, latMinD, latHem,
-                         lonDeg, lonMinW, lonMinD, lonHem,
-                         dateStr, timeStr, trueHDG, compassRDG) {
-    const dt = new Date(dateStr + "T" + timeStr);
+// Interpolasi MV (simplified placeholder, gunakan WMM2025 asli di HTML)
+function interpolateWMM(year, lat, lon) {
+    // Placeholder: nilai MV 0 untuk contoh
+    // Gunakan WMM2025 asli di HTML-mu dengan fungsi spherical harmonics
+    // Hasil = 0 hanya supaya script jalan dulu
+    return 0;
+}
+
+// Hitung MV penuh + compass error
+function calculateMVFull() {
+    const dt = new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
     const year = decimalYearLT(dt);
-    const lat = toDecimal(latDeg, latMinW, latMinD, latHem);
-    const lon = toDecimal(lonDeg, lonMinW, lonMinD, lonHem);
+
+    const latMin = getMinutes(document.getElementById('latMinW').value, document.getElementById('latMinD').value);
+    const lonMin = getMinutes(document.getElementById('lonMinW').value, document.getElementById('lonMinD').value);
+
+    const lat = toDecimal(document.getElementById('latDeg').value, latMin, document.getElementById('latHem').value);
+    const lon = toDecimal(document.getElementById('lonDeg').value, lonMin, document.getElementById('lonHem').value);
 
     const mv = interpolateWMM(year, lat, lon);
     const mvNext = interpolateWMM(year+1, lat, lon);
     const annual = mvNext - mv;
 
-    const compErr = compassRDG - (trueHDG + mv);
+    document.getElementById('mvResult').textContent = mv.toFixed(2) + "° " + (mv>=0?"E":"W");
+    document.getElementById('mvAnnual').textContent = "Annual change "+annual.toFixed(2)+"°/yr";
 
-    return {
-        mv: mv.toFixed(2) + "° " + (mv>=0?"E":"W"),
-        annualChange: annual.toFixed(2) + "°/yr",
-        compassError: compErr.toFixed(2) + "°"
-    };
+    const th = parseFloat(document.getElementById('trueHDG').value)||0;
+    const cr = parseFloat(document.getElementById('compassRDG').value)||0;
+    const compErr = cr - (th + mv);
+    document.getElementById('compErrorResult').textContent = "Compass Error: "+compErr.toFixed(2)+"°";
 }
-
-// Example usage:
-let result = calculateMVFull("3","46","558","S","115","38","756","E",
-                              "2026-02-23","08:00:00",
-                              0, 0);
-console.log(result);
-// Output: { mv: "...", annualChange: "...", compassError: "..." }
 </script>
 </body>
 </html
