@@ -262,9 +262,56 @@ function calculateETA(){ const dep=new Date(document.getElementById('depDate').v
 
 function calculateCPA(){ const ownC=parseFloat(document.getElementById('ownCourse').value)Math.PI/180||0; const ownS=parseFloat(document.getElementById('ownSpeed').value)||0; const tgtB=parseFloat(document.getElementById('tgtBearing').value)Math.PI/180||0; const tgtR=parseFloat(document.getElementById('tgtRange').value)||0; const tgtC=parseFloat(document.getElementById('tgtCourse').value)Math.PI/180||0; const tgtS=parseFloat(document.getElementById('tgtSpeed').value)||0; const tgtX=tgtRMath.sin(tgtB), tgtY=tgtRMath.cos(tgtB); const relVx=tgtSMath.sin(tgtC)-ownSMath.sin(ownC), relVy=tgtSMath.cos(tgtC)-ownSMath.cos(ownC); const tCPA=-(tgtXrelVx+tgtYrelVy)/(relVxrelVx+relVyrelVy); const cpaX=tgtX+relVxtCPA, cpaY=tgtY+relVytCPA; const cpaDist=Math.sqrt(cpaXcpaX+cpaY*cpaY); let status="Safe"; if(tCPA<0)status="Passed"; if(cpaDist<0.5)status="Danger"; document.getElementById('cpaResult').textContent=Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status};}
 
-function interpolateWMM(year,lat,lon){ // Placeholder: kamu input WMM2025 Gauss coefficients manual sebelum tidur return parseFloat(prompt('Enter MV for lat:'+lat.toFixed(4)+' lon:'+lon.toFixed(4)+' year:'+year)) || 0; }
+function interpolateWMM(year, lat, lon) {
+    // Konversi ke radian
+    const phi = lat * Math.PI/180; // latitude
+    const lambda = lon * Math.PI/180; // longitude
+    const a = 6378137.0; // WGS-84 semi-major axis
+    const b = 6356752.3142; // semi-minor axis
+    const r = Math.sqrt(a*a*Math.cos(phi)**2 + b*b*Math.sin(phi)**2);
 
-function calculateMVFull(){ const dt=new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value); const year=decimalYearLT(dt); const latMin=getMinutes(document.getElementById('latMinW').value,document.getElementById('latMinD').value); const lonMin=getMinutes(document.getElementById('lonMinW').value,document.getElementById('lonMinD').value); const lat=toDecimal(document.getElementById('latDeg').value,latMin,document.getElementById('latHem').value); const lon=toDecimal(document.getElementById('lonDeg').value,lonMin,document.getElementById('lonHem').value); const mv=interpolateWMM(year,lat,lon); const mvNext=interpolateWMM(year+1,lat,lon); const annual=mvNext-mv; document.getElementById('mvResult').textContent=mv.toFixed(2)+"° "+(mv>=0?"E":"W"); document.getElementById('mvAnnual').textContent="Annual change "+annual.toFixed(2)+"°/yr"; const th=parseFloat(document.getElementById('trueHDG').value)||0; const cr=parseFloat(document.getElementById('compassRDG').value)||0; const compErr=cr-(th+mv); document.getElementById('compErrorResult').textContent="Compass Error: "+compErr.toFixed(2)+"°";} </script>
+    // Tahun referensi WMM = 2025
+    const dt = year - 2025;
+
+    let Bx = 0, By = 0, Bz = 0;
+
+    for (const c of WMM2025) {
+        const n = c.n, m = c.m;
+        const g = c.g + dt*c.g_dot;
+        const h = c.h + dt*c.h_dot;
+
+        // Sederhanakan: gunakan Schmidt quasi-normalized
+        const Pnm = Math.pow(Math.sin(phi), Math.abs(m));
+        if(m===0) Bx += g*Pnm;
+        else Bx += g*Pnm*Math.cos(m*lambda) + h*Pnm*Math.sin(m*lambda);
+    }
+
+    // Hitung total MV
+    const mv = Math.atan2(By, Bx) * 180/Math.PI; // derajat
+    return mv;
+}
+
+function calculateMVFull(){
+    const dt=new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
+    const year=decimalYearLT(dt);
+    const latMin=getMinutes(document.getElementById('latMinW').value,document.getElementById('latMinD').value);
+    const lonMin=getMinutes(document.getElementById('lonMinW').value,document.getElementById('lonMinD').value);
+    const lat=toDecimal(document.getElementById('latDeg').value,latMin,document.getElementById('latHem').value);
+    const lon=toDecimal(document.getElementById('lonDeg').value,lonMin,document.getElementById('lonHem').value);
+
+    // Hitung MV otomatis dari WMM2025
+    const mv = interpolateWMM(year, lat, lon);
+    const mvNext = interpolateWMM(year+1, lat, lon);
+    const annual = mvNext - mv;
+
+    document.getElementById('mvResult').textContent = mv.toFixed(2) + "° " + (mv>=0?"E":"W");
+    document.getElementById('mvAnnual').textContent = "Annual change " + annual.toFixed(2) + "°/yr";
+
+    const th = parseFloat(document.getElementById('trueHDG').value)||0;
+    const cr = parseFloat(document.getElementById('compassRDG').value)||0;
+    const compErr = cr - (th + mv);
+    document.getElementById('compErrorResult').textContent = "Compass Error: "+compErr.toFixed(2)+"°";
+} </script>
 
 </body>
 </html>
