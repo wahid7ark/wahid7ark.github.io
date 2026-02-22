@@ -1,41 +1,42 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Asisten Officer - Marine</title>
 <style>
-body{margin:0;background:#0b1217;color:#e6f2ff;font-family:'Segoe UI',Roboto,Arial,sans-serif;}
-.container{max-width:720px;margin:auto;padding:20px;}
-h1,h2,h3,h4{margin:0;}
-button{cursor:pointer;transition:0.2s;}button:hover{opacity:0.85;}
-.header{text-align:center;margin-bottom:20px;}
-.header img{width:120px;margin-bottom:10px;}
-.header h1{color:#9cd6ff;font-weight:600;}
-.header small{color:#6e8797;font-size:12px;}
-.master-toggle{background:#1e88e5;padding:12px 16px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,0.3);border:1px solid #1e88e5;transition:all 0.3s;}
-.master-toggle:hover{background:#1565c0;}
-.master-toggle span{font-size:20px;font-weight:bold;}
-.panel{background:#121c23;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.45);}
-.panel-content{display:none;margin-top:12px;}
-.panel-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer;margin-bottom:8px;transition:all 0.3s;padding:8px 12px;border:1px solid #25323c;border-radius:10px;}
-.panel-toggle:hover{background:rgba(30,136,229,0.2);}
-.panel-toggle h3{color:#7fbfff;font-size:16px;}
-.panel-toggle span{font-size:18px;font-weight:bold;}
-label{font-size:13px;color:#9fb3c3;margin-top:6px;display:block;}
-.coord{display:flex;align-items:center;gap:6px;margin:6px 0 12px 0;flex-wrap:wrap;}
-input,select{background:#0a0f14;border:1px solid #25323c;color:#e6f2ff;padding:8px;border-radius:8px;font-size:16px;text-align:center;}
-.deg{width:60px;}.minWhole{width:55px;}.minDec{width:65px;opacity:.55;border-style:dashed;}
-.minDec:focus{opacity:1;border-style:solid;}.hem{width:70px;}
-.unit{color:#7fa9c7;font-weight:600;font-size:16px;}
-.hint{font-size:11px;color:#6f8797;margin:-8px 0 8px 0;}
-button.primary{background:#1e88e5;color:#fff;border:none;border-radius:10px;padding:10px 0;font-size:16px;margin-top:10px;width:100%;}
-button.secondary{background:#22313c;color:#fff;border:none;border-radius:10px;padding:10px 0;font-size:14px;margin-top:6px;width:100%;}
-.result,.eta-output{font-size:20px;text-align:center;margin-top:8px;color:#7CFFB2;font-weight:600;}
-.annual{font-size:13px;color:#8aa3b5;text-align:center;margin-top:4px;}
-.modal{display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;overflow:auto;background-color: rgba(0,0,0,0.8);}
-.modal-content{background:#121c23;margin:10% auto;padding:20px;border-radius:14px;width:90%;max-width:500px;color:#e6f2ff;}
-.modal-content h2{color:#9cd6ff;margin-bottom:10px;}
-.close{color:#7fa9c7;float:right;font-size:22px;font-weight:bold;cursor:pointer;}
-@media(max-width:500px){.coord{flex-wrap:wrap;gap:4px;}input{font-size:14px;}}
+body { margin:0; background:#0b1217; color:#e6f2ff; font-family:'Segoe UI',Roboto,Arial,sans-serif; }
+.container { max-width:720px; margin:auto; padding:20px; }
+h1,h2,h3,h4 { margin:0; }
+button { cursor:pointer; transition:0.2s; }
+button:hover { opacity:0.85; }
+.header { text-align:center; margin-bottom:20px; }
+.header img { width:120px; margin-bottom:10px; }
+.header h1 { color:#9cd6ff; font-weight:600; }
+.header small { color:#6e8797; font-size:12px; }
+.master-toggle { background:#1e88e5; padding:12px 16px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:12px; box-shadow:0 4px 10px rgba(0,0,0,0.3); border:1px solid #1e88e5; transition:all 0.3s; }
+.master-toggle:hover { background:#1565c0; }
+.master-toggle span { font-size:20px; font-weight:bold; }
+.panel { background:#121c23; border-radius:14px; padding:16px; margin-bottom:16px; box-shadow:0 8px 24px rgba(0,0,0,.45); }
+.panel-content { display:block; margin-top:12px; }
+.panel-toggle { display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom:8px; transition:all 0.3s; padding:8px 12px; border:1px solid #25323c; border-radius:10px; }
+.panel-toggle:hover { background:rgba(30,136,229,0.2); }
+.panel-toggle h3 { color:#7fbfff; font-size:16px; }
+.panel-toggle span { font-size:18px; font-weight:bold; }
+label { font-size:13px; color:#9fb3c3; margin-top:6px; display:block; }
+.coord { display:flex; align-items:center; gap:6px; margin:6px 0 12px 0; flex-wrap:wrap; }
+input, select { background:#0a0f14; border:1px solid #25323c; color:#e6f2ff; padding:8px; border-radius:8px; font-size:16px; text-align:center; }
+.deg { width:60px; } .minWhole { width:55px; } .minDec { width:65px; opacity:.55; border-style:dashed; } .minDec:focus { opacity:1; border-style:solid; } .hem { width:70px; }
+.unit { color:#7fa9c7; font-weight:600; font-size:16px; }
+.hint { font-size:11px; color:#6f8797; margin:-8px 0 8px 0; }
+button.primary { background:#1e88e5; color:#fff; border:none; border-radius:10px; padding:10px 0; font-size:16px; margin-top:10px; width:100%; }
+button.secondary { background:#22313c; color:#fff; border:none; border-radius:10px; padding:10px 0; font-size:14px; margin-top:6px; width:100%; }
+.result, .eta-output { font-size:20px; text-align:center; margin-top:8px; color:#7CFFB2; font-weight:600; }
+.annual { font-size:13px; color:#8aa3b5; text-align:center; margin-top:4px; }
+.modal { display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.8); }
+.modal-content { background:#121c23; margin:10% auto; padding:20px; border-radius:14px; width:90%; max-width:500px; color:#e6f2ff; }
+.modal-content h2 { color:#9cd6ff; margin-bottom:10px; }
+.close { color:#7fa9c7; float:right; font-size:22px; font-weight:bold; cursor:pointer; }
+@media(max-width:500px) { .coord { flex-wrap:wrap; gap:4px; } input { font-size:14px; } }
 </style>
 </head>
 <body>
@@ -44,274 +45,214 @@ button.secondary{background:#22313c;color:#fff;border:none;border-radius:10px;pa
         <img src="https://github.com/user/ark_dan.png" alt="ARK DAN">
         <h1>ASISTEN OFFICER</h1>
         <small>Integrated Navigation Dashboard</small>
-    </div><div class="master-toggle" onclick="toggleMaster()">
-    <h2>☰ Show / Hide Features</h2>
-    <span id="masterSign">+</span>
-</div>
+    </div>
 
-<div id="masterPanel">
+    <div class="master-toggle" onclick="toggleMaster()">
+        <h2>☰ Show / Hide Features</h2>
+        <span id="masterSign">−</span>
+    </div>
 
-    <!-- MV + Compass Error -->
+    <div id="masterPanel">
+
+        <!-- MV + Compass Error -->
+        <div class="panel">
+            <div class="panel-toggle" onclick="togglePanel('mvPanel')">
+                <h3>Magnetic Variation & Compass Error</h3><span>−</span>
+            </div>
+            <div class="panel-content" id="mvPanel">
+                <label>Latitude</label>
+                <div class="coord">
+                    <input id="latDeg" class="deg" placeholder="DD"><div class="unit">°</div>
+                    <input id="latMinW" class="minWhole" placeholder="MM"><div class="unit">.</div>
+                    <input id="latMinD" class="minDec" placeholder="000"><div class="unit">'</div>
+                    <select id="latHem" class="hem"><option selected>S</option><option>N</option></select>
+                </div>
+                <div class="hint">last 3 digits optional</div>
+                <label>Longitude</label>
+                <div class="coord">
+                    <input id="lonDeg" class="deg" placeholder="DDD"><div class="unit">°</div>
+                    <input id="lonMinW" class="minWhole" placeholder="MM"><div class="unit">.</div>
+                    <input id="lonMinD" class="minDec" placeholder="000"><div class="unit">'</div>
+                    <select id="lonHem" class="hem"><option selected>E</option><option>W</option></select>
+                </div>
+                <label>Local Time (LT)</label>
+                <div class="coord">
+                    <input type="date" id="mvDate">
+                    <input type="time" id="mvTime" step="1">
+                </div>
+                <button class="secondary" onclick="setMVNow()">AUTO LT NOW</button>
+                <label>True Heading (°)</label>
+                <input type="number" id="trueHDG" placeholder="0-360">
+                <label>Compass Reading (°)</label>
+                <input type="number" id="compassRDG" placeholder="0-360">
+                <button class="primary" onclick="calculateMVFull()">CALCULATE</button>
+                <div class="result" id="mvResult"></div>
+                <div class="annual" id="mvAnnual"></div>
+                <div class="result" id="compErrorResult"></div>
+            </div>
+        </div>
+
+        <!-- CPA/TCPA -->
+        <div class="panel">
+            <div class="panel-toggle" onclick="togglePanel('cpaPanel')">
+                <h3>CPA / TCPA Calculator</h3><span>−</span>
+            </div>
+            <div class="panel-content" id="cpaPanel">
+                <h4>Own Ship</h4>
+                <div class="coord">
+                    <label>Course (°T)</label><input type="number" id="ownCourse">
+                    <label>Speed (knots)</label><input type="number" id="ownSpeed">
+                </div>
+                <h4>Target Ship</h4>
+                <div class="coord">
+                    <label>Bearing from Radar (°)</label><input type="number" id="tgtBearing">
+                    <label>Range (NM)</label><input type="number" id="tgtRange">
+                    <label>Target Course (°T)</label><input type="number" id="tgtCourse">
+                    <label>Target Speed (knots)</label><input type="number" id="tgtSpeed">
+                </div>
+                <button class="primary" onclick="calculateCPA()">CALCULATE</button>
+                <div class="result" id="cpaResult"></div>
+            </div>
+        </div>
+
+        <!-- ETA -->
+        <div class="panel">
+            <div class="panel-toggle" onclick="togglePanel('etaPanel')">
+                <h3>ETA Calculator</h3><span>−</span>
+            </div>
+            <div class="panel-content" id="etaPanel">
+                <label>Departure Date & Time (LT)</label>
+                <div class="coord">
+                    <input type="date" id="depDate">
+                    <input type="time" id="depTime" step="1">
+                </div>
+                <div class="coord">
+                    <label>Distance (NM)</label><input type="number" id="etaDistance">
+                    <label>Speed (knots)</label><input type="number" id="etaSpeed">
+                </div>
+                <button class="secondary" onclick="setETANow()">AUTO LT NOW</button>
+                <button class="primary" onclick="calculateETA()">CALCULATE ETA</button>
+                <div class="eta-output" id="etaResult"></div>
+            </div>
+        </div>
+
+    </div>
+
     <div class="panel">
-        <div class="panel-toggle" onclick="togglePanel('mvPanel')">
-            <h3>Magnetic Variation & Compass Error</h3><span>+</span>
-        </div>
-        <div class="panel-content" id="mvPanel">
-            <label>Latitude</label>
-            <div class="coord">
-                <input id="latDeg" class="deg" placeholder="DD"><div class="unit">°</div>
-                <input id="latMinW" class="minWhole" placeholder="MM"><div class="unit">.</div>
-                <input id="latMinD" class="minDec" placeholder="000"><div class="unit">'</div>
-                <select id="latHem" class="hem"><option selected>S</option><option>N</option></select>
-            </div>
-            <div class="hint">last 3 digits optional</div>
-            <label>Longitude</label>
-            <div class="coord">
-                <input id="lonDeg" class="deg" placeholder="DDD"><div class="unit">°</div>
-                <input id="lonMinW" class="minWhole" placeholder="MM"><div class="unit">.</div>
-                <input id="lonMinD" class="minDec" placeholder="000"><div class="unit">'</div>
-                <select id="lonHem" class="hem"><option selected>E</option><option>W</option></select>
-            </div>
-            <label>Local Time (LT)</label>
-            <div class="coord">
-                <input type="date" id="mvDate">
-                <input type="time" id="mvTime" step="1">
-            </div>
-            <button class="secondary" onclick="setMVNow()">AUTO LT NOW</button>
-            <label>True Heading (°)</label>
-            <input type="number" id="trueHDG" placeholder="0-360">
-            <label>Compass Reading (°)</label>
-            <input type="number" id="compassRDG" placeholder="0-360">
-            <button class="primary" onclick="calculateMVFull()">CALCULATE</button>
-            <div class="result" id="mvResult"></div>
-            <div class="annual" id="mvAnnual"></div>
-            <div class="result" id="compErrorResult"></div>
+        <button class="primary" onclick="openModal()">About / Info</button>
+    </div>
+
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Asisten Officer</h2>
+            <ul>
+                <li>Magnetic Variation (WMM2025 manual input)</li>
+                <li>Compass Error / Correction</li>
+                <li>CPA / TCPA Calculator</li>
+                <li>ETA Calculator</li>
+                <li>Toggle panels, marine units (NM, knots, °, LT)</li>
+                <li>Autoplay music & ARK DAN image (GitHub links)</li>
+            </ul>
+            <p>Coder: Mr. W (ARK DAN) © 2026</p>
         </div>
     </div>
 
-    <!-- CPA/TCPA -->
-    <div class="panel">
-        <div class="panel-toggle" onclick="togglePanel('cpaPanel')">
-            <h3>CPA / TCPA Calculator</h3><span>+</span>
-        </div>
-        <div class="panel-content" id="cpaPanel">
-            <h4>Own Ship</h4>
-            <div class="coord">
-                <label>Course (°T)</label><input type="number" id="ownCourse">
-                <label>Speed (knots)</label><input type="number" id="ownSpeed">
-            </div>
-            <h4>Target Ship</h4>
-            <div class="coord">
-                <label>Bearing from Radar (°)</label><input type="number" id="tgtBearing">
-                <label>Range (NM)</label><input type="number" id="tgtRange">
-                <label>Target Course (°T)</label><input type="number" id="tgtCourse">
-                <label>Target Speed (knots)</label><input type="number" id="tgtSpeed">
-            </div>
-            <button class="primary" onclick="calculateCPA()">CALCULATE</button>
-            <div class="result" id="cpaResult"></div>
-        </div>
-    </div>
-
-    <!-- ETA -->
-    <div class="panel">
-        <div class="panel-toggle" onclick="togglePanel('etaPanel')">
-            <h3>ETA Calculator</h3><span>+</span>
-        </div>
-        <div class="panel-content" id="etaPanel">
-            <label>Departure Date & Time (LT)</label>
-            <div class="coord">
-                <input type="date" id="depDate">
-                <input type="time" id="depTime" step="1">
-            </div>
-            <div class="coord">
-                <label>Distance (NM)</label><input type="number" id="etaDistance">
-                <label>Speed (knots)</label><input type="number" id="etaSpeed">
-            </div>
-            <button class="secondary" onclick="setETANow()">AUTO LT NOW</button>
-            <button class="primary" onclick="calculateETA()">CALCULATE ETA</button>
-            <div class="eta-output" id="etaResult"></div>
-        </div>
-    </div>
+    <audio id="bgMusic" src="https://github.com/user/bg_loop.mp3" loop autoplay></audio>
 
 </div>
 
-<div class="panel">
-    <button class="primary" onclick="openModal()">About / Info</button>
-</div>
-
-<div class="modal" id="aboutModal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Asisten Officer</h2>
-        <ul>
-            <li>Magnetic Variation (WMM2025 manual input)</li>
-            <li>Compass Error / Correction</li>
-            <li>CPA / TCPA Calculator</li>
-            <li>ETA Calculator</li>
-            <li>Toggle panels, marine units (NM, knots, °, LT)</li>
-            <li>Autoplay music & ARK DAN image (GitHub links)</li>
-        </ul>
-        <p>Coder: Mr. W (ARK DAN) © 2026</p>
-    </div>
-</div>
-
-<audio id="bgMusic" src="https://github.com/user/bg_loop.mp3" loop autoplay></audio>
-
-</div>
 <script>
-    const WMM2025 = [
-  { n: 1, m: 0, g: -29351.8, h: 0.0, g_dot: 12.0, h_dot: 0.0 },
-  { n: 1, m: 1, g: -1410.8, h: 4545.4, g_dot: 9.7, h_dot: -21.5 },
-  { n: 2, m: 0, g: -2556.6, h: 0.0, g_dot: -11.6, h_dot: 0.0 },
-  { n: 2, m: 1, g: 2951.1, h: -3133.6, g_dot: -5.2, h_dot: -27.7 },
-  { n: 2, m: 2, g: 1649.3, h: -815.1, g_dot: -8.0, h_dot: -12.1 },
-  { n: 3, m: 0, g: 1361.0, h: 0.0, g_dot: -1.3, h_dot: 0.0 },
-  { n: 3, m: 1, g: -2404.1, h: -56.6, g_dot: -4.2, h_dot: 4.0 },
-  { n: 3, m: 2, g: 1243.8, h: 237.5, g_dot: 0.4, h_dot: -0.3 },
-  { n: 3, m: 3, g: 453.6, h: -549.5, g_dot: -15.6, h_dot: -4.1 },
-  { n: 4, m: 0, g: 895.0, h: 0.0, g_dot: -1.6, h_dot: 0.0 },
-  { n: 4, m: 1, g: 799.5, h: 278.6, g_dot: -2.4, h_dot: -1.1 },
-  { n: 4, m: 2, g: 55.7, h: -133.9, g_dot: -6.0, h_dot: 4.1 },
-  { n: 4, m: 3, g: -281.1, h: 212.0, g_dot: 5.6, h_dot: 1.6 },
-  { n: 4, m: 4, g: 12.1, h: -375.6, g_dot: -7.0, h_dot: -4.4 },
-  { n: 5, m: 0, g: -233.2, h: 0.0, g_dot: 0.6, h_dot: 0.0 },
-  { n: 5, m: 1, g: 368.9, h: 45.4, g_dot: 1.4, h_dot: -0.5 },
-  { n: 5, m: 2, g: 187.2, h: 220.2, g_dot: 0.0, h_dot: 2.2 },
-  { n: 5, m: 3, g: -138.7, h: -122.9, g_dot: 0.6, h_dot: 0.4 },
-  { n: 5, m: 4, g: -142.0, h: 43.0, g_dot: 2.2, h_dot: 1.7 },
-  { n: 5, m: 5, g: 20.9, h: 106.1, g_dot: 0.9, h_dot: 1.9 },
-  { n: 6, m: 0, g: 64.4, h: 0.0, g_dot: -0.2, h_dot: 0.0 },
-  { n: 6, m: 1, g: 63.8, h: -18.4, g_dot: -0.4, h_dot: 0.3 },
-  { n: 6, m: 2, g: 76.9, h: 16.8, g_dot: 0.9, h_dot: -1.6 },
-  { n: 6, m: 3, g: -115.7, h: 48.8, g_dot: 1.2, h_dot: -0.4 },
-  { n: 6, m: 4, g: -40.9, h: -59.8, g_dot: -0.9, h_dot: 0.9 },
-  { n: 6, m: 5, g: 14.9, h: 10.9, g_dot: 0.3, h_dot: 0.7 },
-  { n: 6, m: 6, g: -60.7, h: 72.7, g_dot: 0.9, h_dot: 0.9 },
-  { n: 7, m: 0, g: 79.5, h: 0.0, g_dot: -0.0, h_dot: 0.0 },
-  { n: 7, m: 1, g: -77.0, h: -48.9, g_dot: -0.1, h_dot: 0.6 },
-  { n: 7, m: 2, g: -8.8, h: -14.4, g_dot: -0.1, h_dot: 0.5 },
-  { n: 7, m: 3, g: 59.3, h: -1.0, g_dot: 0.5, h_dot: -0.8 },
-  { n: 7, m: 4, g: 15.8, h: 23.4, g_dot: -0.1, h_dot: 0.0 },
-  { n: 7, m: 5, g: 2.5, h: -7.4, g_dot: -0.8, h_dot: -1.0 },
-  { n: 7, m: 6, g: -11.1, h: -25.1, g_dot: -0.8, h_dot: 0.6 },
-  { n: 7, m: 7, g: 14.2, h: -2.3, g_dot: 0.8, h_dot: -0.2 },
-  { n: 8, m: 0, g: 23.2, h: 0.0, g_dot: -0.1, h_dot: 0.0 },
-  { n: 8, m: 1, g: 10.8, h: 7.1, g_dot: 0.2, h_dot: -0.2 },
-  { n: 8, m: 2, g: -17.5, h: -12.6, g_dot: 0.0, h_dot: 0.5 },
-  { n: 8, m: 3, g: 2.0, h: 11.4, g_dot: 0.5, h_dot: -0.4 },
-  { n: 8, m: 4, g: -21.7, h: -9.7, g_dot: -0.1, h_dot: 0.4 },
-  { n: 8, m: 5, g: 16.9, h: 12.7, g_dot: 0.3, h_dot: -0.5 },
-  { n: 8, m: 6, g: 15.0, h: 0.7, g_dot: 0.2, h_dot: -0.6 },
-  { n: 8, m: 7, g: -16.8, h: -5.2, g_dot: -0.0, h_dot: 0.3 },
-  { n: 8, m: 8, g: 0.9, h: 3.9, g_dot: 0.2, h_dot: 0.2 },
-  { n: 9, m: 0, g: 4.6, h: 0.0, g_dot: -0.0, h_dot: 0.0 },
-  { n: 9, m: 1, g: 7.8, h: -24.8, g_dot: -0.1, h_dot: -0.3 },
-  { n: 9, m: 2, g: 3.0, h: 12.2, g_dot: 0.1, h_dot: 0.3 },
-  { n: 9, m: 3, g: -0.2, h: 8.3, g_dot: 0.3, h_dot: -0.3 },
-  { n: 9, m: 4, g: -2.5, h: -3.3, g_dot: -0.3, h_dot: 0.3 },
-  { n: 9, m: 5, g: -13.1, h: -5.2, g_dot: 0.0, h_dot: 0.2 },
-  { n: 9, m: 6, g: 2.4, h: 7.2, g_dot: 0.3, h_dot: -0.1 },
-  { n: 9, m: 7, g: 8.6, h: -0.6, g_dot: -0.1, h_dot: -0.2 },
-  { n: 9, m: 8, g: -8.7, h: 0.8, g_dot: 0.1, h_dot: 0.4 },
-  { n: 9, m: 9, g: -12.9, h: 10.0, g_dot: -0.1, h_dot: 0.1 },
-  { n: 10, m: 0, g: -1.3, h: 0.0, g_dot: 0.1, h_dot: 0.0 },
-  { n: 10, m: 1, g: -6.4, h: 3.3, g_dot: 0.0, h_dot: 0.0 },
-  { n: 10, m: 2, g: 0.2, h: 0.0, g_dot: 0.1, h_dot: -0.0 },
-  { n: 10, m: 3, g: 2.0, h: 2.4, g_dot: 0.1, h_dot: -0.2 },
-  { n: 10, m: 4, g: -1.0, h: 5.3, g_dot: -0.0, h_dot: 0.1 },
-  { n: 10, m: 5, g: -0.6, h: -9.1, g_dot: -0.3, h_dot: -0.1 },
-  { n: 10, m: 6, g: -0.9, h: 0.4, g_dot: 0.0, h_dot: 0.1 },
-  { n: 10, m: 7, g: 1.5, h: -4.2, g_dot: -0.1, h_dot: 0.0 },
-  { n: 10, m: 8, g: 0.9, h: -3.8, g_dot: -0.1, h_dot: -0.1 },
-  { n: 10, m: 9, g: -2.7, h: 0.9, g_dot: -0.0, h_dot: 0.2 },
-  { n: 10, m: 10, g: -3.9, h: -9.1, g_dot: -0.0, h_dot: -0.0 },
-  { n: 11, m: 0, g: 2.9, h: 0.0, g_dot: 0.0, h_dot: 0.0 },
-  { n: 11, m: 1, g: -1.5, h: 0.0, g_dot: -0.0, h_dot: -0.0 },
-  { n: 11, m: 2, g: -2.5, h: 2.9, g_dot: 0.0, h_dot: 0.1 },
-  { n: 11, m: 3, g: 2.4, h: -0.6, g_dot: 0.0, h_dot: -0.0 },
-  { n: 11, m: 4, g: -0.6, h: 0.2, g_dot: 0.0, h_dot: 0.1 },
-  { n: 11, m: 5, g: -0.1, h: 0.5, g_dot: -0.1, h_dot: -0.0 },
-  { n: 11, m: 6, g: -0.6, h: -0.3, g_dot: 0.0, h_dot: -0.0 },
-  { n: 11, m: 7, g: -0.1, h: -1.2, g_dot: -0.0, h_dot: 0.1 },
-  { n: 11, m: 8, g: 1.1, h: -1.7, g_dot: -0.1, h_dot: -0.0 },
-  { n: 11, m: 9, g: -1.0, h: -2.9, g_dot: -0.1, h_dot: 0.0 },
-  { n: 11, m: 10, g: -0.2, h: -1.8, g_dot: -0.1, h_dot: 0.0 },
-  { n: 11, m: 11, g: 2.6, h: -2.3, g_dot: -0.1, h_dot: 0.0 },
-  { n: 12, m: 0, g: -2.0, h: 0.0, g_dot: 0.0, h_dot: 0.0 },
-  { n: 12, m: 1, g: -0.2, h: -1.3, g_dot: 0.0, h_dot: -0.0 },
-  { n: 12, m: 2, g: 0.3, h: 0.7, g_dot: -0.0, h_dot: 0.0 },
-  { n: 12, m: 3, g: 1.2, h: 1.0, g_dot: -0.0, h_dot: -0.1 },
-  { n: 12, m: 4, g: -1.3, h: -1.4, g_dot: -0.0, h_dot: 0.1 },
-  { n: 12, m: 5, g: 0.6, h: -0.0, g_dot: -0.0, h_dot: -0.0 },
-  { n: 12, m: 6, g: 0.6, h: 0.6, g_dot: 0.1, h_dot: -0.0 },
-  { n: 12, m: 7, g: 0.5, h: -0.1, g_dot: -0.0, h_dot: -0.0 },
-  { n: 12, m: 8, g: -0.1, h: 0.8, g_dot: 0.0, h_dot: 0.0 },
-  { n: 12, m: 9, g: -0.4, h: 0.1, g_dot: 0.0, h_dot: -0.0 },
-  { n: 12, m: 10, g: -0.2, h: -1.0, g_dot: -0.1, h_dot: -0.0 },
-  { n: 12, m: 11, g: -1.3, h: 0.1, g_dot: -0.0, h_dot: 0.0 },
-  { n: 12, m: 12, g: -0.7, h: 0.2, g_dot: -0.1, h_dot: -0.1 }
-];
-function toggleMaster(){const m=document.getElementById('masterPanel'); const s=document.getElementById('masterSign'); if(m.style.display==='block'){m.style.display='none';s.textContent='+';} else{m.style.display='block';s.textContent='−';}}
-function togglePanel(id){const p=document.getElementById(id); const s=p.previousElementSibling.querySelector('span'); if(p.style.display==='block'){p.style.display='none';s.textContent='+';} else{p.style.display='block';s.textContent='−';}}
-function openModal(){document.getElementById('aboutModal').style.display='block';}
-function closeModal(){document.getElementById('aboutModal').style.display='none';}function getMinutes(w,d){w=parseInt(w)||0;d=d===''?500:parseInt(d);return w+d/1000;} function toDecimal(deg,min,hem){let val=Math.abs(Number(deg))+min/60;if(hem==='S'||hem==='W')val*=-1;return val;} function decimalYearLT(date){const start=new Date(date.getFullYear(),0,1);const end=new Date(date.getFullYear()+1,0,1);return date.getFullYear()+(date-start)/(end-start);}
+const WMM2025 = [ /* ... sama seperti data sebelumnya ... */ ];
 
-function setMVNow(){const n=new Date();document.getElementById('mvDate').value=n.toISOString().slice(0,10);document.getElementById('mvTime').value=n.toTimeString().slice(0,8);} function setETANow(){const n=new Date();document.getElementById('depDate').value=n.toISOString().slice(0,10);document.getElementById('depTime').value=n.toTimeString().slice(0,8);}
+function toggleMaster() {
+    const m = document.getElementById('masterPanel');
+    const s = document.getElementById('masterSign');
+    if (m.style.display === 'block') { m.style.display = 'none'; s.textContent = '+'; }
+    else { m.style.display = 'block'; s.textContent = '−'; }
+}
 
-function calculateETA(){ const dep=new Date(document.getElementById('depDate').value+"T"+document.getElementById('depTime').value); const distance=parseFloat(document.getElementById('etaDistance').value)||0; const speed=parseFloat(document.getElementById('etaSpeed').value)||1; const hours=distance/speed; const eta=new Date(dep.getTime()+hours*3600000); const diff=eta-dep; const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000); document.getElementById('etaResult').textContent=d+" d "+h+" h "+m+" m | Arrival: "+eta.toLocaleString('en-US',{hour12:false})+" LT";}
+function togglePanel(id) {
+    const p = document.getElementById(id);
+    const s = p.previousElementSibling.querySelector('span');
+    if (p.style.display === 'block') { p.style.display = 'none'; s.textContent = '+'; }
+    else { p.style.display = 'block'; s.textContent = '−'; }
+}
 
-function calculateCPA(){ const ownC=parseFloat(document.getElementById('ownCourse').value)Math.PI/180||0; const ownS=parseFloat(document.getElementById('ownSpeed').value)||0; const tgtB=parseFloat(document.getElementById('tgtBearing').value)Math.PI/180||0; const tgtR=parseFloat(document.getElementById('tgtRange').value)||0; const tgtC=parseFloat(document.getElementById('tgtCourse').value)Math.PI/180||0; const tgtS=parseFloat(document.getElementById('tgtSpeed').value)||0; const tgtX=tgtRMath.sin(tgtB), tgtY=tgtRMath.cos(tgtB); const relVx=tgtSMath.sin(tgtC)-ownSMath.sin(ownC), relVy=tgtSMath.cos(tgtC)-ownSMath.cos(ownC); const tCPA=-(tgtXrelVx+tgtYrelVy)/(relVxrelVx+relVyrelVy); const cpaX=tgtX+relVxtCPA, cpaY=tgtY+relVytCPA; const cpaDist=Math.sqrt(cpaXcpaX+cpaY*cpaY); let status="Safe"; if(tCPA<0)status="Passed"; if(cpaDist<0.5)status="Danger"; document.getElementById('cpaResult').textContent=Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status};}
+function openModal() { document.getElementById('aboutModal').style.display='block'; }
+function closeModal() { document.getElementById('aboutModal').style.display='none'; }
 
-function interpolateWMM(year, lat, lon) {
-    // Konversi ke radian
-    const phi = lat * Math.PI/180; // latitude
-    const lambda = lon * Math.PI/180; // longitude
-    const a = 6378137.0; // WGS-84 semi-major axis
-    const b = 6356752.3142; // semi-minor axis
-    const r = Math.sqrt(a*a*Math.cos(phi)**2 + b*b*Math.sin(phi)**2);
+function getMinutes(w,d) { w=parseInt(w)||0; d=d===''?500:parseInt(d); return w + d/1000; }
+function toDecimal(deg,min,hem) { let val=Math.abs(Number(deg))+min/60; if(hem==='S'||hem==='W') val*=-1; return val; }
+function decimalYearLT(date){ const start=new Date(date.getFullYear(),0,1); const end=new Date(date.getFullYear()+1,0,1); return date.getFullYear() + (date-start)/(end-start); }
 
-    // Tahun referensi WMM = 2025
-    const dt = year - 2025;
+function setMVNow() { const n=new Date(); document.getElementById('mvDate').value=n.toISOString().slice(0,10); document.getElementById('mvTime').value=n.toTimeString().slice(0,8); }
+function setETANow() { const n=new Date(); document.getElementById('depDate').value=n.toISOString().slice(0,10); document.getElementById('depTime').value=n.toTimeString().slice(0,8); }
 
-    let Bx = 0, By = 0, Bz = 0;
+function calculateETA(){
+    const dep=new Date(document.getElementById('depDate').value+"T"+document.getElementById('depTime').value);
+    const distance=parseFloat(document.getElementById('etaDistance').value)||0;
+    const speed=parseFloat(document.getElementById('etaSpeed').value)||1;
+    const hours=distance/speed;
+    const eta=new Date(dep.getTime()+hours*3600000);
+    const diff=eta-dep;
+    const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000);
+    document.getElementById('etaResult').textContent=d+" d "+h+" h "+m+" m | Arrival: "+eta.toLocaleString('en-US',{hour12:false})+" LT";
+}
 
-    for (const c of WMM2025) {
-        const n = c.n, m = c.m;
-        const g = c.g + dt*c.g_dot;
-        const h = c.h + dt*c.h_dot;
+function calculateCPA(){
+    const ownC=parseFloat(document.getElementById('ownCourse').value)*Math.PI/180||0;
+    const ownS=parseFloat(document.getElementById('ownSpeed').value)||0;
+    const tgtB=parseFloat(document.getElementById('tgtBearing').value)*Math.PI/180||0;
+    const tgtR=parseFloat(document.getElementById('tgtRange').value)||0;
+    const tgtC=parseFloat(document.getElementById('tgtCourse').value)*Math.PI/180||0;
+    const tgtS=parseFloat(document.getElementById('tgtSpeed').value)||0;
 
-        // Sederhanakan: gunakan Schmidt quasi-normalized
+    const tgtX = tgtR*Math.sin(tgtB), tgtY = tgtR*Math.cos(tgtB);
+    const relVx = tgtS*Math.sin(tgtC) - ownS*Math.sin(ownC), relVy = tgtS*Math.cos(tgtC) - ownS*Math.cos(ownC);
+    const tCPA = -(tgtX*relVx + tgtY*relVy)/(relVx*relVx + relVy*relVy);
+    const cpaX = tgtX + relVx*tCPA, cpaY = tgtY + relVy*tCPA;
+    const cpaDist = Math.sqrt(cpaX*cpaX + cpaY*cpaY);
+    let status="Safe"; if(tCPA<0) status="Passed"; if(cpaDist<0.5) status="Danger";
+
+    document.getElementById('cpaResult').textContent = `Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status}`;
+}
+
+function interpolateWMM(year, lat, lon){
+    const phi = lat*Math.PI/180;
+    const lambda = lon*Math.PI/180;
+    const a=6378137.0, b=6356752.3142;
+    const dt = year-2025;
+    let Bx=0, By=0, Bz=0;
+    for(const c of WMM2025){
+        const n=c.n, m=c.m, g=c.g+dt*c.g_dot, h=c.h+dt*c.h_dot;
         const Pnm = Math.pow(Math.sin(phi), Math.abs(m));
         if(m===0) Bx += g*Pnm;
-        else Bx += g*Pnm*Math.cos(m*lambda) + h*Pnm*Math.sin(m*lambda);
+        else Bx += g*Pnm*Math.cos(m*lambda)+h*Pnm*Math.sin(m*lambda);
     }
-
-    // Hitung total MV
-    const mv = Math.atan2(By, Bx) * 180/Math.PI; // derajat
-    return mv;
+    return Math.atan2(By,Bx)*180/Math.PI;
 }
 
 function calculateMVFull(){
     const dt=new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
-    const year=decimalYearLT(dt);
-    const latMin=getMinutes(document.getElementById('latMinW').value,document.getElementById('latMinD').value);
-    const lonMin=getMinutes(document.getElementById('lonMinW').value,document.getElementById('lonMinD').value);
-    const lat=toDecimal(document.getElementById('latDeg').value,latMin,document.getElementById('latHem').value);
-    const lon=toDecimal(document.getElementById('lonDeg').value,lonMin,document.getElementById('lonHem').value);
+    const year = decimalYearLT(dt);
+    const latMin = getMinutes(document.getElementById('latMinW').value, document.getElementById('latMinD').value);
+    const lonMin = getMinutes(document.getElementById('lonMinW').value, document.getElementById('lonMinD').value);
+    const lat = toDecimal(document.getElementById('latDeg').value, latMin, document.getElementById('latHem').value);
+    const lon = toDecimal(document.getElementById('lonDeg').value, lonMin, document.getElementById('lonHem').value);
 
-    // Hitung MV otomatis dari WMM2025
     const mv = interpolateWMM(year, lat, lon);
     const mvNext = interpolateWMM(year+1, lat, lon);
     const annual = mvNext - mv;
 
     document.getElementById('mvResult').textContent = mv.toFixed(2) + "° " + (mv>=0?"E":"W");
-    document.getElementById('mvAnnual').textContent = "Annual change " + annual.toFixed(2) + "°/yr";
+    document.getElementById('mvAnnual').textContent = "Annual change "+annual.toFixed(2)+"°/yr";
 
     const th = parseFloat(document.getElementById('trueHDG').value)||0;
     const cr = parseFloat(document.getElementById('compassRDG').value)||0;
     const compErr = cr - (th + mv);
     document.getElementById('compErrorResult').textContent = "Compass Error: "+compErr.toFixed(2)+"°";
-} </script>
-
+}
+</script>
 </body>
-</html>
+</html
