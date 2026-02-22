@@ -1,0 +1,17 @@
+// ===== WMM2025 Gauss Coefficients (degree 1–4) =====
+const WMM2025 = [
+  {n:1,m:0,gnm:-29404.8,hnm:0.0,gdot:6.7,hdot:0.0},
+  {n:1,m:1,gnm:-1450.9,hnm:4652.5,gdot:7.7,hdot:-25.1},
+  {n:2,m:0,gnm:-2500.0,hnm:0.0,gdot:-11.5,hdot:0.0},
+  {n:2,m:1,gnm:2982.0,hnm:-2991.6,gdot:-7.3,hdot:-30.2},
+  {n:2,m:2,gnm:1676.8,hnm:-734.6,gdot:2.4,hdot:-23.0},
+  {n:3,m:0,gnm:1363.9,hnm:0.0,gdot:2.8,hdot:0.0},
+  {n:3,m:1,gnm:-2381.0,hnm:-82.1,gdot:-6.2,hdot:0.4},
+  {n:3,m:2,gnm:1236.2,hnm:241.8,gdot:3.4,hdot:-0.5},
+  {n:3,m:3,gnm:525.7,hnm:-542.9,gdot:-12.6,hdot:1.5},
+  {n:4,m:0,gnm:903.1,hnm:0.0,gdot:0.2,hdot:0.0},
+  {n:4,m:1,gnm:809.4,hnm:282.0,gdot:0.6,hdot:-0.4},
+  {n:4,m:2,gnm:86.2,hnm:-158.4,gdot:-0.1,hdot:0.0},
+  {n:4,m:3,gnm:-309.4,hnm:199.8,gdot:-0.9,hdot:0.1},
+  {n:4,m:4,gnm:47.9,hnm:-350.1,gdot:0.2,hdot:0.3},
+];
