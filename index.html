@@ -7,7 +7,7 @@
 body { margin:0; background:#0b1217; color:#e6f2ff; font-family:'Segoe UI',Roboto,Arial,sans-serif; }
 .container { max-width:720px; margin:auto; padding:20px; }
 h1,h2,h3,h4 { margin:0; }
-button { cursor:pointer; transition:0.2s; }
+button { cursor:pointer; transition:0.2s; pointer-events:auto; }
 button:hover { opacity:0.85; }
 .header { text-align:center; margin-bottom:20px; }
 .header img { width:120px; margin-bottom:10px; }
@@ -95,7 +95,6 @@ button.secondary { background:#22313c; color:#fff; border:none; border-radius:10
                 <label>Compass Reading (°)</label>
                 <input type="number" id="compassRDG" placeholder="0-360">
                 <button class="primary" onclick="calculateMVFull()">CALCULATE</button>
-
                 <div class="result" id="mvResult"></div>
                 <div class="annual" id="mvAnnual"></div>
                 <div class="result" id="compErrorResult"></div>
@@ -157,7 +156,7 @@ button.secondary { background:#22313c; color:#fff; border:none; border-radius:10
             <span class="close" onclick="closeModal()">&times;</span>
             <h2>Asisten Officer</h2>
             <ul>
-                <li>Magnetic Variation (WMM2025 manual input & spherical harmonic interpolation)</li>
+                <li>Magnetic Variation (WMM2025 manual input)</li>
                 <li>Compass Error / Correction</li>
                 <li>CPA / TCPA Calculator</li>
                 <li>ETA Calculator</li>
@@ -173,7 +172,7 @@ button.secondary { background:#22313c; color:#fff; border:none; border-radius:10
 </div>
 
 <script>
-// WMM2025 coefficient array
+// WMM2025 truncated for brevity, pakai data lengkap di HTML mu
 const WMM2025 = [
   { n: 1, m: 0, g: -29351.8, h: 0.0, g_dot: 12.0, h_dot: 0.0 },
   { n: 1, m: 1, g: -1410.8, h: 4545.4, g_dot: 9.7, h_dot: -21.5 },
@@ -267,26 +266,80 @@ const WMM2025 = [
   { n: 12, m: 12, g: -0.7, h: 0.2, g_dot: -0.1, h_dot: -0.1 }
 ];
 
-// --- Utility functions ---
+// Toggle functions
 function toggleMaster() {
     const m = document.getElementById('masterPanel');
     const s = document.getElementById('masterSign');
-    if (m.style.display==='block'){ m.style.display='none'; s.textContent='+'; } else { m.style.display='block'; s.textContent='−'; }
+    if (m.style.display === 'none') { m.style.display='block'; s.textContent='−'; } 
+    else { m.style.display='none'; s.textContent='+'; }
 }
-function togglePanel(id) {
-    const p = document.getElementById(id);
-    const s = p.previousElementSibling.querySelector('span');
-    if (p.style.display==='block'){ p.style.display='none'; s.textContent='+'; } else { p.style.display='block'; s.textContent='−'; }
+function togglePanel(id){
+    const p=document.getElementById(id);
+    const s=p.previousElementSibling.querySelector('span');
+    if(p.style.display==='none'){ p.style.display='block'; s.textContent='−'; } 
+    else{ p.style.display='none'; s.textContent='+'; }
 }
-function openModal(){document.getElementById('aboutModal').style.display='block';}
-function closeModal(){document.getElementById('aboutModal').style.display='none';}
-function getMinutes(w,d){w=parseInt(w)||0; d=d===''?0:parseInt(d); return w+d/1000;}
-function toDecimal(deg,min,hem){let val=Math.abs(Number(deg))+Number(min)/60; if(hem==='S'||hem==='W') val*=-1; return val;}
-function decimalYearLT(date){const start=new Date(date.getFullYear(),0,1); const end=new Date(date.getFullYear()+1,0,1); return date.getFullYear()+(date-start)/(end-start);}
-function setMVNow(){const n=new Date(); document.getElementById('mvDate').value=n.toISOString().slice(0,10); document.getElementById('mvTime').value=n.toTimeString().slice(0,8);}
-function setETANow(){const n=new Date(); document.getElementById('depDate').value=n.toISOString().slice(0,10); document.getElementById('depTime').value=n.toTimeString().slice(0,8);}
 
-// --- ETA calculation ---
+// Modal
+function openModal(){ document.getElementById('aboutModal').style.display='block'; }
+function closeModal(){ document.getElementById('aboutModal').style.display='none'; }
+
+// Time helpers
+function setMVNow(){ const n=new Date(); document.getElementById('mvDate').value=n.toISOString().slice(0,10); document.getElementById('mvTime').value=n.toTimeString().slice(0,8);}
+function setETANow(){ const n=new Date(); document.getElementById('depDate').value=n.toISOString().slice(0,10); document.getElementById('depTime').value=n.toTimeString().slice(0,8);}
+
+// Convert to decimal
+function toDecimal(deg,min,hem){ let val=Math.abs(Number(deg))+Number(min)/60; if(hem==='S'||hem==='W') val*=-1; return val; }
+
+// MV Placeholder (isi dengan WMM2025 asli)
+function interpolateWMM(year,lat,lon){ return 0; } 
+
+// MV + Compass Error
+function calculateMVFull(){
+    const dt=new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
+    const year=dt.getFullYear() + (dt - new Date(dt.getFullYear(),0,1))/(new Date(dt.getFullYear()+1,0,1)-new Date(dt.getFullYear(),0,1));
+
+    const latMin=document.getElementById('latMinW').value || 0;
+    const latDec=document.getElementById('latMinD').value || 0;
+    const lonMin=document.getElementById('lonMinW').value || 0;
+    const lonDec=document.getElementById('lonMinD').value || 0;
+
+    const lat = toDecimal(document.getElementById('latDeg').value, Number(latMin)+Number(latDec)/1000, document.getElementById('latHem').value);
+    const lon = toDecimal(document.getElementById('lonDeg').value, Number(lonMin)+Number(lonDec)/1000, document.getElementById('lonHem').value);
+
+    const mv=interpolateWMM(year,lat,lon);
+    const mvNext=interpolateWMM(year+1,lat,lon);
+    const annual=mvNext-mv;
+
+    document.getElementById('mvResult').textContent=mv.toFixed(2)+"° "+(mv>=0?"E":"W");
+    document.getElementById('mvAnnual').textContent="Annual change "+annual.toFixed(2)+"°/yr";
+
+    const th=parseFloat(document.getElementById('trueHDG').value)||0;
+    const cr=parseFloat(document.getElementById('compassRDG').value)||0;
+    const compErr=cr-(th+mv);
+    document.getElementById('compErrorResult').textContent="Compass Error: "+compErr.toFixed(2)+"°";
+}
+
+// CPA / TCPA
+function calculateCPA(){
+    const ownC=parseFloat(document.getElementById('ownCourse').value)*Math.PI/180||0;
+    const ownS=parseFloat(document.getElementById('ownSpeed').value)||0;
+    const tgtB=parseFloat(document.getElementById('tgtBearing').value)*Math.PI/180||0;
+    const tgtR=parseFloat(document.getElementById('tgtRange').value)||0;
+    const tgtC=parseFloat(document.getElementById('tgtCourse').value)*Math.PI/180||0;
+    const tgtS=parseFloat(document.getElementById('tgtSpeed').value)||0;
+
+    const tgtX=tgtR*Math.sin(tgtB), tgtY=tgtR*Math.cos(tgtB);
+    const relVx=tgtS*Math.sin(tgtC)-ownS*Math.sin(ownC), relVy=tgtS*Math.cos(tgtC)-ownS*Math.cos(ownC);
+    const tCPA=-(tgtX*relVx+tgtY*relVy)/(relVx*relVx+relVy*relVy);
+    const cpaX=tgtX+relVx*tCPA, cpaY=tgtY+relVy*tCPA;
+    const cpaDist=Math.sqrt(cpaX*cpaX+cpaY*cpaY);
+    let status="Safe"; if(tCPA<0) status="Passed"; if(cpaDist<0.5) status="Danger";
+
+    document.getElementById('cpaResult').textContent=`Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status}`;
+}
+
+// ETA
 function calculateETA(){
     const dep=new Date(document.getElementById('depDate').value+"T"+document.getElementById('depTime').value);
     const distance=parseFloat(document.getElementById('etaDistance').value)||0;
@@ -297,71 +350,6 @@ function calculateETA(){
     const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000);
     document.getElementById('etaResult').textContent=d+" d "+h+" h "+m+" m | Arrival: "+eta.toLocaleString('en-US',{hour12:false})+" LT";
 }
-
-// --- CPA/TCPA calculation ---
-function calculateCPA(){
-    const ownC=parseFloat(document.getElementById('ownCourse').value)*Math.PI/180||0;
-    const ownS=parseFloat(document.getElementById('ownSpeed').value)||0;
-    const tgtB=parseFloat(document.getElementById('tgtBearing').value)*Math.PI/180||0;
-    const tgtR=parseFloat(document.getElementById('tgtRange').value)||0;
-    const tgtC=parseFloat(document.getElementById('tgtCourse').value)*Math.PI/180||0;
-    const tgtS=parseFloat(document.getElementById('tgtSpeed').value)||0;
-
-    const tgtX=tgtR*Math.sin(tgtB), tgtY=tgtR*Math.cos(tgtB);
-    const relVx=tgtS*Math.sin(tgtC)-ownS*Math.sin(ownC);
-    const relVy=tgtS*Math.cos(tgtC)-ownS*Math.cos(ownC);
-    const tCPA=-(tgtX*relVx+tgtY*relVy)/(relVx*relVx+relVy*relVy);
-    const cpaX=tgtX+relVx*tCPA, cpaY=tgtY+relVy*tCPA;
-    const cpaDist=Math.sqrt(cpaX*cpaX+cpaY*cpaY);
-    let status="Safe"; if(tCPA<0) status="Passed"; if(cpaDist<0.5) status="Danger";
-    document.getElementById('cpaResult').textContent=`Distance: ${tgtR.toFixed(2)} NM | CPA: ${cpaDist.toFixed(2)} NM | TCPA: ${tCPA.toFixed(2)} h | Status: ${status}`;
-}
-
-// --- MV + Compass Error ---
-function interpolateWMM(year, lat, lon){
-    // FULL spherical harmonic calculation using WMM2025 coefficients
-    // For brevity here, placeholder is 0 (replace dengan perhitungan harmonik)
-    return 0;
-}
-
-function calculateMVFull(){
-    const dt=new Date(document.getElementById('mvDate').value+"T"+document.getElementById('mvTime').value);
-    const year=decimalYearLT(dt);
-    const latMin=getMinutes(document.getElementById('latMinW').value, document.getElementById('latMinD').value);
-    const lonMin=getMinutes(document.getElementById('lonMinW').value, document.getElementById('lonMinD').value);
-    const lat=toDecimal(document.getElementById('latDeg').value, latMin, document.getElementById('latHem').value);
-    const lon=toDecimal(document.getElementById('lonDeg').value, lonMin, document.getElementById('lonHem').value);
-
-    const mv=interpolateWMM(year, lat, lon);
-    const mvNext=interpolateWMM(year+1, lat, lon);
-    const annual=mvNext-mv;
-
-    document.getElementById('mvResult').textContent=mv.toFixed(2)+"° "+(mv>=0?"E":"W");
-    document.getElementById('mvAnnual').textContent="Annual change "+annual.toFixed(2)+"°/yr";
-
-    const th=parseFloat(document.getElementById('trueHDG').value)||0;
-    const cr=parseFloat(document.getElementById('compassRDG').value)||0;
-    const compErr=cr-(th+mv);
-    document.getElementById('compErrorResult').textContent="Compass Error: "+compErr.toFixed(2)+"°";
-    // --- Panel default display ---
-document.getElementById('masterPanel').style.display='block';
-['mvPanel','cpaPanel','etaPanel'].forEach(id => {
-    document.getElementById(id).style.display='block';
-});
-
-// --- Optional: stop propagation for input fields ---
-document.querySelectorAll('input, select').forEach(el=>{
-    el.addEventListener('click', e=>{ e.stopPropagation(); });
-});
-
-// --- Audio control toggle (optional) ---
-const bgMusic = document.getElementById('bgMusic');
-bgMusic.volume = 0.2; // set default volume
-
-// --- Final: Prevent modal click from closing accidentally ---
-document.getElementById('aboutModal').addEventListener('click', function(e){
-    if(e.target === this) closeModal();
-});
 </script>
 </body>
 </html>
