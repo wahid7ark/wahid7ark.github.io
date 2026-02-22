@@ -310,18 +310,42 @@ function calculateCPA(){
 }
 
 function interpolateWMM(year, lat, lon){
-    const phi = lat*Math.PI/180;
-    const lambda = lon*Math.PI/180;
-    const a=6378137.0, b=6356752.3142;
-    const dt = year-2025;
-    let Bx=0, By=0, Bz=0;
-    for(const c of WMM2025){
-        const n=c.n, m=c.m, g=c.g+dt*c.g_dot, h=c.h+dt*c.h_dot;
-        const Pnm = Math.pow(Math.sin(phi), Math.abs(m));
-        if(m===0) Bx += g*Pnm;
-        else Bx += g*Pnm*Math.cos(m*lambda)+h*Pnm*Math.sin(m*lambda);
+    const phi = lat * Math.PI/180;       // geodetic latitude
+    const lambda = lon * Math.PI/180;    // longitude
+    const dt = year - 2025;
+
+    const a = 6378137.0, b = 6356752.3142; // WGS84
+    const rad = Math.sqrt(a*a*Math.cos(phi)*Math.cos(phi) + b*b*Math.sin(phi)*Math.sin(phi));
+    const theta = Math.PI/2 - Math.atan2(b*Math.sin(phi), a*Math.cos(phi)); // geocentric co-latitude
+
+    let X=0, Y=0, Z=0;
+
+    function Pnm(n,m,x){
+        if(m>n) return 0;
+        if(n===m && n>0) return Math.sqrt(1-0.5/m)* (1-x*x)**(m/2); // Schmidt semi-normalized
+        if(m===0 && n===0) return 1;
+        if(n>m) return ((2*n-1)/ (n-m)) * x * Pnm(n-1,m,x) - ((n+m-1)/(n-m)) * Pnm(n-2,m,x);
+        return 0;
     }
-    return Math.atan2(By,Bx)*180/Math.PI;
+
+    for(const c of WMM2025){
+        const n = c.n, m = c.m;
+        const g = c.g + dt*c.g_dot;
+        const h = c.h + dt*c.h_dot;
+
+        const P = Pnm(n,m, Math.cos(theta));
+
+        if(m===0){
+            X += g * P;
+            Z += - (n+1) * g * P;
+        } else {
+            X += g*P*Math.cos(m*lambda) + h*P*Math.sin(m*lambda);
+            Y += m*(g*P*Math.sin(m*lambda) - h*P*Math.cos(m*lambda));
+            Z += - (n+1)*(g*P*Math.cos(m*lambda) + h*P*Math.sin(m*lambda));
+        }
+    }
+
+    return Math.atan2(Y,X) * 180/Math.PI;
 }
 
 function calculateMVFull(){
