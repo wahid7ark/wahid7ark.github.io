@@ -1,112 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!DOCTYPE html><html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft Survey Assistant Officer</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/icon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Jalur CSS diperbarui ke GitHub -->
-    <link rel="stylesheet" href="https://wahid7ark.github.io/style.css">
-</head>
+<meta charset="UTF-8">
+<title>Compass Check</title><style>
+body{
+    margin:0;
+    background:#0b1116;
+    color:#d7e1ea;
+    font-family:Segoe UI,Roboto,Arial;
+}
+.container{
+    max-width:460px;
+    margin:auto;
+    padding:18px;
+}
+.panel{
+    background:#111a21;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 0 18px rgba(0,0,0,0.5);
+}
+h1{
+    text-align:center;
+    font-weight:600;
+    letter-spacing:1px;
+    color:#8fd3ff;
+}
+label{
+    font-size:13px;
+    color:#9fb3c3;
+}
+.row{
+    display:flex;
+    gap:6px;
+    margin-top:6px;
+}
+input,select{
+    background:#0a0f14;
+    border:1px solid #24313b;
+    color:#e6f2ff;
+    padding:8px;
+    border-radius:8px;
+    width:100%;
+    font-size:15px;
+    text-align:center;
+}
+.unit{
+    display:flex;
+    align-items:center;
+    padding:0 6px;
+    color:#7fa9c7;
+    font-weight:600;
+}
+button{
+    width:100%;
+    padding:12px;
+    background:#1e88e5;
+    border:none;
+    border-radius:10px;
+    color:white;
+    font-size:16px;
+    margin-top:10px;
+}
+button:hover{ background:#42a5f5; }
+.result{
+    text-align:center;
+    font-size:22px;
+    margin-top:10px;
+    color:#7CFFB2;
+}
+.small{
+    text-align:center;
+    color:#7a8c99;
+    font-size:12px;
+    margin-top:6px;
+}
+</style></head><body>
+<div class="container"><h1>COMPASS VARIATION</h1><div class="panel">
+<label>Latitude</label>
+<div class="row">
+<input id="latDeg" placeholder="deg">
+<div class="unit">°</div>
+<input id="latMin" placeholder="min">
+<div class="unit">'</div>
+<select id="latHem">
+<option selected>S</option>
+<option>N</option>
+</select>
+</div><label>Longitude</label>
 
-<body>
-    <!-- ================= AUDIO ================= -->
-    <audio autoplay loop>
-        <source src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/audio.mp3" type="audio/mpeg">
-    </audio>
+<div class="row">
+<input id="lonDeg" placeholder="deg">
+<div class="unit">°</div>
+<input id="lonMin" placeholder="min">
+<div class="unit">'</div>
+<select id="lonHem">
+<option selected>E</option>
+<option>W</option>
+</select>
+</div>
+</div><div class="panel">
+<label>UTC Date & Time</label>
+<div class="row">
+<input type="date" id="date">
+<input type="time" id="time" step="1">
+</div>
+<button onclick="setNow()">AUTO NOW (UTC)</button>
+</div><div class="panel">
+<button onclick="calculate()">CALCULATE VARIATION</button>
+<div class="result" id="result">--.-°</div>
+<div class="small" id="status"></div>
+</div></div><script>
+// ===== TIME =====
+function setNow(){
+    const now=new Date();
+    document.getElementById("date").value=now.toISOString().slice(0,10);
+    document.getElementById("time").value=now.toISOString().slice(11,19);
+}
+setNow();
 
-    <h1>BG ARK CARNELIAN</h1>
-    <img id="barge" src="https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/main/photo.jpg">
+// ===== HELPERS =====
+function toDecimal(deg,min,hem){
+    let d=Math.abs(Number(deg))+Number(min)/60;
+    if(hem==="S"||hem==="W") d*=-1;
+    return d;
+}
+function decimalYear(date){
+    const start=Date.UTC(date.getUTCFullYear(),0,1);
+    const end=Date.UTC(date.getUTCFullYear()+1,0,1);
+    return date.getUTCFullYear()+(date-start)/(end-start);
+}
 
-    <!-- ================= MODE TOGGLE ================= -->
-    <div class="container">
-        <div class="modeToggle card">
-            <label for="modeSelect">Mode:</label>
-            <select id="modeSelect">
-                <option value="surveyor">Surveyor</option>
-                <option value="navalArch">Naval Arch</option>
-                <option value="supervisor">Supervisor 🔒</option>
-            </select>
-        </div>
+// ===== MAGNETIC MODEL =====
+function magneticVariation(latDeg,latMin,latHem,lonDeg,lonMin,lonHem,date){
 
-        <!-- ================= SURVEY INPUTS ================= -->
-        <div class="card" id="initialSurvey">
-            <h3>INITIAL SURVEY</h3>
-            <h4>Forward</h4>
-            <div class="row">
-                <input id="ifp" placeholder="Port (m)">
-                <input id="ifs" placeholder="Stbd (m)">
-            </div>
-            <h4>Midship</h4>
-            <div class="row">
-                <input id="imp" placeholder="Port (m)">
-                <input id="ims" placeholder="Stbd (m)">
-            </div>
-            <h4>Aft</h4>
-            <div class="row">
-                <input id="iap" placeholder="Port (m)">
-                <input id="ias" placeholder="Stbd (m)">
-            </div>
-            <h4>Density</h4>
-            <input id="densI" value="1.025" placeholder="1.025">
-        </div>
+    const DEG2RAD=Math.PI/180;
+    const RAD2DEG=180/Math.PI;
 
-        <div class="card" id="finalSurvey">
-            <h3>FINAL SURVEY</h3>
-            <h4>Forward</h4>
-            <div class="row">
-                <input id="ffp" placeholder="Port (m)">
-                <input id="ffs" placeholder="Stbd (m)">
-            </div>
-            <h4>Midship</h4>
-            <div class="row">
-                <input id="fmp" placeholder="Port (m)">
-                <input id="fms" placeholder="Stbd (m)">
-            </div>
-            <h4>Aft</h4>
-            <div class="row">
-                <input id="fap" placeholder="Port (m)">
-                <input id="fas" placeholder="Stbd (m)">
-            </div>
-            <h4>Density</h4>
-            <input id="densF" value="1.025" placeholder="1.025">
-        </div>
+    const lat=toDecimal(latDeg,latMin,latHem)*DEG2RAD;
+    const lon=toDecimal(lonDeg,lonMin,lonHem)*DEG2RAD;
 
-        <!-- ================= BUTTONS ================= -->
-        <button onclick="calculate()">CALCULATE</button>
-        <button id="exportBtn" onclick="exportReport()">EXPORT REPORT</button>
+    const year=decimalYear(date);
+    const t=year-2025.0;
 
-        <!-- ================= RESULT & GRAPH ================= -->
-        <div class="card" id="resultCard">
-            <div id="result">Awaiting Calculation...</div>
-            <div id="process"></div>
-            <canvas id="chartContainer"></canvas>
-            <div id="formulaAnim"></div>
-        </div>
-    </div>
+    const g10=-29404.5+5.7*t;
+    const g11=-1450.7+7.0*t;
+    const h11=4652.9-25.9*t;
 
-    <!-- ================= ABOUT MODAL ================= -->
-    <div id="aboutBox">
-        <div id="aboutContent">
-            <span id="closeAbout" class="material-icons" onclick="aboutBox.style.display='none'">close</span>
-            <h3>Draft Survey Assistant Officer</h3>
-            <p>Survei draft tongkang menggunakan Metode Quarter Mean Draft, koreksi LCF, koreksi trim, koreksi densitas, dan interpolasi hidrostatik.</p>
-            <p><a href="https://github.com/wahid7ark/wahid7ark.github.io/blob/main/carnelian.html" target="_blank">Profil Pengembang</a></p>
-        </div>
-    </div>
+    const sinLat=Math.sin(lat);
+    const cosLat=Math.cos(lat);
+    const sinLon=Math.sin(lon);
+    const cosLon=Math.cos(lon);
 
-    <!-- ================= FOOTER ================= -->
-    <footer>
-        <span class="coder">Coder: Mr. Wolf (ARK DAN)</span>
-        <span class="copy">©</span><span class="year" id="year"></span>
-        <button class="aboutMini" onclick="showAbout()"><span class="material-icons">info</span>ABOUT</button>
-    </footer>
+    const X=-g10*cosLat+g11*sinLat*cosLon+h11*sinLat*sinLon;
+    const Y=g11*sinLon-h11*cosLon;
 
-    <!-- Jalur JS diperbarui ke GitHub -->
-    <script src="https://wahid7ark.github.io/script.js"></script>
-</body>
+    let D=Math.atan2(Y,X)*RAD2DEG;
 
+    if(D>180)D-=360;
+    if(D<-180)D+=360;
+
+    return D;
+}
+
+// ===== MAIN =====
+function calculate(){
+
+    const latDeg=latDeg.value;
+    const latMin=latMin.value;
+    const latHem=latHem.value;
+
+    const lonDeg=lonDeg.value;
+    const lonMin=lonMin.value;
+    const lonHem=lonHem.value;
+
+    if(latMin>59||lonMin>59){
+        status.textContent="Minute must be 0–59";
+        return;
+    }
+
+    const dt=new Date(date.value+"T"+time.value+"Z");
+
+    const variation=magneticVariation(latDeg,latMin,latHem,lonDeg,lonMin,lonHem,dt);
+
+    let dir=variation>=0?"E":"W";
+
+    result.textContent=Math.abs(variation).toFixed(2)+"° "+dir;
+    status.textContent="Computed from World Magnetic Model";
+}
+</script></body>
 </html>
