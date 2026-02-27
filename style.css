@@ -1,190 +1,100 @@
-/* ================== GLOBAL & BODY ================== */
-body {
-    margin: 0;
-    font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(#03121c, #000814);
-    color: white;
-    text-align: center;
+body, html {
+    margin:0; padding:0;
+    height:100%; width:100%;
+    background-color:#121212;
+    color:white;
+    font-family: 'Iceland', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
 }
 
-h1 {
-    margin: 12px 0;
-    letter-spacing: 2px;
+.glitch {
+    position: relative;
+    font-size: 50px;
+    color: #00FF00;
+    text-align:center;
+    animation: noise-3 1s linear infinite;
+}
+.glitch::after {
+    content:"CYBER ARMY";
+    position:absolute;
+    top:0; left:0;
+    color:#00FF00;
+    font-size:80px;
+    opacity:0.6;
+    animation: noise-1 0.2s linear infinite;
 }
 
-img#barge {
-    width: 95%;
-    max-width: 720px;
-    border-radius: 14px;
-    box-shadow: 0 0 25px #00eaff55;
+@keyframes noise-1 {
+    0%,20%,40%,60%,70%,90%{opacity:0}
+    10%{opacity:0.1}
+    50%{opacity:0.5; left:-6px}
+    80%{opacity:0.3}
+    100%{opacity:0.6; left:2px}
+}
+@keyframes noise-3 {
+    0%,3%,5%,42%,44%,100%{opacity:1; transform:scaleY(1);}
+    4.3%{opacity:1; transform:scaleY(4);}
+    43%{opacity:1; transform:scaleX(10) rotate(60deg);}
 }
 
-.container {
-    display: grid;
-    gap: 14px;
-    padding: 14px;
+.glitch-img-wrapper {
+    position: relative;
+    width: 300px;
+    margin-bottom: 30px;
+}
+.glitch-img-wrapper img {
+    width: 100%;
+    display: block;
 }
 
-.card {
-    background: #021019;
-    padding: 15px;
-    border-radius: 14px;
-    box-shadow: 0 0 15px #00ffd533 inset;
-}
-
-h3 {
-    margin: 10px 0;
-}
-
-h4 {
-    margin: 8px 0 4px 0;
-    color: #7fd3ff;
-}
-
-.row {
-    display: flex;
-    gap: 8px;
-}
-
-input {
-    width: 92%;
-    padding: 11px;
-    margin: 6px;
-    border-radius: 8px;
-    border: none;
-    background: #000c14;
-    color: white;
-    text-align: center;
-    font-size: 15px;
-}
-
-button {
-    padding: 12px;
-    margin: 8px;
-    border: none;
-    border-radius: 12px;
-    background: #0a2a3a;
-    color: #9fe9ff;
-    font-weight: bold;
-    font-size: 15px;
-    box-shadow: 0 0 10px #00eaff33 inset;
-    cursor: pointer;
-}
-
-#exportBtn {
-    background: #00ff88;
-    color: black;
-}
-
-#result {
-    font-size: 18px;
-    color: #00ffd5;
-    margin-top: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-#process {
-    text-align: left;
-    white-space: pre-line;
-    font-size: 13px;
-    color: #bffcf3;
-    margin-top: 12px;
-}
-
-/* MODE TOGGLE */
-.modeToggle {
-    margin: 12px 0;
-}
-
-select {
-    padding: 8px;
-    border-radius: 8px;
-    border: none;
-    background: #001122;
-    color: #7fd3ff;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-/* ABOUT MODAL */
-#aboutBox {
-    position: fixed;
+.glitch-img-wrapper::before,
+.glitch-img-wrapper::after {
+    content: '';
+    position: absolute;
     top: 0;
-    left: 0;
+    left: -100%;
     width: 100%;
     height: 100%;
-    background: #000c;
-    display: none;
+    background: linear-gradient(
+        90deg,
+        rgba(0,255,0,0.1) 0%,
+        rgba(0,255,0,0.6) 50%,
+        rgba(0,255,0,0.1) 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+}
+.glitch-img-wrapper::before {
+    animation: glitch-flicker 1.5s infinite;
+}
+.glitch-img-wrapper::after {
+    animation: glitch-flicker 2s infinite;
+    animation-delay: 0.5s;
 }
 
-#aboutContent {
-    background: #021019;
-    margin: 15% auto;
-    padding: 20px;
-    width: 85%;
-    border-radius: 12px;
-    position: relative;
+@keyframes glitch-flicker {
+    0% {left: -100%; opacity:0;}
+    10% {left: -50%; opacity:0.5;}
+    20% {left:0%; opacity:1;}
+    30% {left:50%; opacity:0.3;}
+    40% {left:100%; opacity:0;}
+    100% {left:100%; opacity:0;}
 }
 
-#closeAbout {
-    position: absolute;
-    right: 18px;
-    top: 12px;
-    font-size: 20px;
-    color: #7feaff;
-    cursor: pointer;
+.footer {
+    font-size:14px;
+    color:#aaa;
+    text-align:center;
+    margin-top:40px;
 }
 
-/* FOOTER */
-footer {
-    padding: 12px;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-}
-
-.coder {
-    color: #7feaff;
-    font-size: 12px;
-    margin-right: 6px;
-}
-
-.copy {
-    color: #00ff7b;
-}
-
-.year {
-    color: #999;
-}
-
-.aboutMini {
-    padding: 3px 10px;
-    font-size: 11px;
-    background: transparent;
-    border: 1px solid #00eaff;
-    color: #7feaff;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.material-icons {
-    vertical-align: middle;
-}
-
-/* GRAPHICS & ANIMATIONS */
-#chartContainer {
-    width: 100%;
-    height: 150px;
-    margin-top: 8px;
-}
-
-@media (min-width: 768px) {
-    #result {
-        max-height: 400px;
-    }
+p {
+    text-align:center;
+    max-width:600px;
+    margin-top:20px;
+    line-height:1.5;
 }
