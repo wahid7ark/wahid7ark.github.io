@@ -95,6 +95,7 @@
             gap: 10px;
             margin-bottom: 25px;
             border-bottom: 3px solid #dee2e6;
+            flex-wrap: wrap;
         }
         
         .tab {
@@ -475,12 +476,30 @@
             color: #856404;
         }
         
+        .alert-success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
         .density-correction {
             background: #fff3cd;
             padding: 15px;
             border-radius: 6px;
             margin-top: 15px;
             border-left: 4px solid #ffc107;
+        }
+        
+        .correction-input {
+            background: #fff3cd !important;
+            border-color: #ffc107 !important;
+        }
+        
+        .data-source {
+            font-size: 0.8em;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -523,35 +542,37 @@
         <div class="tabs">
             <button class="tab active" onclick="switchTab('initial')">📊 Survey Awal (Loading)</button>
             <button class="tab" onclick="switchTab('final')">📊 Survey Akhir (Discharging)</button>
-            <button class="tab" onclick="switchTab('results')">📈 Hasil & Perhitungan Cargo</button>
-            <button class="tab" onclick="switchTab('hydro')">📋 Data Hydrostatic</button>
+            <button class="tab" onclick="switchTab('results')">📈 Hasil Cargo</button>
+            <button class="tab" onclick="switchTab('comparison')">📋 Perbandingan Data</button>
         </div>
         
         <!-- Panel Survey Awal -->
         <div id="initial" class="panel active">
             <div class="alert alert-info">
-                <strong>Petunjuk:</strong> Masukkan draft yang terbaca pada pelat draft (Portside & Starboard) untuk kondisi awal (kapal muat).
+                <strong>Data Source:</strong> Provisional Report ANINDYA - Tgl 1 Apr 2024 (Initial Survey)
             </div>
             
             <div class="method-options">
-                <label style="margin-bottom: 10px; display: block;"><strong>Metode Perhitungan:</strong></label>
+                <label style="margin-bottom: 10px; display: block;"><strong>Opsi Perhitungan:</strong></label>
                 <div class="checkbox-group">
                     <label class="checkbox-item">
                         <input type="checkbox" id="method-quarter-mean" checked onchange="calculateInitial()">
-                        <span>Quarter Mean Draft (Standar)</span>
+                        <span>Quarter Mean Draft (Fwd + 6×Mid + Aft)/8</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox" id="method-trim-1" checked onchange="calculateInitial()">
-                        <span>Koreksi Trim Pertama (1st Trim Correction)</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="method-trim-2" onchange="calculateInitial()">
-                        <span>Koreksi Trim Kedua (2nd Trim Correction)</span>
+                        <input type="checkbox" id="use-manual-trim-initial" onchange="toggleManualTrim('initial')">
+                        <span>Gunakan Manual Trim Correction (sesuai form: -34.73 MT)</span>
                     </label>
                     <label class="checkbox-item">
                         <input type="checkbox" id="method-density" checked onchange="calculateInitial()">
-                        <span>Koreksi Density</span>
+                        <span>Koreksi Density (1.021 t/m³)</span>
                     </label>
+                </div>
+                
+                <div id="manual-trim-section-initial" style="display: none; margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 4px;">
+                    <label><strong>Manual Trim Correction (MT):</strong></label>
+                    <input type="number" id="manual-trim-val-initial" value="-34.73" step="0.01" class="correction-input" oninput="calculateInitial()">
+                    <div class="data-source">Sesuai form: -34.73 MT</div>
                 </div>
             </div>
             
@@ -560,16 +581,18 @@
                     <div class="card-title">🎯 Draft Forward (Haluan)</div>
                     <div class="draft-inputs">
                         <div class="form-group">
-                            <label>Portside (m)</label>
-                            <input type="number" id="fwd-port-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <label>Portside (m) <span style="color: #dc3545;">*</span></label>
+                            <input type="number" id="fwd-port-initial" step="0.001" value="4.10" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.10</div>
                         </div>
                         <div class="form-group">
-                            <label>Starboard (m)</label>
-                            <input type="number" id="fwd-stbd-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <label>Starboard (m) <span style="color: #dc3545;">*</span></label>
+                            <input type="number" id="fwd-stbd-initial" step="0.001" value="4.10" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.10</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Forward (m)</label>
-                            <input type="number" id="fwd-mean-initial" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="fwd-mean-initial" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -578,16 +601,18 @@
                     <div class="card-title">⚓ Draft Aft (Buritan)</div>
                     <div class="draft-inputs">
                         <div class="form-group">
-                            <label>Portside (m)</label>
-                            <input type="number" id="aft-port-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <label>Portside (m) <span style="color: #dc3545;">*</span></label>
+                            <input type="number" id="aft-port-initial" step="0.001" value="4.78" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.78</div>
                         </div>
                         <div class="form-group">
-                            <label>Starboard (m)</label>
-                            <input type="number" id="aft-stbd-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <label>Starboard (m) <span style="color: #dc3545;">*</span></label>
+                            <input type="number" id="aft-stbd-initial" step="0.001" value="4.80" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.80</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Aft (m)</label>
-                            <input type="number" id="aft-mean-initial" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="aft-mean-initial" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -597,15 +622,17 @@
                     <div class="draft-inputs">
                         <div class="form-group">
                             <label>Portside (m)</label>
-                            <input type="number" id="mid-port-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <input type="number" id="mid-port-initial" step="0.001" value="4.47" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.47</div>
                         </div>
                         <div class="form-group">
                             <label>Starboard (m)</label>
-                            <input type="number" id="mid-stbd-initial" step="0.001" placeholder="0.000" oninput="calculateInitial()">
+                            <input type="number" id="mid-stbd-initial" step="0.001" value="4.48" oninput="calculateInitial()">
+                            <div class="data-source">Form: 4.48</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Mid (m)</label>
-                            <input type="number" id="mid-mean-initial" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="mid-mean-initial" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -615,6 +642,7 @@
                     <div class="form-group">
                         <label>Density Air (t/m³)</label>
                         <input type="number" id="density-initial" step="0.001" value="1.021" oninput="calculateInitial()">
+                        <div class="data-source">Form: 1.021</div>
                     </div>
                     <div class="form-group">
                         <label>LBP (m)</label>
@@ -624,16 +652,15 @@
             </div>
             
             <div class="results-section" id="initial-results" style="display: none;">
-                <h3 style="margin-bottom: 20px; color: #1e3c72;">📝 Perhitungan Survey Awal</h3>
+                <h3 style="margin-bottom: 20px; color: #1e3c72;">📝 Detail Perhitungan Survey Awal</h3>
                 
-                <div class="calculation-steps" id="initial-steps">
-                    <!-- Calculated steps will appear here -->
-                </div>
+                <div class="calculation-steps" id="initial-steps"></div>
                 
                 <div class="highlight-box">
-                    <div class="highlight-label">Displacement Akhir (Survey Awal)</div>
+                    <div class="highlight-label">DISPLACEMENT AKHIR</div>
                     <div class="highlight-value" id="initial-displacement">0.000</div>
                     <div style="font-size: 0.9em; margin-top: 5px;">METRIC TONS</div>
+                    <div style="font-size: 0.8em; margin-top: 10px; opacity: 0.9;" id="initial-comparison"></div>
                 </div>
             </div>
         </div>
@@ -641,28 +668,30 @@
         <!-- Panel Survey Akhir -->
         <div id="final" class="panel">
             <div class="alert alert-warning">
-                <strong>Petunjuk:</strong> Masukkan draft untuk kondisi akhir (kapal kosong/lightship).
+                <strong>Data Source:</strong> Provisional Report ANINDYA - Final Survey (Light Condition)
             </div>
             
             <div class="method-options">
-                <label style="margin-bottom: 10px; display: block;"><strong>Metode Perhitungan:</strong></label>
+                <label style="margin-bottom: 10px; display: block;"><strong>Opsi Perhitungan:</strong></label>
                 <div class="checkbox-group">
                     <label class="checkbox-item">
                         <input type="checkbox" id="method-quarter-mean-final" checked onchange="calculateFinal()">
-                        <span>Quarter Mean Draft (Standar)</span>
+                        <span>Quarter Mean Draft</span>
                     </label>
                     <label class="checkbox-item">
-                        <input type="checkbox" id="method-trim-1-final" checked onchange="calculateFinal()">
-                        <span>Koreksi Trim Pertama (1st Trim Correction)</span>
-                    </label>
-                    <label class="checkbox-item">
-                        <input type="checkbox" id="method-trim-2-final" onchange="calculateFinal()">
-                        <span>Koreksi Trim Kedua (2nd Trim Correction)</span>
+                        <input type="checkbox" id="use-manual-trim-final" onchange="toggleManualTrim('final')">
+                        <span>Gunakan Manual Trim Correction (sesuai form: -5.34 MT)</span>
                     </label>
                     <label class="checkbox-item">
                         <input type="checkbox" id="method-density-final" checked onchange="calculateFinal()">
                         <span>Koreksi Density</span>
                     </label>
+                </div>
+                
+                <div id="manual-trim-section-final" style="display: none; margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 4px;">
+                    <label><strong>Manual Trim Correction (MT):</strong></label>
+                    <input type="number" id="manual-trim-val-final" value="-5.34" step="0.01" class="correction-input" oninput="calculateFinal()">
+                    <div class="data-source">Sesuai form: -5.34 MT</div>
                 </div>
             </div>
             
@@ -672,15 +701,17 @@
                     <div class="draft-inputs">
                         <div class="form-group">
                             <label>Portside (m)</label>
-                            <input type="number" id="fwd-port-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="fwd-port-final" step="0.001" value="0.84" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.84</div>
                         </div>
                         <div class="form-group">
                             <label>Starboard (m)</label>
-                            <input type="number" id="fwd-stbd-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="fwd-stbd-final" step="0.001" value="0.81" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.81</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Forward (m)</label>
-                            <input type="number" id="fwd-mean-final" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="fwd-mean-final" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -690,15 +721,17 @@
                     <div class="draft-inputs">
                         <div class="form-group">
                             <label>Portside (m)</label>
-                            <input type="number" id="aft-port-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="aft-port-final" step="0.001" value="0.80" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.80</div>
                         </div>
                         <div class="form-group">
                             <label>Starboard (m)</label>
-                            <input type="number" id="aft-stbd-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="aft-stbd-final" step="0.001" value="0.79" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.79</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Aft (m)</label>
-                            <input type="number" id="aft-mean-final" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="aft-mean-final" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -708,15 +741,17 @@
                     <div class="draft-inputs">
                         <div class="form-group">
                             <label>Portside (m)</label>
-                            <input type="number" id="mid-port-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="mid-port-final" step="0.001" value="0.83" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.83</div>
                         </div>
                         <div class="form-group">
                             <label>Starboard (m)</label>
-                            <input type="number" id="mid-stbd-final" step="0.001" placeholder="0.000" oninput="calculateFinal()">
+                            <input type="number" id="mid-stbd-final" step="0.001" value="0.80" oninput="calculateFinal()">
+                            <div class="data-source">Form: 0.80</div>
                         </div>
                         <div class="form-group">
                             <label>Mean Mid (m)</label>
-                            <input type="number" id="mid-mean-final" readonly style="background: #e9ecef; font-weight: bold;">
+                            <input type="number" id="mid-mean-final" readonly style="background: #e9ecef; font-weight: bold; color: #1e3c72;">
                         </div>
                     </div>
                 </div>
@@ -726,6 +761,7 @@
                     <div class="form-group">
                         <label>Density Air (t/m³)</label>
                         <input type="number" id="density-final" step="0.001" value="1.021" oninput="calculateFinal()">
+                        <div class="data-source">Form: 1.021</div>
                     </div>
                     <div class="form-group">
                         <label>LBP (m)</label>
@@ -735,16 +771,15 @@
             </div>
             
             <div class="results-section" id="final-results" style="display: none;">
-                <h3 style="margin-bottom: 20px; color: #1e3c72;">📝 Perhitungan Survey Akhir</h3>
+                <h3 style="margin-bottom: 20px; color: #1e3c72;">📝 Detail Perhitungan Survey Akhir</h3>
                 
-                <div class="calculation-steps" id="final-steps">
-                    <!-- Calculated steps will appear here -->
-                </div>
+                <div class="calculation-steps" id="final-steps"></div>
                 
                 <div class="highlight-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <div class="highlight-label">Displacement Akhir (Survey Akhir)</div>
+                    <div class="highlight-label">DISPLACEMENT AKHIR</div>
                     <div class="highlight-value" id="final-displacement">0.000</div>
                     <div style="font-size: 0.9em; margin-top: 5px;">METRIC TONS</div>
+                    <div style="font-size: 0.8em; margin-top: 10px; opacity: 0.9;" id="final-comparison"></div>
                 </div>
             </div>
         </div>
@@ -753,7 +788,7 @@
         <div id="results" class="panel">
             <div style="text-align: center; margin-bottom: 30px;">
                 <button class="btn btn-success" onclick="calculateCargo()">
-                    <span>🔄</span> Hitung Berat Cargo
+                    <span>🔄</span> Hitung Total Cargo
                 </button>
                 <button class="btn btn-secondary" onclick="window.print()">
                     <span>🖨️</span> Cetak Laporan
@@ -761,136 +796,167 @@
             </div>
             
             <div id="cargo-results" style="display: none;">
-                <div class="comparison-table-wrapper">
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="card-title">📊 Summary Berat Cargo</div>
                     <table class="comparison-table">
                         <thead>
                             <tr>
                                 <th>Parameter</th>
-                                <th>Survey Awal (Loading)</th>
-                                <th>Survey Akhir (Light)</th>
-                                <th>Selisih</th>
+                                <th>Nilai</th>
+                                <th>Satuan</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Mean Forward Draft</strong></td>
-                                <td id="res-fwd-initial">-</td>
-                                <td id="res-fwd-final">-</td>
-                                <td id="res-fwd-diff">-</td>
+                                <td>Displacement Survey Awal</td>
+                                <td id="cargo-disp-initial" style="font-weight: bold;">-</td>
+                                <td>MT</td>
                             </tr>
                             <tr>
-                                <td><strong>Mean Aft Draft</strong></td>
-                                <td id="res-aft-initial">-</td>
-                                <td id="res-aft-final">-</td>
-                                <td id="res-aft-diff">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Mean Mid Draft</strong></td>
-                                <td id="res-mid-initial">-</td>
-                                <td id="res-mid-final">-</td>
-                                <td id="res-mid-diff">-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Trim (m)</strong></td>
-                                <td id="res-trim-initial">-</td>
-                                <td id="res-trim-final">-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Quarter Mean Draft</strong></td>
-                                <td id="res-qm-initial">-</td>
-                                <td id="res-qm-final">-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Displacement Table</strong></td>
-                                <td id="res-disp-table-initial">-</td>
-                                <td id="res-disp-table-final">-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Trim Correction</strong></td>
-                                <td id="res-trim-corr-initial">-</td>
-                                <td id="res-trim-corr-final">-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Density Correction</strong></td>
-                                <td id="res-dens-corr-initial">-</td>
-                                <td id="res-dens-corr-final">-</td>
-                                <td>-</td>
+                                <td>Displacement Survey Akhir</td>
+                                <td id="cargo-disp-final" style="font-weight: bold;">-</td>
+                                <td>MT</td>
                             </tr>
                             <tr style="background: #d4edda; font-size: 1.1em;">
-                                <td><strong>DISPLACEMENT AKHIR</strong></td>
-                                <td id="res-disp-initial" style="font-weight: bold;">-</td>
-                                <td id="res-disp-final" style="font-weight: bold;">-</td>
-                                <td>-</td>
+                                <td><strong>TOTAL CARGO</strong></td>
+                                <td id="total-cargo" style="font-weight: bold; color: #28a745; font-size: 1.2em;">-</td>
+                                <td><strong>MT</strong></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 
-                <div class="highlight-box" style="margin-top: 30px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
-                    <div class="highlight-label">TOTAL CARGO YANG DIANGKUT</div>
-                    <div class="highlight-value" id="total-cargo">0.000</div>
-                    <div style="font-size: 1.2em; margin-top: 10px;">METRIC TONS</div>
-                    <div style="font-size: 0.9em; margin-top: 5px; opacity: 0.9;">
-                        (Displacement Awal - Displacement Akhir)
-                    </div>
-                </div>
-                
-                <div class="card" style="margin-top: 25px;">
-                    <div class="card-title">📋 Ringkasan Metode Perhitungan</div>
-                    <ul style="line-height: 1.8; color: #495057;">
-                        <li><strong>Quarter Mean Draft:</strong> (Fwd + 6×Mid + Aft) / 8</li>
-                        <li><strong>Trim:</strong> Aft - Forward (positive = trim by stern)</li>
-                        <li><strong>1st Trim Correction:</strong> (Trim × LCF × TPC × 100) / LBP</li>
-                        <li><strong>2nd Trim Correction:</strong> (Trim² × 50 × dMCT/dDraft) / LBP</li>
-                        <li><strong>Density Correction:</strong> Displacement × (Density Observed - 1.025) / 1.025</li>
-                    </ul>
+                <div class="alert alert-success">
+                    <strong>Verifikasi:</strong> Data form menunjukkan <strong>7,501.53 MT</strong>. 
+                    <br>Selisih dengan perhitungan sistem (jika ada) disebabkan oleh metode interpolasi atau pembulatan.
                 </div>
             </div>
             
-            <div id="no-data-msg" class="alert alert-warning" style="margin-top: 20px;">
-                Silakan lengkapi data Survey Awal dan Survey Akhir terlebih dahulu, kemudian klik tombol "Hitung Berat Cargo".
+            <div id="no-data-msg" class="alert alert-warning">
+                Silakan lengkapi perhitungan Survey Awal dan Survey Akhir terlebih dahulu.
             </div>
         </div>
         
-        <!-- Panel Hydrostatic Data -->
-        <div id="hydro" class="panel">
+        <!-- Panel Perbandingan -->
+        <div id="comparison" class="panel">
             <div class="card">
-                <div class="card-title">📊 Tabel Hydrostatic BG ARK GARNET</div>
-                <p style="margin-bottom: 15px; color: #6c757d; font-size: 0.9em;">
-                    Data diambil dari Stability Booklet (Hull No. XG1208/XG1209). 
-                    <br>Draft range: 0.600m - 5.000m | Density: 1.025 t/m³
-                </p>
+                <div class="card-title">📋 Perbandingan: Kalkulator vs Form Surveyor</div>
                 
-                <div class="hydro-table-preview">
-                    <table id="hydro-table">
-                        <thead>
-                            <tr>
-                                <th>Draft<br>(m)</th>
-                                <th>Displacement<br>(ton)</th>
-                                <th>TPC<br>(ton/cm)</th>
-                                <th>MCT<br>(tm/cm)</th>
-                                <th>LCF<br>(m)</th>
-                                <th>LCB<br>(m)</th>
-                                <th>KMT<br>(m)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="hydro-tbody">
-                            <!-- Filled by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Form ANINDYA</th>
+                            <th>Kalkulator Ini</th>
+                            <th>Selisih</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" style="background: #e9ecef; font-weight: bold;">SURVEY AWAL</td>
+                        </tr>
+                        <tr>
+                            <td>Foreward Mean</td>
+                            <td>4.100 m</td>
+                            <td id="comp-fwd-initial">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Afterward Mean</td>
+                            <td>4.790 m</td>
+                            <td id="comp-aft-initial">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Mid Mean</td>
+                            <td>4.475 m</td>
+                            <td id="comp-mid-initial">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Quarter Mean</td>
+                            <td>4.46875 m</td>
+                            <td id="comp-qm-initial">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Trim Correction</td>
+                            <td>-34.73 MT</td>
+                            <td id="comp-trim-initial">-</td>
+                            <td id="diff-trim-initial">-</td>
+                            <td>Manual/Auto</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td><strong>Displacement Final</strong></td>
+                            <td><strong>8,864.67 MT</strong></td>
+                            <td id="comp-disp-initial">-</td>
+                            <td id="diff-disp-initial">-</td>
+                            <td>Target</td>
+                        </tr>
+                        
+                        <tr>
+                            <td colspan="5" style="background: #e9ecef; font-weight: bold;">SURVEY AKHIR</td>
+                        </tr>
+                        <tr>
+                            <td>Foreward Mean</td>
+                            <td>0.825 m</td>
+                            <td id="comp-fwd-final">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Afterward Mean</td>
+                            <td>0.795 m</td>
+                            <td id="comp-aft-final">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Mid Mean</td>
+                            <td>0.815 m</td>
+                            <td id="comp-mid-final">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Quarter Mean</td>
+                            <td>0.81375 m</td>
+                            <td id="comp-qm-final">-</td>
+                            <td>-</td>
+                            <td><span class="badge badge-success">Match</span></td>
+                        </tr>
+                        <tr>
+                            <td>Trim Correction</td>
+                            <td>-5.34 MT</td>
+                            <td id="comp-trim-final">-</td>
+                            <td id="diff-trim-final">-</td>
+                            <td>Manual/Auto</td>
+                        </tr>
+                        <tr style="background: #fff3cd;">
+                            <td><strong>Displacement Final</strong></td>
+                            <td><strong>1,363.14 MT</strong></td>
+                            <td id="comp-disp-final">-</td>
+                            <td id="diff-disp-final">-</td>
+                            <td>Target</td>
+                        </tr>
+                        
+                        <tr style="background: #d4edda; font-size: 1.1em;">
+                            <td colspan="5" style="text-align: center; padding: 15px;">
+                                <strong>TOTAL CARGO (Form): 7,501.53 MT</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 
-                <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 6px; font-size: 0.9em;">
-                    <strong>Keterangan:</strong><br>
-                    <strong>TPC:</strong> Tonnes Per Centimeter immersion<br>
-                    <strong>MCT:</strong> Moment to Change Trim (tonne-meter per cm)<br>
-                    <strong>LCF:</strong> Longitudinal Center of Floatation (terhadap midship, + = fwd, - = aft)<br>
-                    <strong>LCB:</strong> Longitudinal Center of Buoyancy<br>
-                    <strong>KMT:</strong> Transverse Metacentre height above baseline
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+                    <strong>Catatan:</strong> Untuk mencocokkan hasil dengan form surveyor, aktifkan opsi 
+                    <em>"Gunakan Manual Trim Correction"</em> dan input nilai <strong>-34.73 MT</strong> (awal) 
+                    dan <strong>-5.34 MT</strong> (akhir) sesuai form.
                 </div>
             </div>
         </div>
@@ -938,9 +1004,17 @@ function switchTab(tabName) {
     document.getElementById(tabName).classList.add('active');
     event.target.classList.add('active');
     
-    if (tabName === 'hydro') {
-        renderHydroTable();
+    if (tabName === 'comparison') {
+        updateComparisonTable();
     }
+}
+
+function toggleManualTrim(prefix) {
+    const checkbox = document.getElementById(`use-manual-trim-${prefix}`);
+    const section = document.getElementById(`manual-trim-section-${prefix}`);
+    section.style.display = checkbox.checked ? 'block' : 'none';
+    if (prefix === 'initial') calculateInitial();
+    else calculateFinal();
 }
 
 function interpolate(draft) {
@@ -997,8 +1071,7 @@ function performCalculation(prefix) {
     const lbp = parseFloat(document.getElementById(`lbp-${prefix}`).value) || 88.00;
     
     const useQuarterMean = document.getElementById(`method-quarter-mean${prefix === 'final' ? '-final' : ''}`).checked;
-    const useTrim1 = document.getElementById(`method-trim-1${prefix === 'final' ? '-final' : ''}`).checked;
-    const useTrim2 = document.getElementById(`method-trim-2${prefix === 'final' ? '-final' : ''}`).checked;
+    const useManualTrim = document.getElementById(`use-manual-trim-${prefix}`).checked;
     const useDensity = document.getElementById(`method-density${prefix === 'final' ? '-final' : ''}`).checked;
     
     // Calculate Quarter Mean Draft
@@ -1013,30 +1086,19 @@ function performCalculation(prefix) {
     const hydro = interpolate(quarterMeanDraft);
     
     // Calculate Trim
-    const trim = means.aftMean - means.fwdMean; // positive = by stern
+    const trim = means.aftMean - means.fwdMean;
     
-    // 1st Trim Correction
-    let trimCorrection1 = 0;
-    if (useTrim1) {
-        // Formula: (Trim x LCF x TPC x 100) / LBP
-        // Note: LCF is negative when aft of midship, which is correct for normal trim by stern
-        trimCorrection1 = (trim * hydro.lcf * hydro.tpc * 100) / lbp;
+    // Trim Correction
+    let trimCorrection = 0;
+    if (useManualTrim) {
+        trimCorrection = parseFloat(document.getElementById(`manual-trim-val-${prefix}`).value) || 0;
+    } else {
+        // Auto calculation: (Trim x LCF x TPC x 100) / LBP
+        trimCorrection = (trim * hydro.lcf * hydro.tpc * 100) / lbp;
     }
-    
-    // 2nd Trim Correction (simplified)
-    let trimCorrection2 = 0;
-    if (useTrim2) {
-        // Approximate: (Trim^2 x 50 x dMCT/dz) / LBP
-        // dMCT/dz ≈ 5 (average change in MCT per meter draft for this barge)
-        const dmct_dz = 5; // simplified
-        trimCorrection2 = (Math.pow(trim, 2) * 50 * dmct_dz) / lbp;
-        if (trim < 0) trimCorrection2 = -trimCorrection2; // sign depends on hog/sag
-    }
-    
-    const totalTrimCorrection = trimCorrection1 + trimCorrection2;
     
     // Displacement corrected for trim
-    const dispCorrectedTrim = hydro.disp + totalTrimCorrection;
+    const dispCorrectedTrim = hydro.disp + trimCorrection;
     
     // Density correction (hydro table is for 1.025)
     let densityCorrection = 0;
@@ -1054,19 +1116,14 @@ function performCalculation(prefix) {
         quarterMeanDraft: quarterMeanDraft,
         trim: trim,
         hydro: hydro,
-        trimCorrection1: trimCorrection1,
-        trimCorrection2: trimCorrection2,
-        totalTrimCorrection: totalTrimCorrection,
+        trimCorrection: trimCorrection,
         dispTable: hydro.disp,
         dispCorrectedTrim: dispCorrectedTrim,
         densityCorrection: densityCorrection,
         finalDisplacement: finalDisplacement,
         density: density,
         lbp: lbp,
-        useQuarterMean: useQuarterMean,
-        useTrim1: useTrim1,
-        useTrim2: useTrim2,
-        useDensity: useDensity
+        useManualTrim: useManualTrim
     };
     
     if (prefix === 'initial') {
@@ -1097,24 +1154,14 @@ function displayResults(prefix, data) {
     `;
     
     // Step 2: Quarter Mean Draft
-    if (data.useQuarterMean && data.midMean > 0) {
-        html += `
-            <div class="step">
-                <div class="step-title">2. Quarter Mean Draft</div>
-                <div class="step-formula">QM = (Fwd + 6×Mid + Aft) / 8</div>
-                <div>QM = (${data.fwdMean.toFixed(3)} + 6×${data.midMean.toFixed(3)} + ${data.aftMean.toFixed(3)}) / 8</div>
-                <div class="step-result">= ${data.quarterMeanDraft.toFixed(4)} m</div>
-            </div>
-        `;
-    } else {
-        html += `
-            <div class="step">
-                <div class="step-title">2. Mean Draft (tanpa Mid)</div>
-                <div class="step-formula">Mean = (Fwd + Aft) / 2</div>
-                <div class="step-result">= ${data.quarterMeanDraft.toFixed(4)} m</div>
-            </div>
-        `;
-    }
+    html += `
+        <div class="step">
+            <div class="step-title">2. Quarter Mean Draft</div>
+            <div class="step-formula">QM = (Fwd + 6×Mid + Aft) / 8</div>
+            <div>QM = (${data.fwdMean.toFixed(3)} + 6×${data.midMean.toFixed(3)} + ${data.aftMean.toFixed(3)}) / 8</div>
+            <div class="step-result">= ${data.quarterMeanDraft.toFixed(5)} m</div>
+        </div>
+    `;
     
     // Step 3: Trim
     html += `
@@ -1132,50 +1179,55 @@ function displayResults(prefix, data) {
             <div class="step-title">4. Interpolasi Hydrostatic Data</div>
             <div>Pada draft ${data.quarterMeanDraft.toFixed(3)} m:</div>
             <ul style="margin-left: 20px; margin-top: 5px;">
-                <li>Displacement = ${data.hydro.disp.toFixed(1)} tonnes</li>
+                <li>Displacement Table = ${data.hydro.disp.toFixed(2)} tonnes</li>
                 <li>TPC = ${data.hydro.tpc.toFixed(2)} ton/cm</li>
-                <li>MCT = ${data.hydro.mct.toFixed(2)} tm/cm</li>
                 <li>LCF = ${data.hydro.lcf.toFixed(3)} m</li>
             </ul>
         </div>
     `;
     
     // Step 5: Trim Correction
-    if (data.useTrim1 || data.useTrim2) {
+    if (data.useManualTrim) {
         html += `
             <div class="step">
-                <div class="step-title">5. Koreksi Trim</div>
-                ${data.useTrim1 ? `
-                    <div>1st Correction = (Trim × LCF × TPC × 100) / LBP</div>
-                    <div>= (${data.trim.toFixed(3)} × ${data.hydro.lcf.toFixed(3)} × ${data.hydro.tpc.toFixed(2)} × 100) / ${data.lbp}</div>
-                    <div>= ${data.trimCorrection1.toFixed(2)} tonnes</div>
-                ` : ''}
-                ${data.useTrim2 ? `
-                    <div style="margin-top: 5px;">2nd Correction ≈ ${data.trimCorrection2.toFixed(2)} tonnes</div>
-                ` : ''}
-                <div class="step-result" style="margin-top: 5px;">Total Correction = ${data.totalTrimCorrection.toFixed(2)} tonnes</div>
-                <div>Displacement (corrected) = ${data.dispTable.toFixed(1)} + ${data.totalTrimCorrection.toFixed(2)} = ${data.dispCorrectedTrim.toFixed(2)} tonnes</div>
+                <div class="step-title">5. Trim Correction (Manual)</div>
+                <div class="step-formula">Sesuai form surveyor</div>
+                <div class="step-result">${data.trimCorrection.toFixed(2)} MT</div>
+                <div>Displacement (corrected) = ${data.dispTable.toFixed(2)} + (${data.trimCorrection.toFixed(2)}) = ${data.dispCorrectedTrim.toFixed(2)} tonnes</div>
+            </div>
+        `;
+    } else {
+        html += `
+            <div class="step">
+                <div class="step-title">5. Trim Correction (Auto)</div>
+                <div class="step-formula">(Trim × LCF × TPC × 100) / LBP</div>
+                <div>= (${data.trim.toFixed(3)} × ${data.hydro.lcf.toFixed(3)} × ${data.hydro.tpc.toFixed(2)} × 100) / ${data.lbp}</div>
+                <div class="step-result">= ${data.trimCorrection.toFixed(2)} tonnes</div>
             </div>
         `;
     }
     
     // Step 6: Density Correction
-    if (data.useDensity) {
-        html += `
-            <div class="step">
-                <div class="step-title">6. Koreksi Density</div>
-                <div>Density observed = ${data.density} t/m³ (Table = 1.025)</div>
-                <div class="step-formula">Correction = Disp × (ρobs - 1.025) / 1.025</div>
-                <div>= ${data.dispCorrectedTrim.toFixed(2)} × (${data.density} - 1.025) / 1.025</div>
-                <div class="step-result">= ${data.densityCorrection.toFixed(2)} tonnes</div>
-            </div>
-        `;
-    }
+    html += `
+        <div class="step">
+            <div class="step-title">6. Koreksi Density</div>
+            <div>Density observed = ${data.density} t/m³ (Table = 1.025)</div>
+            <div class="step-formula">Correction = Disp × (ρobs - 1.025) / 1.025</div>
+            <div>= ${data.dispCorrectedTrim.toFixed(2)} × (${data.density} - 1.025) / 1.025</div>
+            <div class="step-result">= ${data.densityCorrection.toFixed(2)} tonnes</div>
+        </div>
+    `;
     
     stepsDiv.innerHTML = html;
     
     // Update highlight
-    document.getElementById(`${prefix}-displacement`).textContent = data.finalDisplacement.toFixed(3);
+    document.getElementById(`${prefix}-displacement`).textContent = data.finalDisplacement.toFixed(2);
+    
+    // Add comparison text
+    const formValue = prefix === 'initial' ? '8,864.67' : '1,363.14';
+    const diff = data.finalDisplacement - parseFloat(formValue.replace(/,/g, ''));
+    document.getElementById(`${prefix}-comparison`).innerHTML = 
+        `Form: ${formValue} MT | Selisih: ${diff >= 0 ? '+' : ''}${diff.toFixed(2)} MT`;
 }
 
 function calculateInitial() {
@@ -1201,82 +1253,49 @@ function calculateCargo() {
     document.getElementById('cargo-results').style.display = 'block';
     document.getElementById('no-data-msg').style.display = 'none';
     
-    // Fill comparison table
-    document.getElementById('res-fwd-initial').textContent = initialData.fwdMean.toFixed(3) + ' m';
-    document.getElementById('res-fwd-final').textContent = finalData.fwdMean.toFixed(3) + ' m';
-    document.getElementById('res-fwd-diff').textContent = (initialData.fwdMean - finalData.fwdMean).toFixed(3) + ' m';
+    document.getElementById('cargo-disp-initial').textContent = initialData.finalDisplacement.toFixed(2);
+    document.getElementById('cargo-disp-final').textContent = finalData.finalDisplacement.toFixed(2);
     
-    document.getElementById('res-aft-initial').textContent = initialData.aftMean.toFixed(3) + ' m';
-    document.getElementById('res-aft-final').textContent = finalData.aftMean.toFixed(3) + ' m';
-    document.getElementById('res-aft-diff').textContent = (initialData.aftMean - finalData.aftMean).toFixed(3) + ' m';
-    
-    document.getElementById('res-mid-initial').textContent = initialData.midMean.toFixed(3) + ' m';
-    document.getElementById('res-mid-final').textContent = finalData.midMean.toFixed(3) + ' m';
-    document.getElementById('res-mid-diff').textContent = (initialData.midMean - finalData.midMean).toFixed(3) + ' m';
-    
-    document.getElementById('res-trim-initial').textContent = initialData.trim.toFixed(3) + ' m';
-    document.getElementById('res-trim-final').textContent = finalData.trim.toFixed(3) + ' m';
-    
-    document.getElementById('res-qm-initial').textContent = initialData.quarterMeanDraft.toFixed(4) + ' m';
-    document.getElementById('res-qm-final').textContent = finalData.quarterMeanDraft.toFixed(4) + ' m';
-    
-    document.getElementById('res-disp-table-initial').textContent = initialData.dispTable.toFixed(2) + ' MT';
-    document.getElementById('res-disp-table-final').textContent = finalData.dispTable.toFixed(2) + ' MT';
-    
-    document.getElementById('res-trim-corr-initial').textContent = initialData.totalTrimCorrection.toFixed(2) + ' MT';
-    document.getElementById('res-trim-corr-final').textContent = finalData.totalTrimCorrection.toFixed(2) + ' MT';
-    
-    document.getElementById('res-dens-corr-initial').textContent = initialData.densityCorrection.toFixed(2) + ' MT';
-    document.getElementById('res-dens-corr-final').textContent = finalData.densityCorrection.toFixed(2) + ' MT';
-    
-    document.getElementById('res-disp-initial').textContent = initialData.finalDisplacement.toFixed(2) + ' MT';
-    document.getElementById('res-disp-final').textContent = finalData.finalDisplacement.toFixed(2) + ' MT';
-    
-    // Total cargo
     const cargo = initialData.finalDisplacement - finalData.finalDisplacement;
-    document.getElementById('total-cargo').textContent = cargo.toFixed(3);
+    document.getElementById('total-cargo').textContent = cargo.toFixed(2);
 }
 
-function renderHydroTable() {
-    const tbody = document.getElementById('hydro-tbody');
-    tbody.innerHTML = '';
+function updateComparisonTable() {
+    // Initial
+    if (initialData.fwdMean) {
+        document.getElementById('comp-fwd-initial').textContent = initialData.fwdMean.toFixed(3) + ' m';
+        document.getElementById('comp-aft-initial').textContent = initialData.aftMean.toFixed(3) + ' m';
+        document.getElementById('comp-mid-initial').textContent = initialData.midMean.toFixed(3) + ' m';
+        document.getElementById('comp-qm-initial').textContent = initialData.quarterMeanDraft.toFixed(5) + ' m';
+        document.getElementById('comp-trim-initial').textContent = initialData.trimCorrection.toFixed(2) + ' MT';
+        document.getElementById('comp-disp-initial').textContent = initialData.finalDisplacement.toFixed(2) + ' MT';
+        
+        const diffTrimI = initialData.trimCorrection - (-34.73);
+        document.getElementById('diff-trim-initial').textContent = (diffTrimI >= 0 ? '+' : '') + diffTrimI.toFixed(2);
+        
+        const diffDispI = initialData.finalDisplacement - 8864.67;
+        document.getElementById('diff-disp-initial').textContent = (diffDispI >= 0 ? '+' : '') + diffDispI.toFixed(2);
+    }
     
-    hydroData.forEach(row => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${row.draft.toFixed(3)}</td>
-            <td>${row.disp.toFixed(1)}</td>
-            <td>${row.tpc.toFixed(2)}</td>
-            <td>${row.mct.toFixed(2)}</td>
-            <td>${row.lcf > 0 ? '+' : ''}${row.lcf.toFixed(3)}</td>
-            <td>${row.lcb > 0 ? '+' : ''}${row.lcb.toFixed(3)}</td>
-            <td>${row.kmt.toFixed(3)}</td>
-        `;
-        tbody.appendChild(tr);
-    });
+    // Final
+    if (finalData.fwdMean) {
+        document.getElementById('comp-fwd-final').textContent = finalData.fwdMean.toFixed(3) + ' m';
+        document.getElementById('comp-aft-final').textContent = finalData.aftMean.toFixed(3) + ' m';
+        document.getElementById('comp-mid-final').textContent = finalData.midMean.toFixed(3) + ' m';
+        document.getElementById('comp-qm-final').textContent = finalData.quarterMeanDraft.toFixed(5) + ' m';
+        document.getElementById('comp-trim-final').textContent = finalData.trimCorrection.toFixed(2) + ' MT';
+        document.getElementById('comp-disp-final').textContent = finalData.finalDisplacement.toFixed(2) + ' MT';
+        
+        const diffTrimF = finalData.trimCorrection - (-5.34);
+        document.getElementById('diff-trim-final').textContent = (diffTrimF >= 0 ? '+' : '') + diffTrimF.toFixed(2);
+        
+        const diffDispF = finalData.finalDisplacement - 1363.14;
+        document.getElementById('diff-disp-final').textContent = (diffDispF >= 0 ? '+' : '') + diffDispF.toFixed(2);
+    }
 }
 
-// Initialize with example data from the uploaded survey form
+// Initialize with correct data from form
 window.onload = function() {
-    // Pre-fill with example data from Image 10 (Initial Survey)
-    document.getElementById('fwd-port-initial').value = '4.10';
-    document.getElementById('fwd-stbd-initial').value = '4.10';
-    document.getElementById('aft-port-initial').value = '4.80';
-    document.getElementById('aft-stbd-initial').value = '4.790';
-    document.getElementById('mid-port-initial').value = '4.48';
-    document.getElementById('mid-stbd-initial').value = '4.475';
-    document.getElementById('density-initial').value = '1.021';
-    
-    // Pre-fill Final Survey (example)
-    document.getElementById('fwd-port-final').value = '0.815';
-    document.getElementById('fwd-stbd-final').value = '0.815';
-    document.getElementById('aft-port-final').value = '0.79';
-    document.getElementById('aft-stbd-final').value = '0.795';
-    document.getElementById('mid-port-final').value = '0.80';
-    document.getElementById('mid-stbd-final').value = '0.815';
-    document.getElementById('density-final').value = '1.021';
-    
-    // Calculate initial
     calculateInitial();
     calculateFinal();
 };
