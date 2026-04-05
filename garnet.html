@@ -1458,34 +1458,28 @@ window.onload = function() {
     calculateFinal();
 };
 </script>
-    <script>
-(function(){
 
-  const backup = "PGRpdiBjbGFzcz0iZm9vdGVyIj48cD4mY29weTsgMjAyNiA8c3Ryb25nPkJHIEFSSyBHQVJORVQ8L3N0cm9uZz4gfCBIdWxsIE5vLiBYRzEyMDgvWEcxMjA5IHwgRGV2ZWxvcGVkIGJ5IE1yLiBXYWhpZDwvcD48L2Rpdj4=";
+<script>
+(function () {
+    const backup = "PGRpdiBjbGFzcz0iZm9vdGVyIj48cD4mY29weTsgMjAyNiA8c3Ryb25nPkJHIEFSSyBHQVJORVQ8L3N0cm9uZz4gfCBIdWxsIE5vLiBYRzEyMDgvWEcxMjA5IHwgRGV2ZWxvcGVkIGJ5IE1yLiBXYWhpZDwvcD48L2Rpdj4=";
 
-  function loadFooter(){
-    const el = document.getElementById("secure-footer");
-    if(!el) return;
+    function loadFooter() {
+        const el = document.getElementById("secure-footer");
+        if (!el) return;
 
-    // 🔁 langsung tampilkan backup dulu (ANTI HILANG)
-    el.innerHTML = atob(backup);
+        el.innerHTML = atob(backup);
 
-    // 🌐 coba ambil dari GitHub
-    fetch("https://username.github.io/repo/footer.html") // ganti nanti
-      .then(res => res.text())
-      .then(data => {
-        if(data && data.trim() !== ""){
-          el.innerHTML = data;
-        }
-      })
-      .catch(() => {
-        // biarkan backup tetap tampil
-      });
-  }
+        fetch("https://username.github.io/repo/footer.html")
+            .then(res => res.text())
+            .then(data => {
+                if (data && data.trim() !== "") {
+                    el.innerHTML = data;
+                }
+            })
+            .catch(() => {});
+    }
 
-  // langsung jalan (tidak tunggu event)
-  loadFooter();
-
+    loadFooter();
 })();
 </script>
 
