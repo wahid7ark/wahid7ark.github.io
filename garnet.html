@@ -1461,39 +1461,30 @@ window.onload = function() {
     <script>
 (function(){
 
-  const backup = "const backup = "PGRpdiBjbGFzcz0iZm9vdGVyIj4KICA8cD4mY29weTsgMjAyNiA8c3Ryb25nPkJHIEFSSyBHQVJORVQ8L3N0cm9uZz4gfCBIdWxsIE5vLiBYRzEyMDgvWEcxMjA5IHwgRGV2ZWxvcGVkIGJ5IE1yLiBXYWhpZDwvcD4KPC9kaXY+";
+  const backup = "PGRpdiBjbGFzcz0iZm9vdGVyIj48cD4mY29weTsgMjAyNiA8c3Ryb25nPkJHIEFSSyBHQVJORVQ8L3N0cm9uZz4gfCBIdWxsIE5vLiBYRzEyMDgvWEcxMjA5IHwgRGV2ZWxvcGVkIGJ5IE1yLiBXYWhpZDwvcD48L2Rpdj4=";
 
-  function decode(str){
-    try {
-      return atob(str);
-    } catch {
-      return "";
-    }
-  }
-
-  function renderFooter(content){
+  function loadFooter(){
     const el = document.getElementById("secure-footer");
     if(!el) return;
 
-    el.innerHTML = content;
+    // 🔁 langsung tampilkan backup dulu (ANTI HILANG)
+    el.innerHTML = atob(backup);
 
-    // 🔐 proteksi ringan
-    el.style.userSelect = "none";
-  }
-
-  function loadFooter(){
-    fetch("https://username.github.io/repo/footer.html") // ganti URL kamu
+    // 🌐 coba ambil dari GitHub
+    fetch("https://username.github.io/repo/footer.html") // ganti nanti
       .then(res => res.text())
-      .then(data => renderFooter(data))
-      .catch(() => renderFooter(decode(backup)));
+      .then(data => {
+        if(data && data.trim() !== ""){
+          el.innerHTML = data;
+        }
+      })
+      .catch(() => {
+        // biarkan backup tetap tampil
+      });
   }
 
-  // pastikan DOM sudah siap
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", loadFooter);
-  } else {
-    loadFooter();
-  }
+  // langsung jalan (tidak tunggu event)
+  loadFooter();
 
 })();
 </script>
