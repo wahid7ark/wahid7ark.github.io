@@ -949,9 +949,7 @@
         </div>
     </div>
     
-    <div class="footer">
-        <p>© 2026 <strong>BG ARK GARNET</strong> | Hull No. XG1208/XG1209 | Developed by Mr. Wahid</p>
-    </div>
+    <div id="secure-footer"></div>
 </div>
 
 <!-- Printable Report Section -->
@@ -1459,6 +1457,45 @@ window.onload = function() {
     calculateInitial();
     calculateFinal();
 };
+</script>
+    <script>
+(function(){
+
+  const backup = "PGRpdiBjbGFzcz0iZm9vdGVyIj4KICAgICAgICA8cD7CqSAyMDI2IDxzdHJvbmc+QkcgQVJLIEdBUk5FVDwvc3Ryb25nPiB8IEh1bGwgTm8uIFhHMTIwOC9YRzEyMDkgfCBEZXZlbG9wZWQgYnkgTXIuIFdhaGlkPC9wPgogICAgPC9kaXY+";
+
+  function decode(str){
+    try {
+      return atob(str);
+    } catch {
+      return "";
+    }
+  }
+
+  function renderFooter(content){
+    const el = document.getElementById("secure-footer");
+    if(!el) return;
+
+    el.innerHTML = content;
+
+    // 🔐 proteksi ringan
+    el.style.userSelect = "none";
+  }
+
+  function loadFooter(){
+    fetch("https://username.github.io/repo/footer.html") // ganti URL kamu
+      .then(res => res.text())
+      .then(data => renderFooter(data))
+      .catch(() => renderFooter(decode(backup)));
+  }
+
+  // pastikan DOM sudah siap
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadFooter);
+  } else {
+    loadFooter();
+  }
+
+})();
 </script>
 
 </body>
