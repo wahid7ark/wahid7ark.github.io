@@ -1469,7 +1469,7 @@ window.onload = function() {
 
         el.innerHTML = atob(backup);
 
-        fetch("https://username.github.io/repo/footer.html")
+        fetch("https://raw.githubusercontent.com/wahid7ark/wahid7ark.github.io/refs/heads/main/footer.html")
             .then(res => res.text())
             .then(data => {
                 if (data && data.trim() !== "") {
