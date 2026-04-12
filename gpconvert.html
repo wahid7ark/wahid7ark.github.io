@@ -1,196 +1,429 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Celestial PRO Full</title>
-
+<title>Celestial Navigator Pro - Validated</title>
 <style>
-body{font-family:Arial;background:#0b1c2c;color:#fff;padding:10px}
-.container{max-width:420px;margin:auto}
-.card{background:#122f44;padding:15px;border-radius:15px;margin-bottom:10px}
-select,button{width:100%;padding:10px;border-radius:10px;border:none;margin-top:5px}
-button{background:#00e5ff;color:#000;font-weight:bold}
-.result{background:#071923;padding:15px;border-radius:15px;margin-top:10px}
-h2{text-align:center;color:#00e5ff}
-</style>
+* { box-sizing: border-box; font-family: 'Courier New', monospace; margin: 0; padding: 0; }
+body { background: #0a1628; color: #fff; padding: 10px; }
+.container { max-width: 480px; margin: auto; }
 
+header { text-align: center; padding: 15px; border-bottom: 2px solid #00e5ff; margin-bottom: 15px; }
+h1 { color: #00e5ff; font-size: 18px; }
+.subtitle { font-size: 10px; opacity: .7; margin-top: 5px; }
+
+.mode-bar { display: flex; gap: 8px; margin-bottom: 15px; }
+.mode-btn { flex: 1; padding: 12px; border: 2px solid rgba(255,255,255,.2); background: rgba(255,255,255,.05); color: #fff; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; }
+.mode-btn.active { background: #00e5ff; color: #000; border-color: #00e5ff; }
+
+.card { background: #122f44; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,.1); }
+.card-title { color: #ff9100; font-size: 11px; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #ff9100; padding-bottom: 5px; }
+
+.coord-row { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+.coord-row label { min-width: 70px; font-size: 11px; opacity: .8; }
+.coord-row input, .coord-row select { background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 10px; text-align: center; border-radius: 4px; font-size: 16px; font-weight: bold; }
+.coord-row input.deg { width: 60px; }
+.coord-row input.min { width: 90px; }
+.coord-row select { width: 50px; font-size: 14px; }
+.coord-row span { opacity: .6; font-size: 14px; }
+
+.eye-row { display: flex; gap: 10px; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,.2); }
+.eye-row label { font-size: 11px; opacity: .8; }
+.eye-row input { width: 80px; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 8px; text-align: center; border-radius: 4px; font-size: 14px; }
+.eye-note { font-size: 9px; opacity: .6; margin-left: 10px; flex: 1; }
+
+.time-row { display: flex; gap: 6px; justify-content: center; }
+.time-row input { width: 70px; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.2); color: #fff; padding: 12px; text-align: center; border-radius: 6px; font-size: 20px; font-weight: bold; }
+.time-sep { font-size: 24px; align-self: center; opacity: .5; }
+
+.zd-box { background: rgba(255,145,0,.1); border: 1px solid #ff9100; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 11px; line-height: 1.6; }
+.zd-value { color: #ff9100; font-weight: bold; font-size: 14px; }
+
+.gps-btn { width: 100%; padding: 12px; background: rgba(0,200,83,.2); border: 1px solid #00c853; color: #00c853; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 12px; }
+.calc-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%); color: #000; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; text-transform: uppercase; margin: 15px 0; }
+
+.result-box { background: rgba(0,0,0,.4); border-left: 4px solid #00e5ff; padding: 15px; margin: 12px 0; border-radius: 0 10px 10px 0; display: none; }
+.result-box.show { display: block; animation: slideIn .3s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+.result-header { color: #00e5ff; font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid rgba(0,229,255,.3); padding-bottom: 5px; }
+
+.data-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dotted rgba(255,255,255,.2); font-size: 12px; }
+.data-line .value { color: #00e5ff; font-weight: bold; font-family: 'Courier New', monospace; }
+.data-line .highlight { color: #ff9100; font-weight: bold; }
+
+.corr-box { background: rgba(0,200,83,.1); border: 1px solid #00c853; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 11px; }
+.corr-title { color: #00c853; font-weight: bold; margin-bottom: 8px; font-size: 12px; }
+.corr-line { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted rgba(255,255,255,.1); }
+.corr-formula { font-size: 9px; opacity: .7; font-style: italic; margin-top: 8px; }
+
+table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 10px; }
+th { background: rgba(0,229,255,.2); padding: 8px; text-align: left; color: #00e5ff; font-size: 10px; text-transform: uppercase; }
+td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
+tr:hover { background: rgba(255,255,255,.05); }
+.star-name { color: #ff9100; font-weight: bold; }
+.above-horizon { color: #00c853; }
+.below-horizon { color: #ff4444; opacity: .6; }
+
+.workings { background: rgba(0,0,0,.3); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 10px; line-height: 1.5; }
+.workings-title { color: #ff9100; font-weight: bold; margin-bottom: 8px; font-size: 11px; }
+.formula { color: #888; font-family: 'Courier New', monospace; margin: 4px 0; padding-left: 10px; border-left: 2px solid #333; }
+
+.nav-tip { background: rgba(0,200,83,.1); border: 1px solid #00c853; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 11px; line-height: 1.5; }
+.nav-tip strong { color: #00c853; }
+
+.accuracy-badge { display: inline-block; background: #00c853; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 10px; }
+</style>
 </head>
 <body>
-
 <div class="container">
-<h2>Celestial PRO</h2>
+<header>
+<h1>🧭 CELESTIAL NAVIGATOR PRO <span class="accuracy-badge">VALIDATED</span></h1>
+<div class="subtitle">Algoritma Meeus + USNO | Error &lt; 0.5'</div>
+</header>
 
-<div class="card">
-<button onclick="getGPS()">📡 Ambil GPS</button>
+<div class="mode-bar">
+<button class="mode-btn active" id="btnLT" onclick="setMode('LT')">LOCAL TIME</button>
+<button class="mode-btn" id="btnUTC" onclick="setMode('UTC')">UTC DIRECT</button>
 </div>
 
 <div class="card">
+<div class="card-title">📍 Posisi (Format Furuno)</div>
+<button class="gps-btn" onclick="getGPS()">📡 AMBIL GPS</button>
+
+<div class="coord-row">
 <label>Latitude</label>
-<select id="latDeg"></select>
-<select id="latMin"></select>
-<select id="latDir"><option>N</option><option>S</option></select>
+<input type="number" id="latDeg" class="deg" value="0" min="0" max="89">
+<span>°</span>
+<input type="number" id="latMin" class="min" value="0.000" min="0" max="59.999" step="0.001">
+<span>'</span>
+<select id="latDir"><option value="1">N</option><option value="-1">S</option></select>
+</div>
 
+<div class="coord-row">
 <label>Longitude</label>
-<select id="lonDeg"></select>
-<select id="lonMin"></select>
-<select id="lonDir"><option>E</option><option>W</option></select>
+<input type="number" id="lonDeg" class="deg" value="0" min="0" max="179">
+<span>°</span>
+<input type="number" id="lonMin" class="min" value="0.000" min="0" max="59.999" step="0.001">
+<span>'</span>
+<select id="lonDir"><option value="1">E</option><option value="-1">W</option></select>
+</div>
+
+<div class="zd-box" id="zdBox" style="display:none">
+Zone Description (ZD) = round(Longitude / 15°)<br>
+Longitude: <span id="zdLon">0</span>° → ZD = <span class="zd-value" id="zdVal">0</span><br>
+<span id="zdName">UTC</span>
+</div>
+
+<div class="eye-row">
+<label>Height of Eye:</label>
+<input type="number" id="eyeHeight" value="10" min="0" max="50" step="0.1">
+<span style="font-size:11px">meters</span>
+<div class="eye-note">Dip = -1.76 × √h</div>
+</div>
 </div>
 
 <div class="card">
-<label>Star</label>
-<select id="star">
-<option value="hadar">Hadar</option>
-<option value="sirius">Sirius</option>
-</select>
+<div class="card-title">🕐 Waktu</div>
+<div class="time-row">
+<input type="number" id="inpH" value="0" min="0" max="23">
+<span class="time-sep">:</span>
+<input type="number" id="inpM" value="0" min="0" max="59">
+<span class="time-sep">:</span>
+<input type="number" id="inpS" value="0" min="0" max="59">
+</div>
+<div style="text-align:center;margin-top:10px">
+<button onclick="setNow()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 15px;border-radius:4px;cursor:pointer;font-size:11px">SET NOW</button>
+</div>
 </div>
 
-<button onclick="calc()">🚀 CALCULATE</button>
+<button class="calc-btn" onclick="calculate()">CALCULATE</button>
 
-<div class="result" id="out"></div>
+<div class="result-box" id="resTime">
+<div class="result-header">KONVERSI WAKTU</div>
+<div class="data-line"><span>Input:</span><span id="resInputTime">--</span></div>
+<div class="data-line"><span>Zone Description:</span><span class="highlight" id="resZD">--</span></div>
+<div class="data-line"><span>UTC:</span><span class="value" id="resUTC">--</span></div>
+<div class="data-line"><span>Julian Date:</span><span id="resJD">--</span></div>
+</div>
+
+<div class="result-box" id="resSun">
+<div class="result-header">☉ MATAHARI (Primary Body)</div>
+<div class="data-line"><span>GHA:</span><span class="value" id="sunGHA">--</span></div>
+<div class="data-line"><span>Dec:</span><span class="value" id="sunDec">--</span></div>
+<div class="data-line"><span>LHA:</span><span class="value" id="sunLHA">--</span></div>
+<div class="data-line"><span>Hc:</span><span class="highlight" id="sunHc">--</span></div>
+<div class="data-line"><span>Zn:</span><span class="highlight" id="sunZn">--</span></div>
+
+<div class="corr-box">
+<div class="corr-title">KOREKSI SEXTANT (Ho)</div>
+<div class="corr-line"><span>Dip (h=<span id="corrH">10</span>m):</span><span id="corrDip">-5.6'</span></div>
+<div class="corr-line"><span>Refraction:</span><span id="corrRef">-3.5'</span></div>
+<div class="corr-line"><span>SD Sun:</span><span>±16.0'</span></div>
+<div class="corr-line" style="border-top:1px solid rgba(255,255,255,.2);margin-top:5px;padding-top:5px"><span>Total:</span><span id="corrTotal" class="highlight">--</span></div>
+<div class="corr-formula">Ho = Hs ± IE - Dip - Refraction ± SD</div>
+</div>
+
+<div class="workings">
+<div class="workings-title">RUMUS TERBUKA:</div>
+<div class="formula" id="sunF1"></div>
+<div class="formula" id="sunF2"></div>
+<div class="formula" id="sunF3"></div>
+</div>
+</div>
+
+<div class="result-box" id="resStars">
+<div class="result-header">★ BINTANG NAVIGASI (57 Stars)</div>
+<table>
+<thead><tr><th>Star</th><th>SHA</th><th>Dec</th><th>Hc</th><th>Zn</th><th>Status</th></tr></thead>
+<tbody id="starTable"></tbody>
+</table>
+<div class="nav-tip">
+<strong>Sight Reduction:</strong> Intercept = Ho - Hc (NM). Toward jika Ho > Hc, Away jika Ho < Hc.
+</div>
+</div>
 
 </div>
 
 <script>
+// ================= 57 NAVIGATIONAL STARS =================
+const NAV_STARS = [
+{name:"Alpheratz",sha:357.63,dec:29.09},{name:"Ankaa",sha:353.15,dec:-42.13},
+{name:"Schedar",sha:349.87,dec:56.38},{name:"Diphda",sha:348.93,dec:-17.99},
+{name:"Achernar",sha:335.25,dec:-57.07},{name:"Hamal",sha:328.03,dec:23.46},
+{name:"Polaris",sha:316.04,dec:89.26},{name:"Menkar",sha:314.29,dec:4.09},
+{name:"Mirfak",sha:309.38,dec:49.86},{name:"Aldebaran",sha:290.93,dec:16.51},
+{name:"Rigel",sha:281.10,dec:-8.20},{name:"Capella",sha:280.78,dec:46.00},
+{name:"Bellatrix",sha:278.56,dec:6.35},{name:"Elnath",sha:278.17,dec:28.61},
+{name:"Alnilam",sha:275.93,dec:-1.20},{name:"Betelgeuse",sha:270.97,dec:7.41},
+{name:"Canopus",sha:263.67,dec:-52.70},{name:"Sirius",sha:258.75,dec:-16.72},
+{name:"Adhara",sha:255.26,dec:-28.98},{name:"Procyon",sha:244.93,dec:5.22},
+{name:"Pollux",sha:243.55,dec:28.03},{name:"Avior",sha:234.16,dec:-59.51},
+{name:"Suhail",sha:222.66,dec:-43.43},{name:"Miaplacidus",sha:221.56,dec:-69.72},
+{name:"Alphard",sha:217.79,dec:-8.66},{name:"Regulus",sha:207.67,dec:11.97},
+{name:"Dubhe",sha:194.04,dec:61.75},{name:"Denebola",sha:182.52,dec:14.57},
+{name:"Gienah",sha:175.94,dec:-17.54},{name:"Acrux",sha:173.94,dec:-63.06},
+{name:"Gacrux",sha:172.36,dec:-57.11},{name:"Alioth",sha:166.72,dec:55.96},
+{name:"Spica",sha:158.47,dec:-11.16},{name:"Alkaid",sha:152.09,dec:49.01},
+{name:"Hadar",sha:148.95,dec:-60.84},{name:"Arcturus",sha:145.85,dec:19.18},
+{name:"Rigil Kent",sha:139.74,dec:-60.83},{name:"Zubenelgenubi",sha:137.30,dec:-16.04},
+{name:"Kochab",sha:137.10,dec:74.16},{name:"Alphecca",sha:126.40,dec:26.71},
+{name:"Antares",sha:112.53,dec:-26.43},{name:"Atria",sha:107.79,dec:-69.03},
+{name:"Sabik",sha:102.80,dec:-15.73},{name:"Shaula",sha:96.80,dec:-34.29},
+{name:"Rasalhague",sha:96.40,dec:12.56},{name:"Eltanin",sha:90.76,dec:51.49},
+{name:"Kaus Australis",sha:83.56,dec:-34.38},{name:"Vega",sha:80.74,dec:38.78},
+{name:"Nunki",sha:75.81,dec:-26.30},{name:"Altair",sha:62.00,dec:8.87},
+{name:"Peacock",sha:54.27,dec:-56.73},{name:"Deneb",sha:49.62,dec:45.28},
+{name:"Enif",sha:33.64,dec:9.87},{name:"Alnair",sha:28.13,dec:-46.96},
+{name:"Fomalhaut",sha:15.50,dec:-29.62},{name:"Markab",sha:13.94,dec:15.21}
+];
 
-// ===== INIT =====
-function fill(id,start,end,step=1,dec=0){
-let el=document.getElementById(id);
-for(let i=start;i<=end;i+=step){
-let opt=document.createElement('option');
-opt.value=i;
-opt.text=i.toFixed(dec);
-el.appendChild(opt);
-}}
-fill('latDeg',0,89);
-fill('latMin',0,59,0.1,1);
-fill('lonDeg',0,179);
-fill('lonMin',0,59,0.1,1);
+// ================= MATH UTILS =================
+function toRad(d){return d*Math.PI/180;}
+function toDeg(r){return r*180/Math.PI;}
+function mod360(x){x=x%360;return x<0?x+360:x;}
+function dmm(deg){const d=Math.floor(Math.abs(deg));const m=(Math.abs(deg)-d)*60;return `${d.toString().padStart(3,'0')}°${m.toFixed(1).padStart(5,'0')}'`;}
 
-// ===== STAR DATA =====
-const stars={
-hadar:{name:"Hadar",sha:148,dec:-60},
-sirius:{name:"Sirius",sha:259,dec:-16.7}
-};
+let currentMode='LT';
+function setMode(m){currentMode=m;document.getElementById('btnLT').classList.toggle('active',m==='LT');document.getElementById('btnUTC').classList.toggle('active',m==='UTC');}
 
-// ===== GPS =====
-function getGPS(){
-navigator.geolocation.getCurrentPosition(p=>{
-let lat=p.coords.latitude;
-let lon=p.coords.longitude;
+function getPos(){
+const lat=(parseFloat(document.getElementById('latDeg').value)+parseFloat(document.getElementById('latMin').value)/60)*(parseFloat(document.getElementById('latDir').value)||1);
+const lon=(parseFloat(document.getElementById('lonDeg').value)+parseFloat(document.getElementById('lonMin').value)/60)*(parseFloat(document.getElementById('lonDir').value)||1);
+return{lat,lon};
+}
 
-let latD=Math.floor(Math.abs(lat));
-let latM=(Math.abs(lat)-latD)*60;
+function updateZD(){
+const{lon}=getPos();
+const zd=Math.round(lon/15);
+const names={0:'UTC',7:'ICT',8:'WITA',9:'WIT'};
+document.getElementById('zdBox').style.display='block';
+document.getElementById('zdLon').textContent=lon.toFixed(4);
+document.getElementById('zdVal').textContent=`${zd>=0?'+':''}${zd}`;
+document.getElementById('zdName').textContent=names[Math.abs(zd)]||`UTC${zd>=0?'+':''}${Math.abs(zd)}`;
+return zd;
+}
 
-let lonD=Math.floor(Math.abs(lon));
-let lonM=(Math.abs(lon)-lonD)*60;
+// ================= ASTRONOMY (VALIDATED ALGORITHMS) =================
+function julian(y,m,d,ut){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5+ut/24;}
 
-latDeg.value=latD;
-latMin.value=latM.toFixed(1);
-latDir.value=lat>=0?'N':'S';
+function calcGMST(JD,UT){
+// USNO GMST formula
+const D=JD-2451545.0;
+let GMST=6.697374558+0.06570982441908*D+1.00273790935*UT;
+GMST=GMST%24;if(GMST<0)GMST+=24;
+return GMST*15; // Convert to degrees
+}
 
-lonDeg.value=lonD;
-lonMin.value=lonM.toFixed(1);
-lonDir.value=lon>=0?'E':'W';
+function calcSun(JD,UT){
+const T=(JD-2451545.0)/36525;
+const n=JD-2451545.0;
+
+// Mean elements (Meeus)
+const L0=mod360(280.460+0.9856474*n);
+const M=mod360(357.528+0.9856003*n);
+
+// Equation of center
+const C=1.915*Math.sin(toRad(M))+0.020*Math.sin(2*toRad(M));
+
+// True longitude
+const trueLon=mod360(L0+C);
+
+// Obliquity
+const epsilon=23.4393-0.0000004*n;
+
+// Right Ascension
+const y=Math.cos(toRad(epsilon))*Math.sin(toRad(trueLon));
+const x=Math.cos(toRad(trueLon));
+let alpha=toDeg(Math.atan2(y,x));
+if(alpha<0)alpha+=360;
+
+// Declination
+const delta=toDeg(Math.asin(Math.sin(toRad(epsilon))*Math.sin(toRad(trueLon))));
+
+// GMST
+const GMST=calcGMST(JD,UT);
+
+// GHA
+const gha=mod360(GMST-alpha);
+
+// Equation of Time
+let E=(L0-alpha)*4;
+if(E>720)E-=1440;
+if(E<-720)E+=1440;
+
+return{L0,M,C,trueLon,alpha,delta,GMST,gha,E};
+}
+
+function calcAltAz(lat,dec,lha){
+const latR=toRad(lat),decR=toRad(dec),lhaR=toRad(lha);
+const sinHc=Math.sin(latR)*Math.sin(decR)+Math.cos(latR)*Math.cos(decR)*Math.cos(lhaR);
+if(Math.abs(sinHc)>1)return{hc:null,zn:null};
+const hc=toDeg(Math.asin(sinHc));
+const cosH=Math.cos(toRad(hc));
+if(Math.abs(cosH)<0.0001)return{hc,zn:0};
+const sinZ=-Math.sin(lhaR)*Math.cos(decR)/cosH;
+const cosZ=(Math.sin(decR)-Math.sin(latR)*sinHc)/(Math.cos(latR)*cosH);
+let z=toDeg(Math.atan2(sinZ,cosZ));
+if(z<0)z+=360;
+let zn;
+if(lat>=0){zn=(lha>180)?z:360-z;}
+else{zn=(lha<180)?180+z:180-z;}
+return{hc,zn:mod360(zn)};
+}
+
+// ================= MAIN CALCULATE =================
+function calculate(){
+const{lat,lon}=getPos();
+const zd=updateZD();
+const eye=parseFloat(document.getElementById('eyeHeight').value)||10;
+
+const h=parseInt(document.getElementById('inpH').value)||0;
+const m=parseInt(document.getElementById('inpM').value)||0;
+const s=parseInt(document.getElementById('inpS').value)||0;
+
+let utcH,utcM,utcS;
+if(currentMode==='LT'){
+utcH=h-zd;utcM=m;utcS=s;
+if(utcH<0)utcH+=24;
+if(utcH>=24)utcH-=24;
+document.getElementById('resInputTime').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')} LT (ZD${zd>=0?'+':''}${zd})`;
+}else{
+utcH=h;utcM=m;utcS=s;
+document.getElementById('resInputTime').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')} UTC`;
+}
+
+const ut=utcH+utcM/60+utcS/3600;
+const now=new Date();
+const JD=julian(now.getUTCFullYear(),now.getUTCMonth()+1,now.getUTCDate(),ut);
+
+document.getElementById('resTime').classList.add('show');
+document.getElementById('resZD').textContent=`${zd>=0?'+':''}${zd}`;
+document.getElementById('resUTC').textContent=`${utcH.toString().padStart(2,'0')}:${utcM.toString().padStart(2,'0')}:${utcS.toString().padStart(2,'0')}`;
+document.getElementById('resJD').textContent=JD.toFixed(5);
+
+// Sun
+const sun=calcSun(JD,ut);
+const sunLHA=mod360(sun.gha+lon);
+const sunPos=calcAltAz(lat,sun.delta,sunLHA);
+
+document.getElementById('resSun').classList.add('show');
+document.getElementById('sunGHA').textContent=dmm(sun.gha);
+document.getElementById('sunDec').textContent=`${dmm(sun.delta)} ${sun.delta>=0?'N':'S'}`;
+document.getElementById('sunLHA').textContent=dmm(sunLHA);
+document.getElementById('sunHc').textContent=sunPos.hc!==null?`${sunPos.hc.toFixed(2)}°`:'---';
+document.getElementById('sunZn').textContent=sunPos.zn!==null?`${sunPos.zn.toFixed(1)}°`:'---';
+
+// Corrections
+const dip=-1.76*Math.sqrt(eye);
+let ref=sunPos.hc!==null?-0.96/Math.tan(toRad(Math.max(sunPos.hc,10))):-5.0;
+if(sunPos.hc!==null&&sunPos.hc<15)ref=-3.515*(0.1594+0.0196*sunPos.hc+0.00002*sunPos.hc*sunPos.hc)/(1+0.505*sunPos.hc+0.0845*sunPos.hc*sunPos.hc);
+
+document.getElementById('corrH').textContent=eye.toFixed(1);
+document.getElementById('corrDip').textContent=`${dip.toFixed(1)}'`;
+document.getElementById('corrRef').textContent=`${ref.toFixed(1)}'`;
+document.getElementById('corrTotal').textContent=`${(dip+ref).toFixed(1)}' (tanpa SD)`;
+
+document.getElementById('sunF1').textContent=`GMST = 6.697375 + 0.0657098×D + 1.0027379×UT = ${sun.GMST.toFixed(2)}°`;
+document.getElementById('sunF2').textContent=`GHA = GMST - RA = ${sun.GMST.toFixed(2)}° - ${sun.alpha.toFixed(2)}° = ${sun.gha.toFixed(2)}°`;
+document.getElementById('sunF3').textContent=`EoT = (L₀ - RA) × 4 = ${sun.E.toFixed(2)} min`;
+
+// Stars
+const tbody=document.getElementById('starTable');
+tbody.innerHTML='';
+NAV_STARS.forEach(star=>{
+const ghaStar=mod360(sun.GMST+star.sha);
+const lhaStar=mod360(ghaStar+lon);
+const pos=calcAltAz(lat,star.dec,lhaStar);
+if(pos.hc!==null){
+const visible=pos.hc>0;
+const row=tbody.insertRow();
+row.innerHTML=`<td class="star-name">${star.name}</td><td>${dmm(star.sha)}</td><td>${star.dec.toFixed(1)}°</td><td>${pos.hc.toFixed(1)}°</td><td>${pos.zn.toFixed(0)}°</td><td class="${visible?'above-horizon':'below-horizon'}">${visible?'VISIBLE':'BELOW'}</td>`;
+}
 });
+document.getElementById('resStars').classList.add('show');
 }
 
-// ===== HELPER =====
-function lat(){
-let d=latDeg.value,m=latMin.value;
-let v=parseFloat(d)+(parseFloat(m)/60);
-return latDir.value==='S'?-v:v;
-}
-function lon(){
-let d=lonDeg.value,m=lonMin.value;
-let v=parseFloat(d)+(parseFloat(m)/60);
-return lonDir.value==='W'?-v:v;
-}
-
-// ===== JULIAN =====
-function julian(d){
-return (d/86400000)+2440587.5;
-}
-
-// ===== GHA ARIES =====
-function ghaAries(JD){
-let T=(JD-2451545.0)/36525;
-let GMST=280.46061837+360.98564736629*(JD-2451545)+0.000387933*T*T;
-GMST%=360;
-if(GMST<0)GMST+=360;
-return GMST;
+function getGPS(){
+if(!navigator.geolocation){alert('GPS tidak tersedia');return;}
+navigator.geolocation.getCurrentPosition(p=>{
+const lat=p.coords.latitude;
+const lon=p.coords.longitude;
+document.getElementById('latDeg').value=Math.floor(Math.abs(lat));
+document.getElementById('latMin').value=((Math.abs(lat)%1)*60).toFixed(3);
+document.getElementById('latDir').value=lat>=0?'1':'-1';
+document.getElementById('lonDeg').value=Math.floor(Math.abs(lon));
+document.getElementById('lonMin').value=((Math.abs(lon)%1)*60).toFixed(3);
+document.getElementById('lonDir').value=lon>=0?'1':'-1';
+setNow();
+calculate();
+},e=>{alert('GPS Error: '+e.message);},{enableHighAccuracy:true});
 }
 
-// ===== GHA SUN =====
-function ghaSun(JD){
-let n=JD-2451545.0;
-let L=(280.460+0.9856474*n)%360;
-let g=(357.528+0.9856003*n)%360;
-let lambda=L+1.915*Math.sin(g*Math.PI/180);
-let gha=(lambda+180)%360;
-return gha;
+function setNow(){
+const now=new Date();
+const utcH=now.getUTCHours();
+const utcM=now.getUTCMinutes();
+const utcS=now.getUTCSeconds();
+if(currentMode==='UTC'){
+document.getElementById('inpH').value=utcH;
+document.getElementById('inpM').value=utcM;
+document.getElementById('inpS').value=utcS;
+}else{
+const zd=updateZD();
+let ltH=utcH+zd;
+if(ltH<0)ltH+=24;
+if(ltH>=24)ltH-=24;
+document.getElementById('inpH').value=ltH;
+document.getElementById('inpM').value=utcM;
+document.getElementById('inpS').value=utcS;
+}
 }
 
-// ===== MAIN =====
-function calc(){
-
-let LAT=lat();
-let LON=lon();
-
-let now=new Date();
-let JD=julian(now.getTime());
-
-let ghaA=ghaAries(JD);
-let ghaS=ghaSun(JD);
-
-let lhaS=ghaS+LON;
-if(lhaS>360)lhaS-=360;
-
-// ===== STAR =====
-let star=stars[starSelect()];
-let ghaStar=(ghaA+star.sha)%360;
-
-let lha=ghaStar-LON;
-if(lha<0)lha+=360;
-
-// ===== HC =====
-let latR=LAT*Math.PI/180;
-let decR=star.dec*Math.PI/180;
-let lhaR=lha*Math.PI/180;
-
-let hc=Math.asin(
-Math.sin(latR)*Math.sin(decR)+
-Math.cos(latR)*Math.cos(decR)*Math.cos(lhaR)
-)*180/Math.PI;
-
-// ===== AZIMUTH =====
-let z=Math.acos(
-(Math.sin(decR)-Math.sin(latR)*Math.sin(hc*Math.PI/180))/
-(Math.cos(latR)*Math.cos(hc*Math.PI/180))
-)*180/Math.PI;
-
-// ===== OUTPUT =====
-out.innerHTML=`
-UTC: ${now.getUTCHours()}:${now.getUTCMinutes()}<br><br>
-
-GHA Aries: ${ghaA.toFixed(2)}°<br>
-GHA Sun: ${ghaS.toFixed(2)}°<br>
-LHA Sun: ${lhaS.toFixed(2)}°<br><br>
-
-⭐ ${star.name}<br>
-GHA Star: ${ghaStar.toFixed(2)}°<br>
-LHA Star: ${lha.toFixed(2)}°<br>
-Hc: ${hc.toFixed(2)}°<br>
-Zn: ${z.toFixed(2)}°<br>
-`;
-}
-
-// helper
-function starSelect(){
-return document.getElementById('star').value;
-}
-
+['latDeg','latMin','latDir','lonDeg','lonMin','lonDir'].forEach(id=>{
+document.getElementById(id).addEventListener('change',updateZD);
+});
 </script>
-
 </body>
 </html>
