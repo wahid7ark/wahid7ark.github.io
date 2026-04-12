@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPS → Celestial Converter PRO</title>
+<style>
+body{font-family:Arial;background:#0b1c2c;color:#fff;padding:20px}
+.container{max-width:500px;margin:auto}
+input,button,select{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none}
+button{background:#00bcd4;color:#000;font-weight:bold}
+.result{background:#122f44;padding:15px;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>GPS → Celestial Data PRO</h2><label>Mode</label> <select id="mode">
+
+  <option value="auto">AUTO (GPS + Device Time)</option>
+  <option value="lt">Local Time (Auto UTC)</option>
+  <option value="utc">UTC Manual</option>
+</select><label>Latitude (°)</label> <input type="number" id="lat" step="0.0001" placeholder="-2.9186">
+
+<label>Longitude (° East + / West -)</label> <input type="number" id="lon" step="0.0001" placeholder="122.229">
+
+<div id="manualTime">
+<label>Hour</label>
+<input type="number" id="hour" min="0" max="23"><label>Minute</label> <input type="number" id="min" min="0" max="59">
+
+</div><button onclick="calculate()">CALCULATE</button>
+
+<div class="result" id="output"></div>
+</div><script>
+function calculate(){
+let lat = parseFloat(document.getElementById('lat').value);
+let lon = parseFloat(document.getElementById('lon').value);
+let mode = document.getElementById('mode').value;
+
+let hour, min, zone, utcHour, utcMin;
+
+if(mode === "auto"){
+  let now = new Date();
+  hour = now.getHours();
+  min = now.getMinutes();
+  zone = -now.getTimezoneOffset()/60;
+  utcHour = now.getUTCHours();
+  utcMin = now.getUTCMinutes();
+}
+
+else if(mode === "lt"){
+  hour = parseFloat(document.getElementById('hour').value);
+  min = parseFloat(document.getElementById('min').value);
+  zone = Math.round(lon/15);
+  let totalMin = hour*60 + min - zone*60;
+  utcHour = Math.floor((totalMin/60)%24);
+  if(utcHour < 0) utcHour += 24;
+  utcMin = totalMin % 60;
+  if(utcMin < 0) utcMin += 60;
+}
+
+else{
+  utcHour = parseFloat(document.getElementById('hour').value);
+  utcMin = parseFloat(document.getElementById('min').value);
+}
+
+// GHA Sun approximation
+let gha = 180 + (utcHour * 15) + (utcMin * 0.25);
+if(gha > 360) gha -= 360;
+
+// GHA from longitude (reverse)
+let gha_real = (lon >= 0) ? 360 - lon : Math.abs(lon);
+
+// LHA
+let lha = gha_real + lon;
+if(lha > 360) lha -= 360;
+if(lha < 0) lha += 360;
+
+let output = `
+<h3>Results</h3>
+<p><b>Mode:</b> ${mode.toUpperCase()}</p>
+<p><b>UTC:</b> ${utcHour.toFixed(0).padStart(2,'0')}:${utcMin.toFixed(0).padStart(2,'0')}</p>
+<p><b>Zone:</b> ${zone !== undefined ? zone : '-'} </p>
+<p><b>GHA (approx):</b> ${gha.toFixed(2)}°</p>
+<p><b>GHA (GPS):</b> ${gha_real.toFixed(2)}°</p>
+<p><b>LHA:</b> ${lha.toFixed(2)}°</p>
+`;
+
+document.getElementById('output').innerHTML = output;
+}
+</script></body>
+</html>
