@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Celestial Navigator Pro - Validated</title>
+<title>Celestial Navigator Pro - Final</title>
 <style>
 * { box-sizing: border-box; font-family: 'Courier New', monospace; margin: 0; padding: 0; }
 body { background: #0a1628; color: #fff; padding: 10px; }
@@ -58,6 +58,17 @@ h1 { color: #00e5ff; font-size: 18px; }
 .corr-line { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted rgba(255,255,255,.1); }
 .corr-formula { font-size: 9px; opacity: .7; font-style: italic; margin-top: 8px; }
 
+.day-indicator { padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 10px; }
+.day-indicator.day { background: rgba(255,193,7,.2); border: 1px solid #ffc107; color: #ffc107; }
+.day-indicator.twilight { background: rgba(255,87,34,.2); border: 1px solid #ff5722; color: #ff5722; }
+.day-indicator.night { background: rgba(33,150,243,.2); border: 1px solid #2196f3; color: #2196f3; }
+
+.tabs { display: flex; gap: 5px; margin: 15px 0; }
+.tab { flex: 1; padding: 10px; background: rgba(255,255,255,.05); border: none; color: #fff; border-radius: 8px; cursor: pointer; font-size: 11px; }
+.tab.active { background: #00e5ff; color: #000; font-weight: bold; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
 table { width: 100%; font-size: 11px; border-collapse: collapse; margin-top: 10px; }
 th { background: rgba(0,229,255,.2); padding: 8px; text-align: left; color: #00e5ff; font-size: 10px; text-transform: uppercase; }
 td { padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,.1); }
@@ -80,7 +91,7 @@ tr:hover { background: rgba(255,255,255,.05); }
 <div class="container">
 <header>
 <h1>🧭 CELESTIAL NAVIGATOR PRO <span class="accuracy-badge">VALIDATED</span></h1>
-<div class="subtitle">Algoritma Meeus + USNO | Error &lt; 0.5'</div>
+<div class="subtitle">Auto-ZD | Sun/Moon | Valid 2026-2050+</div>
 </header>
 
 <div class="mode-bar">
@@ -90,7 +101,7 @@ tr:hover { background: rgba(255,255,255,.05); }
 
 <div class="card">
 <div class="card-title">📍 Posisi (Format Furuno)</div>
-<button class="gps-btn" onclick="getGPS()">📡 AMBIL GPS</button>
+<button class="gps-btn" onclick="getGPS()">📡 AMBIL GPS (Auto-ZD)</button>
 
 <div class="coord-row">
 <label>Latitude</label>
@@ -119,7 +130,7 @@ Longitude: <span id="zdLon">0</span>° → ZD = <span class="zd-value" id="zdVal
 <div class="eye-row">
 <label>Height of Eye:</label>
 <input type="number" id="eyeHeight" value="10" min="0" max="50" step="0.1">
-<span style="font-size:11px">meters</span>
+<span style="font-size:11px">m</span>
 <div class="eye-note">Dip = -1.76 × √h</div>
 </div>
 </div>
@@ -148,8 +159,19 @@ Longitude: <span id="zdLon">0</span>° → ZD = <span class="zd-value" id="zdVal
 <div class="data-line"><span>Julian Date:</span><span id="resJD">--</span></div>
 </div>
 
+<div class="result-box" id="dayNightBox" style="display:none;">
+<div id="dayNightStatus" class="day-indicator day">MENGHITUNG...</div>
+</div>
+
+<div class="tabs" id="mainTabs" style="display:none;">
+<button class="tab active" onclick="showTab('sun')">☉ SUN</button>
+<button class="tab" onclick="showTab('moon')">☽ MOON</button>
+<button class="tab" onclick="showTab('stars')">★ STARS</button>
+</div>
+
+<div id="sun" class="tab-content active">
 <div class="result-box" id="resSun">
-<div class="result-header">☉ MATAHARI (Primary Body)</div>
+<div class="result-header">☉ MATAHARI</div>
 <div class="data-line"><span>GHA:</span><span class="value" id="sunGHA">--</span></div>
 <div class="data-line"><span>Dec:</span><span class="value" id="sunDec">--</span></div>
 <div class="data-line"><span>LHA:</span><span class="value" id="sunLHA">--</span></div>
@@ -164,15 +186,31 @@ Longitude: <span id="zdLon">0</span>° → ZD = <span class="zd-value" id="zdVal
 <div class="corr-line" style="border-top:1px solid rgba(255,255,255,.2);margin-top:5px;padding-top:5px"><span>Total:</span><span id="corrTotal" class="highlight">--</span></div>
 <div class="corr-formula">Ho = Hs ± IE - Dip - Refraction ± SD</div>
 </div>
-
-<div class="workings">
-<div class="workings-title">RUMUS TERBUKA:</div>
-<div class="formula" id="sunF1"></div>
-<div class="formula" id="sunF2"></div>
-<div class="formula" id="sunF3"></div>
 </div>
 </div>
 
+<div id="moon" class="tab-content">
+<div class="result-box" id="resMoon">
+<div class="result-header">☽ BULAN (Lunar Navigation)</div>
+<div class="data-line"><span>GHA Moon:</span><span class="value" id="moonGHA">--</span></div>
+<div class="data-line"><span>Dec Moon:</span><span class="value" id="moonDec">--</span></div>
+<div class="data-line"><span>LHA Moon:</span><span class="value" id="moonLHA">--</span></div>
+<div class="data-line"><span>Hc:</span><span class="highlight" id="moonHc">--</span></div>
+<div class="data-line"><span>Zn:</span><span class="highlight" id="moonZn">--</span></div>
+<div class="data-line"><span>Illumination:</span><span id="moonIllum">--</span></div>
+<div class="data-line"><span>Age:</span><span id="moonAge">--</span></div>
+
+<div class="corr-box">
+<div class="corr-title">KOREKSI BULAN</div>
+<div class="corr-line"><span>HP (Horizontal Parallax):</span><span id="moonHP">--</span></div>
+<div class="corr-line"><span>SD (Semi-diameter):</span><span id="moonSD">--</span></div>
+<div class="corr-line"><span>Parallax Correction:</span><span>HP × cos(Hc)</span></div>
+<div class="corr-formula">Ho = Hs - Dip - Refraction + Parallax ± SD</div>
+</div>
+</div>
+</div>
+
+<div id="stars" class="tab-content">
 <div class="result-box" id="resStars">
 <div class="result-header">★ BINTANG NAVIGASI (57 Stars)</div>
 <table>
@@ -183,11 +221,11 @@ Longitude: <span id="zdLon">0</span>° → ZD = <span class="zd-value" id="zdVal
 <strong>Sight Reduction:</strong> Intercept = Ho - Hc (NM). Toward jika Ho > Hc, Away jika Ho < Hc.
 </div>
 </div>
+</div>
 
 </div>
 
 <script>
-// ================= 57 NAVIGATIONAL STARS =================
 const NAV_STARS = [
 {name:"Alpheratz",sha:357.63,dec:29.09},{name:"Ankaa",sha:353.15,dec:-42.13},
 {name:"Schedar",sha:349.87,dec:56.38},{name:"Diphda",sha:348.93,dec:-17.99},
@@ -219,7 +257,6 @@ const NAV_STARS = [
 {name:"Fomalhaut",sha:15.50,dec:-29.62},{name:"Markab",sha:13.94,dec:15.21}
 ];
 
-// ================= MATH UTILS =================
 function toRad(d){return d*Math.PI/180;}
 function toDeg(r){return r*180/Math.PI;}
 function mod360(x){x=x%360;return x<0?x+360:x;}
@@ -237,7 +274,7 @@ return{lat,lon};
 function updateZD(){
 const{lon}=getPos();
 const zd=Math.round(lon/15);
-const names={0:'UTC',7:'ICT',8:'WITA',9:'WIT'};
+const names={0:'UTC',7:'WIB',8:'WITA',9:'WIT'};
 document.getElementById('zdBox').style.display='block';
 document.getElementById('zdLon').textContent=lon.toFixed(4);
 document.getElementById('zdVal').textContent=`${zd>=0?'+':''}${zd}`;
@@ -245,55 +282,56 @@ document.getElementById('zdName').textContent=names[Math.abs(zd)]||`UTC${zd>=0?'
 return zd;
 }
 
-// ================= ASTRONOMY (VALIDATED ALGORITHMS) =================
 function julian(y,m,d,ut){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5+ut/24;}
 
 function calcGMST(JD,UT){
-// USNO GMST formula
 const D=JD-2451545.0;
 let GMST=6.697374558+0.06570982441908*D+1.00273790935*UT;
 GMST=GMST%24;if(GMST<0)GMST+=24;
-return GMST*15; // Convert to degrees
+return GMST*15;
 }
 
 function calcSun(JD,UT){
-const T=(JD-2451545.0)/36525;
 const n=JD-2451545.0;
-
-// Mean elements (Meeus)
-const L0=mod360(280.460+0.9856474*n);
-const M=mod360(357.528+0.9856003*n);
-
-// Equation of center
+const L0=(280.460+0.9856474*n)%360;
+const M=(357.528+0.9856003*n)%360;
 const C=1.915*Math.sin(toRad(M))+0.020*Math.sin(2*toRad(M));
-
-// True longitude
-const trueLon=mod360(L0+C);
-
-// Obliquity
+const trueLon=(L0+C)%360;
 const epsilon=23.4393-0.0000004*n;
-
-// Right Ascension
 const y=Math.cos(toRad(epsilon))*Math.sin(toRad(trueLon));
 const x=Math.cos(toRad(trueLon));
 let alpha=toDeg(Math.atan2(y,x));
 if(alpha<0)alpha+=360;
-
-// Declination
 const delta=toDeg(Math.asin(Math.sin(toRad(epsilon))*Math.sin(toRad(trueLon))));
-
-// GMST
 const GMST=calcGMST(JD,UT);
-
-// GHA
 const gha=mod360(GMST-alpha);
-
-// Equation of Time
 let E=(L0-alpha)*4;
 if(E>720)E-=1440;
 if(E<-720)E+=1440;
-
 return{L0,M,C,trueLon,alpha,delta,GMST,gha,E};
+}
+
+function calcMoon(JD,UT){
+const T=(JD-2451545.0)/36525;
+const Lp=(218.316+13.176396*365.25*T)%360;
+const M=(134.963+13.064993*365.25*T)%360;
+const D=(297.850+12.190749*365.25*T)%360;
+const F=(93.272+13.229350*365.25*T)%360;
+let lon=Lp+6.289*Math.sin(toRad(M))+1.274*Math.sin(toRad(2*D-M))+0.658*Math.sin(toRad(2*D))+0.214*Math.sin(toRad(2*M));
+lon=lon%360;
+let lat=5.128*Math.sin(toRad(F));
+const dist=385001-20905*Math.cos(toRad(M));
+const HP=toDeg(Math.asin(6378.14/dist))*60;
+const dec=toDeg(Math.asin(Math.sin(toRad(23.44))*Math.sin(toRad(lon))));
+let RA=toDeg(Math.atan2(Math.sin(toRad(lon))*Math.cos(toRad(23.44)),Math.cos(toRad(lon))));
+if(RA<0)RA+=360;
+const GMST=calcGMST(JD,UT);
+const gha=mod360(GMST-RA);
+const sunLon=(280.460+0.9856474*(JD-2451545.0))%360;
+const elongation=Math.acos(Math.cos(toRad(lon-sunLon)))*180/Math.PI;
+const illum=(1+Math.cos(toRad(elongation)))/2*100;
+const age=(JD-2451549.5)%29.53059;
+return{gha,dec,HP,illum,age,RA};
 }
 
 function calcAltAz(lat,dec,lha){
@@ -313,7 +351,6 @@ else{zn=(lha<180)?180+z:180-z;}
 return{hc,zn:mod360(zn)};
 }
 
-// ================= MAIN CALCULATE =================
 function calculate(){
 const{lat,lon}=getPos();
 const zd=updateZD();
@@ -343,7 +380,8 @@ document.getElementById('resZD').textContent=`${zd>=0?'+':''}${zd}`;
 document.getElementById('resUTC').textContent=`${utcH.toString().padStart(2,'0')}:${utcM.toString().padStart(2,'0')}:${utcS.toString().padStart(2,'0')}`;
 document.getElementById('resJD').textContent=JD.toFixed(5);
 
-// Sun
+document.getElementById('mainTabs').style.display='flex';
+
 const sun=calcSun(JD,ut);
 const sunLHA=mod360(sun.gha+lon);
 const sunPos=calcAltAz(lat,sun.delta,sunLHA);
@@ -355,21 +393,45 @@ document.getElementById('sunLHA').textContent=dmm(sunLHA);
 document.getElementById('sunHc').textContent=sunPos.hc!==null?`${sunPos.hc.toFixed(2)}°`:'---';
 document.getElementById('sunZn').textContent=sunPos.zn!==null?`${sunPos.zn.toFixed(1)}°`:'---';
 
-// Corrections
+const dayNightBox=document.getElementById('dayNightBox');
+const dayNightStatus=document.getElementById('dayNightStatus');
+dayNightBox.style.display='block';
+if(sunPos.hc!==null){
+if(sunPos.hc>0){
+dayNightStatus.className='day-indicator day';
+dayNightStatus.textContent=`☀️ DAY - Sun Hc: ${sunPos.hc.toFixed(1)}° (Good for sights)`;
+}else if(sunPos.hc>-6){
+dayNightStatus.className='day-indicator twilight';
+dayNightStatus.textContent=`🌅 TWILIGHT - Sun Hc: ${sunPos.hc.toFixed(1)}° (Switch to Moon/Stars)`;
+}else{
+dayNightStatus.className='day-indicator night';
+dayNightStatus.textContent=`🌙 NIGHT - Sun Hc: ${sunPos.hc.toFixed(1)}° (Use Moon/Stars)`;
+}
+}
+
 const dip=-1.76*Math.sqrt(eye);
 let ref=sunPos.hc!==null?-0.96/Math.tan(toRad(Math.max(sunPos.hc,10))):-5.0;
 if(sunPos.hc!==null&&sunPos.hc<15)ref=-3.515*(0.1594+0.0196*sunPos.hc+0.00002*sunPos.hc*sunPos.hc)/(1+0.505*sunPos.hc+0.0845*sunPos.hc*sunPos.hc);
-
 document.getElementById('corrH').textContent=eye.toFixed(1);
 document.getElementById('corrDip').textContent=`${dip.toFixed(1)}'`;
 document.getElementById('corrRef').textContent=`${ref.toFixed(1)}'`;
 document.getElementById('corrTotal').textContent=`${(dip+ref).toFixed(1)}' (tanpa SD)`;
 
-document.getElementById('sunF1').textContent=`GMST = 6.697375 + 0.0657098×D + 1.0027379×UT = ${sun.GMST.toFixed(2)}°`;
-document.getElementById('sunF2').textContent=`GHA = GMST - RA = ${sun.GMST.toFixed(2)}° - ${sun.alpha.toFixed(2)}° = ${sun.gha.toFixed(2)}°`;
-document.getElementById('sunF3').textContent=`EoT = (L₀ - RA) × 4 = ${sun.E.toFixed(2)} min`;
+const moon=calcMoon(JD,ut);
+const moonLHA=mod360(moon.gha+lon);
+const moonPos=calcAltAz(lat,moon.dec,moonLHA);
 
-// Stars
+document.getElementById('resMoon').classList.add('show');
+document.getElementById('moonGHA').textContent=dmm(moon.gha);
+document.getElementById('moonDec').textContent=`${dmm(moon.dec)} ${moon.dec>=0?'N':'S'}`;
+document.getElementById('moonLHA').textContent=dmm(moonLHA);
+document.getElementById('moonHc').textContent=moonPos.hc!==null?`${moonPos.hc.toFixed(2)}°`:'---';
+document.getElementById('moonZn').textContent=moonPos.zn!==null?`${moonPos.zn.toFixed(1)}°`:'---';
+document.getElementById('moonIllum').textContent=`${moon.illum.toFixed(1)}%`;
+document.getElementById('moonAge').textContent=`${moon.age.toFixed(1)} days`;
+document.getElementById('moonHP').textContent=`${moon.HP.toFixed(1)}'`;
+document.getElementById('moonSD').textContent=`${(moon.HP*0.2725).toFixed(1)}'`;
+
 const tbody=document.getElementById('starTable');
 tbody.innerHTML='';
 NAV_STARS.forEach(star=>{
@@ -383,6 +445,13 @@ row.innerHTML=`<td class="star-name">${star.name}</td><td>${dmm(star.sha)}</td><
 }
 });
 document.getElementById('resStars').classList.add('show');
+}
+
+function showTab(tab){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+event.target.classList.add('active');
+document.getElementById(tab).classList.add('active');
 }
 
 function getGPS(){
@@ -423,7 +492,7 @@ document.getElementById('inpS').value=utcS;
 
 ['latDeg','latMin','latDir','lonDeg','lonMin','lonDir'].forEach(id=>{
 document.getElementById(id).addEventListener('change',updateZD);
-});
+n});
 </script>
 </body>
 </html>
