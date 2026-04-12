@@ -1,111 +1,196 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Celestial Assistant PRO (Real GHA)</title>
+<title>Celestial PRO Full</title>
+
 <style>
-body{font-family:Arial;background:#0b1c2c;color:#fff;padding:15px}
+body{font-family:Arial;background:#0b1c2c;color:#fff;padding:10px}
 .container{max-width:420px;margin:auto}
-.card{background:#122f44;padding:12px;border-radius:15px;margin-bottom:10px}
-label{font-size:11px;opacity:0.6}
-select{width:100%;padding:10px;border-radius:10px;border:none;background:#0f2535;color:#fff;font-size:16px}
-button{width:100%;padding:12px;border:none;border-radius:12px;background:#00e5ff;color:#000;font-weight:bold;font-size:16px;margin-top:10px}
+.card{background:#122f44;padding:15px;border-radius:15px;margin-bottom:10px}
+select,button{width:100%;padding:10px;border-radius:10px;border:none;margin-top:5px}
+button{background:#00e5ff;color:#000;font-weight:bold}
 .result{background:#071923;padding:15px;border-radius:15px;margin-top:10px}
-.toggle{display:flex;background:#0f2535;border-radius:10px;overflow:hidden}
-.toggle button{flex:1;padding:10px;background:none;color:#fff;border:none}
-.toggle .active{background:#00e5ff;color:#000}
-.big{font-size:20px;font-weight:bold}
-.small{font-size:12px;opacity:0.7}
-.row{display:flex;gap:5px}
+h2{text-align:center;color:#00e5ff}
 </style>
+
 </head>
 <body>
+
 <div class="container">
-<h2>Celestial PRO (Real GHA)</h2><div class="card">
-<label>Mode</label>
-<div class="toggle">
-<button id="autoBtn" class="active" onclick="setMode('auto')">AUTO</button>
-<button id="ltBtn" onclick="setMode('lt')">LT</button>
-<button id="utcBtn" onclick="setMode('utc')">UTC</button>
+<h2>Celestial PRO</h2>
+
+<div class="card">
+<button onclick="getGPS()">📡 Ambil GPS</button>
 </div>
-</div><div class="card">
+
+<div class="card">
 <label>Latitude</label>
-<div class="row">
 <select id="latDeg"></select>
 <select id="latMin"></select>
-<select id="latDir"><option>S</option><option>N</option></select>
-</div>
+<select id="latDir"><option>N</option><option>S</option></select>
+
 <label>Longitude</label>
-<div class="row">
 <select id="lonDeg"></select>
 <select id="lonMin"></select>
 <select id="lonDir"><option>E</option><option>W</option></select>
 </div>
-</div><div class="card">
-<label>Date & Time</label>
-<div class="row">
-<select id="year"></select>
-<select id="month"></select>
-<select id="day"></select>
+
+<div class="card">
+<label>Star</label>
+<select id="star">
+<option value="hadar">Hadar</option>
+<option value="sirius">Sirius</option>
+</select>
 </div>
-<div class="row">
-<select id="hour"></select>
-<select id="min"></select>
+
+<button onclick="calc()">🚀 CALCULATE</button>
+
+<div class="result" id="out"></div>
+
 </div>
-</div><button onclick="calculate()">CALCULATE</button>
 
-<div class="result" id="output"></div>
-</div><script>
-let mode="auto";
-function setMode(m){mode=m;['autoBtn','ltBtn','utcBtn'].forEach(id=>document.getElementById(id).classList.remove('active'));document.getElementById(m+'Btn').classList.add('active');}
+<script>
 
-function fill(id,start,end,step=1,dec=0){let el=document.getElementById(id);for(let i=start;i<=end;i+=step){let opt=document.createElement('option');opt.value=i;opt.text=i.toFixed(dec).padStart(2,'0');el.appendChild(opt);}}
-fill('latDeg',0,89);fill('latMin',0,59,0.1,1);fill('lonDeg',0,179);fill('lonMin',0,59,0.1,1);fill('hour',0,23);fill('min',0,59);
-fill('year',2020,2035);fill('month',1,12);fill('day',1,31);
+// ===== INIT =====
+function fill(id,start,end,step=1,dec=0){
+let el=document.getElementById(id);
+for(let i=start;i<=end;i+=step){
+let opt=document.createElement('option');
+opt.value=i;
+opt.text=i.toFixed(dec);
+el.appendChild(opt);
+}}
+fill('latDeg',0,89);
+fill('latMin',0,59,0.1,1);
+fill('lonDeg',0,179);
+fill('lonMin',0,59,0.1,1);
 
-function lat(){let d=latDeg.value,m=latMin.value;let v=parseFloat(d)+(parseFloat(m)/60);return latDir.value==='S'?-v:v;}
-function lon(){let d=lonDeg.value,m=lonMin.value;let v=parseFloat(d)+(parseFloat(m)/60);return lonDir.value==='W'?-v:v;}
+// ===== STAR DATA =====
+const stars={
+hadar:{name:"Hadar",sha:148,dec:-60},
+sirius:{name:"Sirius",sha:259,dec:-16.7}
+};
 
-function julianDate(y,m,d,h,min){if(m<=2){y-=1;m+=12;}let A=Math.floor(y/100);let B=2-A+Math.floor(A/4);let JD=Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5;let dayfrac=(h+min/60)/24;return JD+dayfrac;}
+// ===== GPS =====
+function getGPS(){
+navigator.geolocation.getCurrentPosition(p=>{
+let lat=p.coords.latitude;
+let lon=p.coords.longitude;
 
-function ghaAries(JD){let T=(JD-2451545.0)/36525;let GMST=280.46061837+360.98564736629*(JD-2451545)+0.000387933*T*T-(T*T*T)/38710000;GMST%=360;if(GMST<0)GMST+=360;return GMST;}
+let latD=Math.floor(Math.abs(lat));
+let latM=(Math.abs(lat)-latD)*60;
 
-function ghaSun(JD){let n=JD-2451545.0;let L=(280.460+0.9856474*n)%360;if(L<0)L+=360;let g=(357.528+0.9856003*n)%360;let lambda=L+1.915*Math.sin(g*Math.PI/180)+0.020*Math.sin(2*g*Math.PI/180);
-let gha=(lambda+180)%360;return gha;}
+let lonD=Math.floor(Math.abs(lon));
+let lonM=(Math.abs(lon)-lonD)*60;
 
-function calculate(){
-let lo=lon();
-let h,m,y,mo,d,utcH,utcM,zone;
+latDeg.value=latD;
+latMin.value=latM.toFixed(1);
+latDir.value=lat>=0?'N':'S';
 
-if(mode==='auto'){
+lonDeg.value=lonD;
+lonMin.value=lonM.toFixed(1);
+lonDir.value=lon>=0?'E':'W';
+});
+}
+
+// ===== HELPER =====
+function lat(){
+let d=latDeg.value,m=latMin.value;
+let v=parseFloat(d)+(parseFloat(m)/60);
+return latDir.value==='S'?-v:v;
+}
+function lon(){
+let d=lonDeg.value,m=lonMin.value;
+let v=parseFloat(d)+(parseFloat(m)/60);
+return lonDir.value==='W'?-v:v;
+}
+
+// ===== JULIAN =====
+function julian(d){
+return (d/86400000)+2440587.5;
+}
+
+// ===== GHA ARIES =====
+function ghaAries(JD){
+let T=(JD-2451545.0)/36525;
+let GMST=280.46061837+360.98564736629*(JD-2451545)+0.000387933*T*T;
+GMST%=360;
+if(GMST<0)GMST+=360;
+return GMST;
+}
+
+// ===== GHA SUN =====
+function ghaSun(JD){
+let n=JD-2451545.0;
+let L=(280.460+0.9856474*n)%360;
+let g=(357.528+0.9856003*n)%360;
+let lambda=L+1.915*Math.sin(g*Math.PI/180);
+let gha=(lambda+180)%360;
+return gha;
+}
+
+// ===== MAIN =====
+function calc(){
+
+let LAT=lat();
+let LON=lon();
+
 let now=new Date();
-y=now.getUTCFullYear();mo=now.getUTCMonth()+1;d=now.getUTCDate();utcH=now.getUTCHours();utcM=now.getUTCMinutes();zone=-now.getTimezoneOffset()/60;
-}
-else if(mode==='lt'){
-y=parseInt(year.value);mo=parseInt(month.value);d=parseInt(day.value);
-h=parseInt(hour.value);m=parseInt(min.value);
-zone=Math.round(lo/15);
-let total=h*60+m-zone*60;
-utcH=Math.floor((total/60)%24);if(utcH<0)utcH+=24;
-utcM=total%60;if(utcM<0)utcM+=60;
-}
-else{
-y=parseInt(year.value);mo=parseInt(month.value);d=parseInt(day.value);
-utcH=parseInt(hour.value);utcM=parseInt(min.value);
-}
+let JD=julian(now.getTime());
 
-let JD=julianDate(y,mo,d,utcH,utcM);
 let ghaA=ghaAries(JD);
 let ghaS=ghaSun(JD);
-let lhaS=ghaS+lo; if(lhaS>360)lhaS-=360; if(lhaS<0)lhaS+=360;
 
-let out=`<div class='big'>UTC ${utcH.toString().padStart(2,'0')}:${utcM.toString().padStart(2,'0')}</div>
-<div class='small'>${y}-${mo}-${d} | Mode ${mode.toUpperCase()}</div>
-<hr>
-<div class='big'>GHA Aries ${ghaA.toFixed(2)}°</div>
-<div class='big'>GHA Sun ${ghaS.toFixed(2)}°</div>
-<div class='big'>LHA Sun ${lhaS.toFixed(2)}°</div>`;
-output.innerHTML=out;
+let lhaS=ghaS+LON;
+if(lhaS>360)lhaS-=360;
+
+// ===== STAR =====
+let star=stars[starSelect()];
+let ghaStar=(ghaA+star.sha)%360;
+
+let lha=ghaStar-LON;
+if(lha<0)lha+=360;
+
+// ===== HC =====
+let latR=LAT*Math.PI/180;
+let decR=star.dec*Math.PI/180;
+let lhaR=lha*Math.PI/180;
+
+let hc=Math.asin(
+Math.sin(latR)*Math.sin(decR)+
+Math.cos(latR)*Math.cos(decR)*Math.cos(lhaR)
+)*180/Math.PI;
+
+// ===== AZIMUTH =====
+let z=Math.acos(
+(Math.sin(decR)-Math.sin(latR)*Math.sin(hc*Math.PI/180))/
+(Math.cos(latR)*Math.cos(hc*Math.PI/180))
+)*180/Math.PI;
+
+// ===== OUTPUT =====
+out.innerHTML=`
+UTC: ${now.getUTCHours()}:${now.getUTCMinutes()}<br><br>
+
+GHA Aries: ${ghaA.toFixed(2)}°<br>
+GHA Sun: ${ghaS.toFixed(2)}°<br>
+LHA Sun: ${lhaS.toFixed(2)}°<br><br>
+
+⭐ ${star.name}<br>
+GHA Star: ${ghaStar.toFixed(2)}°<br>
+LHA Star: ${lha.toFixed(2)}°<br>
+Hc: ${hc.toFixed(2)}°<br>
+Zn: ${z.toFixed(2)}°<br>
+`;
 }
-</script></body>
+
+// helper
+function starSelect(){
+return document.getElementById('star').value;
+}
+
+</script>
+
+</body>
 </html>
