@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deviasi Kompas - TB. ARK DAN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #2d5a87, #1a2a6c);
+            min-height: 100vh;
+            color: #fff;
+            padding: 15px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        header .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ffd700;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 3px solid #ffd700;
+        }
+        .info-item label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .info-item span {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        @media(min-width: 600px) {
+            .calculator { grid-template-columns: 1fr 1fr; }
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .input-group input, .input-group select {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.4); }
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a2a6c;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+        }
+        .btn:active { transform: translateY(0); }
+        .result-box {
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+        }
+        .result-box.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-item .label { font-size: 0.9rem; opacity: 0.8; }
+        .result-item .value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+        .formula-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            border-left: 3px solid #00d4ff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(0,0,0,0.2);
+            font-weight: 600;
+            color: #ffd700;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        .dev-positive { color: #4ade80; }
+        .dev-negative { color: #f87171; }
+        .dev-zero { color: #ffd700; }
+        .chart-container {
+            position: relative;
+            height: 280px;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 12px;
+            padding: 10px;
+        }
+        .compass-ring {
+            width: 240px;
+            height: 240px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.3);
+            position: relative;
+            background: rgba(0,0,0,0.2);
+        }
+        .compass-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px; height: 8px;
+            background: #ffd700;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .compass-needle {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 2px;
+            background: #ff4444;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(0deg);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 5;
+            height: 100px;
+        }
+        .compass-needle::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: 0;
+            width: 2px;
+            height: 100px;
+            background: #4444ff;
+        }
+        .compass-label {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transform: translate(-50%, -50%);
+        }
+        .coeff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .coeff-item {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .coeff-item .letter {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+        .coeff-item .val {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .note {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .scroll-table {
+            overflow-x: auto;
+            border-radius: 10px;
+        }
+        .direction-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,215,0,0.15);
+            color: #ffd700;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚓ TB. ARK DAN — Deviasi Kompas</h1>
+            <div class="subtitle">
+                Daftar Deviasi No. 24/I/KSOP.BJM-2024<br>
+                Kaget Island | 30/01/2024 | 10.18 HRS<br>
+                03° 23.649 S — 114° 33.219 E
+            </div>
+        </header>
+
+        <!-- Kalkulator Konversi -->
+        <div class="card">
+            <h2>🧭 Kalkulator Konversi Arah</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Variasi Magnetik</label>
+                    <span id="magVarDisplay">0.0° E</span>
+                </div>
+                <div class="info-item">
+                    <label>Deviasi Saat Ini</label>
+                    <span id="currentDev">-</span>
+                </div>
+            </div>
+            <div class="calculator">
+                <div class="input-group">
+                    <label>Variasi Magnetik (°)</label>
+                    <input type="number" id="magVar" step="0.1" value="0" placeholder="Contoh: 2.5 atau -1.5">
+                    <small style="opacity:0.6; font-size:0.75rem;">Positif = East (E), Negatif = West (W)</small>
+                </div>
+                <div class="input-group">
+                    <label>Arah Kompas (CC) — °</label>
+                    <input type="number" id="compassCourse" min="0" max="360" step="0.1" placeholder="0 - 360">
+                </div>
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>atau Pilih Pedoman</label>
+                    <select id="directionSelect" onchange="selectDirection()">
+                        <option value="">-- Pilih Arah --</option>
+                        <option value="0">000° — UTARA</option>
+                        <option value="22.5">022.5° — UTL</option>
+                        <option value="45">045° — TL</option>
+                        <option value="67.5">067.5° — TTL</option>
+                        <option value="90">090° — T</option>
+                        <option value="112.5">112.5° — TTG</option>
+                        <option value="135">135° — TG</option>
+                        <option value="157.5">157.5° — STG</option>
+                        <option value="180">180° — SLTN</option>
+                        <option value="202.5">202.5° — SBD</option>
+                        <option value="225">225° — BD</option>
+                        <option value="247.5">247.5° — BBD</option>
+                        <option value="270">270° — B</option>
+                        <option value="292.5">292.5° — BBL</option>
+                        <option value="315">315° — BL</option>
+                        <option value="337.5">337.5° — UBL</option>
+                        <option value="360">360° — UTARA</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="calculate()">🔍 HITUNG KONVERSI</button>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-item">
+                    <span class="label">Arah Kompas (CC)</span>
+                    <span class="value" id="resCC">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Deviasi (Dev)</span>
+                    <span class="value" id="resDev">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Arah Magnetik (MC)</span>
+                    <span class="value" id="resMC">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Variasi (Var)</span>
+                    <span class="value" id="resVar">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Arah Sejati (TC)</span>
+                    <span class="value" id="resTC">-</span>
+                </div>
+                <div class="formula-box" id="formulaBox"></div>
+            </div>
+
+            <div class="compass-ring" id="compassRing">
+                <div class="compass-center"></div>
+                <div class="compass-needle" id="compassNeedle"></div>
+                <div class="compass-label" style="top:8px;left:50%;">N</div>
+                <div class="compass-label" style="top:50%;right:8px;">E</div>
+                <div class="compass-label" style="bottom:8px;left:50%;">S</div>
+                <div class="compass-label" style="top:50%;left:8px;">W</div>
+            </div>
+        </div>
+
+        <!-- Tabel Deviasi -->
+        <div class="card">
+            <h2>📋 Tabel Deviasi</h2>
+            <div class="scroll-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Haluan (°)</th>
+                            <th>Pedoman</th>
+                            <th>Deviasi (°)</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="devTableBody"></tbody>
+                </table>
+            </div>
+            <div class="note">
+                <strong>Keterangan:</strong><br>
+                Deviasi <strong>+</strong> (positif) → H. Pedoman < H. Magnet (East Deviation)<br>
+                Deviasi <strong>−</strong> (negatif) → H. Pedoman > H. Magnet (West Deviation)<br>
+                <em>Rumus: MC = CC + Dev &nbsp;|&nbsp; TC = MC + Var (E+, W−)</em>
+            </div>
+        </div>
+
+        <!-- Koefisien Pedoman -->
+        <div class="card">
+            <h2>📐 Koefisien Pedoman</h2>
+            <div class="coeff-grid">
+                <div class="coeff-item">
+                    <div class="letter">A</div>
+                    <div class="val">-0.250</div>
+                </div>
+                <div class="coeff-item">
+                    <div class="letter">B</div>
+                    <div class="val">-0.186</div>
+                </div>
+                <div class="coeff-item">
+                    <div class="letter">C</div>
+                    <div class="val">-0.186</div>
+                </div>
+                <div class="coeff-item">
+                    <div class="letter">D</div>
+                    <div class="val">-0.500</div>
+                </div>
+                <div class="coeff-item">
+                    <div class="letter">E</div>
+                    <div class="val">-0.250</div>
+                </div>
+            </div>
+            <div class="note">
+                Koefisien ini digunakan untuk menghitung deviasi teoretis pada sembarang haluan menggunakan rumus:<br>
+                <strong>Dev = A + B·sin(ζ) + C·cos(ζ) + D·sin(2ζ) + E·cos(2ζ)</strong><br>
+                di mana ζ = haluan kompas (dalam derajat).
+            </div>
+        </div>
+
+        <!-- Cari Deviasi Manual -->
+        <div class="card">
+            <h2>🔎 Cari Deviasi untuk Arah Tertentu</h2>
+            <div class="input-group" style="margin-bottom:15px;">
+                <label>Masukkan Arah Kompas (0° — 360°)</label>
+                <input type="number" id="lookupCourse" min="0" max="360" step="0.1" placeholder="Contoh: 123.5">
+            </div>
+            <button class="btn" onclick="lookupDeviation()">CARI DEVIASI</button>
+            <div class="result-box" id="lookupResult" style="margin-top:15px;">
+                <div class="result-item">
+                    <span class="label">Arah yang Diminta</span>
+                    <span class="value" id="lkCourse">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Deviasi (Interpolasi)</span>
+                    <span class="value" id="lkDev">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Antara Titik</span>
+                    <span class="value" id="lkBetween">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Tabel Deviasi TB. ARK DAN
+        const deviationData = [
+            { course: 0,   dir: "UTARA", dev: 0.0 },
+            { course: 22.5, dir: "UTL",   dev: -0.3 },
+            { course: 45,   dir: "TL",    dev: -1.2 },
+            { course: 67.5, dir: "TTL",   dev: -0.5 },
+            { course: 90,   dir: "T",     dev: -0.5 },
+            { course: 112.5,dir: "TTG",   dev: -1.0 },
+            { course: 135,  dir: "TG",    dev: 0.5 },
+            { course: 157.5,dir: "STG",   dev: 1.0 },
+            { course: 180,  dir: "SLTN",  dev: -0.5 },
+            { course: 202.5,dir: "SBD",   dev: -0.9 },
+            { course: 225,  dir: "BD",    dev: -0.8 },
+            { course: 247.5,dir: "BBD",   dev: 0.2 },
+            { course: 270,  dir: "B",     dev: 1.0 },
+            { course: 292.5,dir: "BBL",   dev: -0.7 },
+            { course: 315,  dir: "BL",    dev: -0.5 },
+            { course: 337.5,dir: "UBL",   dev: 0.4 },
+            { course: 360,  dir: "UTARA", dev: 0.0 }
+        ];
+
+        // Koefisien
+        const coeff = { A: -0.250, B: -0.186, C: -0.186, D: -0.500, E: -0.250 };
+
+        // Fungsi interpolasi linear untuk deviasi
+        function getDeviation(course) {
+            course = ((course % 360) + 360) % 360;
+            if (course === 0) course = 360;
+
+            // Cari exact match
+            const exact = deviationData.find(d => Math.abs(d.course - course) < 0.01);
+            if (exact) return exact.dev;
+
+            // Interpolasi linear
+            for (let i = 0; i < deviationData.length - 1; i++) {
+                const curr = deviationData[i];
+                const next = deviationData[i+1];
+                if (course >= curr.course && course <= next.course) {
+                    const ratio = (course - curr.course) / (next.course - curr.course);
+                    return curr.dev + ratio * (next.dev - curr.dev);
+                }
+            }
+            return 0;
+        }
+
+        // Fungsi hitung deviasi teoretis dari koefisien
+        function calcTheoreticalDeviation(course) {
+            const z = course * Math.PI / 180;
+            return coeff.A 
+                 + coeff.B * Math.sin(z) 
+                 + coeff.C * Math.cos(z) 
+                 + coeff.D * Math.sin(2*z) 
+                 + coeff.E * Math.cos(2*z);
+        }
+
+        function selectDirection() {
+            const val = document.getElementById('directionSelect').value;
+            if (val !== '') {
+                document.getElementById('compassCourse').value = val;
+            }
+        }
+
+        function calculate() {
+            const ccInput = parseFloat(document.getElementById('compassCourse').value);
+            const varInput = parseFloat(document.getElementById('magVar').value) || 0;
+
+            if (isNaN(ccInput)) {
+                alert('Masukkan arah kompas (CC) terlebih dahulu!');
+                return;
+            }
+
+            let cc = ccInput % 360;
+            if (cc < 0) cc += 360;
+
+            const dev = getDeviation(cc);
+            const mc = cc + dev;
+            const tc = mc + varInput;
+
+            // Update display
+            document.getElementById('magVarDisplay').textContent = (varInput >= 0 ? '+' : '') + varInput.toFixed(1) + '° ' + (varInput >= 0 ? 'E' : 'W');
+            document.getElementById('currentDev').textContent = (dev >= 0 ? '+' : '') + dev.toFixed(2) + '°';
+
+            document.getElementById('resCC').textContent = cc.toFixed(1) + '°';
+            document.getElementById('resDev').textContent = (dev >= 0 ? '+' : '') + dev.toFixed(2) + '°';
+            document.getElementById('resMC').textContent = mc.toFixed(1) + '°';
+            document.getElementById('resVar').textContent = (varInput >= 0 ? '+' : '') + varInput.toFixed(1) + '° ' + (varInput >= 0 ? 'E' : 'W');
+            document.getElementById('resTC').textContent = tc.toFixed(1) + '°';
+
+            const formula = `MC = CC + Dev = ${cc.toFixed(1)} + (${dev.toFixed(2)}) = ${mc.toFixed(1)}°\nTC = MC + Var = ${mc.toFixed(1)} + (${varInput.toFixed(1)}) = ${tc.toFixed(1)}°`;
+            document.getElementById('formulaBox').textContent = formula;
+
+            document.getElementById('resultBox').classList.add('active');
+
+            // Update compass needle
+            const needle = document.getElementById('compassNeedle');
+            needle.style.transform = `translate(-50%, -100%) rotate(${cc}deg)`;
+        }
+
+        function lookupDeviation() {
+            const course = parseFloat(document.getElementById('lookupCourse').value);
+            if (isNaN(course)) {
+                alert('Masukkan arah kompas!');
+                return;
+            }
+
+            let cc = course % 360;
+            if (cc < 0) cc += 360;
+
+            const dev = getDeviation(cc);
+
+            // Cari titik terdekat
+            let between = '';
+            for (let i = 0; i < deviationData.length - 1; i++) {
+                const curr = deviationData[i];
+                const next = deviationData[i+1];
+                if (cc >= curr.course && cc <= next.course) {
+                    between = `${curr.course}° (${curr.dir}) — ${next.course}° (${next.dir})`;
+                    break;
+                }
+            }
+
+            document.getElementById('lkCourse').textContent = cc.toFixed(1) + '°';
+            document.getElementById('lkDev').textContent = (dev >= 0 ? '+' : '') + dev.toFixed(2) + '°';
+            document.getElementById('lkBetween').textContent = between || '360° — 0°';
+
+            document.getElementById('lookupResult').classList.add('active');
+        }
+
+        // Render tabel
+        function renderTable() {
+            const tbody = document.getElementById('devTableBody');
+            deviationData.forEach(d => {
+                const row = document.createElement('tr');
+                let devClass = 'dev-zero';
+                let ket = 'Nihil';
+                if (d.dev > 0) { devClass = 'dev-positive'; ket = 'East Dev.'; }
+                if (d.dev < 0) { devClass = 'dev-negative'; ket = 'West Dev.'; }
+
+                row.innerHTML = `
+                    <td><span class="direction-badge">${d.course.toFixed(1)}°</span></td>
+                    <td><strong>${d.dir}</strong></td>
+                    <td class="${devClass}">${d.dev > 0 ? '+' : ''}${d.dev.toFixed(1)}°</td>
+                    <td>${ket}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Init
+        renderTable();
+    </script>
+</body>
+</html>
