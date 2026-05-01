@@ -3,502 +3,1086 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konverter Koordinat DD → DMM | Maritime Navigator</title>
+    <title>Coordinate Converter | Maritime Navigator</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.7);
+            --border: rgba(148, 163, 184, 0.15);
+            --text: #f1f5f9;
+            --text-dim: #94a3b8;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --cyan: #06b6d4;
+            --cyan-light: #22d3ee;
+            --green: #10b981;
+            --red: #ef4444;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
             min-height: 100vh;
-            color: #e0e0e0;
-            padding: 20px;
+            color: var(--text);
+            padding: 16px;
         }
+
         .container {
-            max-width: 900px;
+            max-width: 880px;
             margin: 0 auto;
         }
+
+        /* Header */
         header {
             text-align: center;
-            padding: 25px 0;
-            border-bottom: 2px solid #e94560;
-            margin-bottom: 25px;
+            padding: 28px 0 20px;
         }
+
+        .logo {
+            width: 52px; height: 52px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.25);
+        }
+
         header h1 {
-            font-size: 1.6rem;
-            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text);
+        }
+
+        header h1 span {
+            color: var(--accent);
+        }
+
+        header p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            color: var(--cyan-light);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
             letter-spacing: 1px;
         }
-        header p {
-            color: #aaa;
-            font-size: 0.85rem;
-            margin-top: 5px;
-        }
+
+        /* Cards */
         .card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(12px);
         }
-        .card h2 {
-            font-size: 1rem;
-            color: #e94560;
-            margin-bottom: 15px;
+
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
-        .input-group {
-            margin-bottom: 15px;
+
+        .card-title .icon {
+            width: 26px; height: 26px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--bg);
         }
-        label {
+
+        /* Direction Selector */
+        .dir-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .dir-option {
+            position: relative;
+        }
+
+        .dir-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .dir-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+
+        .dir-option label .arrow {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        .dir-option input:checked + label {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+            color: var(--accent-light);
+            font-weight: 600;
+            box-shadow: 0 2px 12px rgba(245, 158, 11, 0.15);
+        }
+
+        .dir-option input:checked + label .arrow {
+            color: var(--accent);
+        }
+
+        /* Mode Tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .mode-tab {
+            position: relative;
+        }
+
+        .mode-tab input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .mode-tab label {
             display: block;
-            font-size: 0.85rem;
-            color: #bbb;
-            margin-bottom: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
+
+        .mode-tab input:checked + label {
+            background: var(--cyan);
+            color: #fff;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Inputs */
+        .input-group { margin-bottom: 12px; }
+
+        .input-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         textarea, input[type="text"] {
             width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            padding: 12px;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
-        textarea:focus, input:focus {
+
+        textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
+
+        textarea:focus, input[type="text"]:focus {
             outline: none;
-            border-color: #e94560;
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
         }
-        textarea {
-            min-height: 120px;
+
+        textarea::placeholder, input::placeholder {
+            color: rgba(148, 163, 184, 0.4);
         }
+
         .hint {
-            font-size: 0.75rem;
-            color: #888;
+            font-size: 0.7rem;
+            color: rgba(148, 163, 184, 0.6);
             margin-top: 5px;
+            padding-left: 10px;
+            border-left: 2px solid rgba(245, 158, 11, 0.3);
         }
-        .btn {
-            background: #e94560;
-            color: #fff;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .btn:hover {
-            background: #ff6b6b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            margin-left: 10px;
-        }
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.2);
-        }
+
+        /* Buttons */
         .btn-group {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
+            margin-top: 16px;
         }
+
+        .btn {
+            padding: 11px 22px;
+            border-radius: 10px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--bg);
+            box-shadow: 0 3px 14px rgba(245, 158, 11, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 20px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        /* Results */
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .result-count {
+            font-size: 0.72rem;
+            color: var(--cyan-light);
+            background: rgba(6, 182, 212, 0.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            font-weight: 600;
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 18px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
         }
+
         th {
-            background: rgba(233, 69, 96, 0.2);
-            color: #e94560;
+            background: rgba(6, 182, 212, 0.08);
+            color: var(--cyan-light);
             padding: 10px 8px;
             text-align: center;
             font-weight: 600;
-            border-bottom: 2px solid #e94560;
-        }
-        td {
-            padding: 10px 8px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        tr:hover td {
-            background: rgba(255,255,255,0.03);
-        }
-        .coord-cell {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: #4ecca3;
-        }
-        .format-box {
-            background: rgba(0,0,0,0.3);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: #4ecca3;
-            border-left: 3px solid #4ecca3;
-            word-break: break-all;
-        }
-        .format-label {
-            font-size: 0.75rem;
-            color: #888;
-            margin-bottom: 5px;
+            font-size: 0.68rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            white-space: nowrap;
         }
+
+        td {
+            padding: 9px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        tr:hover td {
+            background: rgba(6, 182, 212, 0.03);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .cell-dd { color: var(--text-dim); font-size: 0.75rem; }
+        .cell-dmm { color: var(--cyan-light); font-weight: 600; font-size: 0.8rem; }
+        .cell-furuno { color: var(--accent); font-size: 0.75rem; }
+
+        .row-num {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: var(--bg);
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.65rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Output Boxes */
+        .out-section { margin-top: 14px; }
+
+        .out-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .out-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .out-label .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+        }
+
+        .out-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(6, 182, 212, 0.12);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--cyan-light);
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.7;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .out-box::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--cyan));
+        }
+
         .copy-btn {
-            background: rgba(78, 204, 163, 0.15);
-            color: #4ecca3;
-            border: 1px solid rgba(78, 204, 163, 0.3);
-            padding: 4px 12px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            background: rgba(6, 182, 212, 0.08);
+            color: var(--cyan-light);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 8px;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .copy-btn:hover {
+            background: rgba(6, 182, 212, 0.15);
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--green);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        /* Info Section */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
             transition: all 0.2s;
         }
-        .copy-btn:hover {
-            background: rgba(78, 204, 163, 0.3);
+
+        .info-card:hover {
+            border-color: rgba(6, 182, 212, 0.2);
         }
-        .hidden {
-            display: none;
+
+        .info-card .label {
+            font-size: 0.65rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
+
+        .info-card .value {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .info-card .value code {
+            color: var(--cyan-light);
+            font-size: 0.72rem;
+        }
+
+        .info-tip {
+            margin-top: 14px;
+            padding: 12px;
+            background: rgba(245, 158, 11, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .info-tip p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        .info-tip strong {
+            color: var(--accent);
+        }
+
+        .info-tip code {
+            color: var(--cyan-light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+        }
+
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: #4ecca3;
-            color: #1a1a2e;
+            background: var(--green);
+            color: #fff;
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
+            font-size: 0.82rem;
             transform: translateY(100px);
-            transition: transform 0.3s;
+            opacity: 0;
+            transition: all 0.3s ease;
             z-index: 1000;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
         }
+
         .toast.show {
             transform: translateY(0);
+            opacity: 1;
         }
-        .radio-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            color: #ccc;
-        }
-        .radio-group input[type="radio"] {
-            accent-color: #e94560;
-        }
+
+        .hidden { display: none !important; }
+
         @media (max-width: 600px) {
-            body { padding: 10px; }
-            header h1 { font-size: 1.2rem; }
-            th, td { padding: 8px 4px; font-size: 0.75rem; }
-            .btn-group { justify-content: center; }
+            body { padding: 12px; }
+            .card { padding: 16px; }
+            .dir-selector { gap: 8px; }
+            .dir-option label { padding: 12px 8px; font-size: 0.75rem; }
+            th, td { padding: 7px 5px; font-size: 0.7rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-wrap: wrap; }
+            .btn { flex: 1; min-width: 100px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>⚓ KONVERTER KOORDINAT MARITIM</h1>
-            <p>Decimal Degrees (DD) → Degrees Decimal Minutes (DMM)</p>
-            <p style="font-size:0.75rem; margin-top:8px; color:#e94560;">Compatible: Navionics | Furuno GP-32/39 | Standard GPS</p>
+            <div class="logo">&#9875;</div>
+            <h1>Coordinate <span>Converter</span></h1>
+            <p>Maritime Precision Navigation</p>
+            <div class="badges">
+                <span class="badge">Navionics</span>
+                <span class="badge">Furuno GP-32/39</span>
+                <span class="badge">NMEA</span>
+            </div>
         </header>
 
+        <!-- INPUT CARD -->
         <div class="card">
-            <h2>📥 Input Koordinat</h2>
-            <div class="radio-group">
-                <label><input type="radio" name="inputMode" value="batch" checked onchange="toggleMode()"> Batch (Banyak)</label>
-                <label><input type="radio" name="inputMode" value="single" onchange="toggleMode()"> Single (Satu per satu)</label>
+            <div class="card-title">
+                <div class="icon">&#128229;</div>
+                Input Koordinat
             </div>
 
-            <div id="batchInput">
-                <div class="input-group">
-                    <label>Tempel data koordinat (format bebas):</label>
-                    <textarea id="batchText" placeholder="Contoh:
-1. -5.412, 119.164
-2. -4.049 119.047
-lat: -4.067, lon: 118.465
--2.122, 116.861"></textarea>
-                    <div class="hint">Bisa paste dari Excel, Navionics, screenshot OCR, dll. Sistem akan otomatis ekstrak angka.</div>
+            <!-- Direction Selector -->
+            <div class="dir-selector">
+                <div class="dir-option">
+                    <input type="radio" name="direction" id="dirDD2DMM" value="dd2dmm" checked onchange="toggleDir()">
+                    <label for="dirDD2DMM">
+                        <span>DD</span>
+                        <span class="arrow">&#8594;</span>
+                        <span>DMM</span>
+                    </label>
+                </div>
+                <div class="dir-option">
+                    <input type="radio" name="direction" id="dirDMM2DD" value="dmm2dd" onchange="toggleDir()">
+                    <label for="dirDMM2DD">
+                        <span>DMM</span>
+                        <span class="arrow">&#8594;</span>
+                        <span>DD</span>
+                    </label>
                 </div>
             </div>
 
-            <div id="singleInput" class="hidden">
-                <div class="input-group">
-                    <label>Latitude (DD):</label>
-                    <input type="text" id="latInput" placeholder="Contoh: -5.412 atau 5.412 S">
+            <!-- Mode Tabs -->
+            <div class="mode-tabs">
+                <div class="mode-tab">
+                    <input type="radio" name="inputMode" id="modeBatch" value="batch" checked onchange="toggleMode()">
+                    <label for="modeBatch">Batch</label>
                 </div>
-                <div class="input-group">
-                    <label>Longitude (DD):</label>
-                    <input type="text" id="lonInput" placeholder="Contoh: 119.164 atau 119.164 E">
+                <div class="mode-tab">
+                    <input type="radio" name="inputMode" id="modeSingle" value="single" onchange="toggleMode()">
+                    <label for="modeSingle">Single</label>
+                </div>
+            </div>
+
+            <!-- DD to DMM Inputs -->
+            <div id="secDD2DMM">
+                <div id="batchDD">
+                    <div class="input-group">
+                        <span class="input-label">Koordinat Decimal Degrees</span>
+                        <textarea id="txtBatchDD" placeholder="Contoh:
+-5.412, 119.164
+-4.049 119.047
+lat: -4.067, lon: 118.465"></textarea>
+                        <div class="hint">Paste dari Excel, Navionics, atau tulis manual. Auto-ekstrak angka.</div>
+                    </div>
+                </div>
+                <div id="singleDD" class="hidden">
+                    <div class="input-group">
+                        <span class="input-label">Latitude (DD)</span>
+                        <input type="text" id="inLatDD" placeholder="Contoh: -5.412">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-label">Longitude (DD)</span>
+                        <input type="text" id="inLonDD" placeholder="Contoh: 119.164">
+                    </div>
+                </div>
+            </div>
+
+            <!-- DMM to DD Inputs -->
+            <div id="secDMM2DD" class="hidden">
+                <div id="batchDMM">
+                    <div class="input-group">
+                        <span class="input-label">Koordinat Deg. Dec. Minutes</span>
+                        <textarea id="txtBatchDMM" placeholder="Contoh:
+00&#176;55.500'S / 117&#176;23.580'E
+05&#176;24.720'S / 119&#176;09.840'E
+0055.500 S, 11723.580 E"></textarea>
+                        <div class="hint">Support: Navionics (00&#176;55.500'S), Furuno (0055.500 S), spasi biasa.</div>
+                    </div>
+                </div>
+                <div id="singleDMM" class="hidden">
+                    <div class="input-group">
+                        <span class="input-label">Latitude (DMM)</span>
+                        <input type="text" id="inLatDMM" placeholder="Contoh: 00&#176;55.500'S">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-label">Longitude (DMM)</span>
+                        <input type="text" id="inLonDMM" placeholder="Contoh: 117&#176;23.580'E">
+                    </div>
                 </div>
             </div>
 
             <div class="btn-group">
-                <button class="btn" onclick="convert()">🔄 KONVERSI</button>
-                <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear</button>
-                <button class="btn btn-secondary" onclick="loadDemo()">📋 Demo Data</button>
+                <button class="btn btn-primary" onclick="doConvert()">&#128260; KONVERSI</button>
+                <button class="btn btn-secondary" onclick="doClear()">&#128465; Clear</button>
+                <button class="btn btn-secondary" onclick="loadDemo()">&#128203; Demo</button>
             </div>
         </div>
 
+        <!-- RESULTS CARD -->
         <div id="resultCard" class="card hidden">
-            <h2>📤 Hasil Konversi</h2>
-            <div style="overflow-x:auto;">
+            <div class="result-header">
+                <div class="card-title" style="margin:0;">
+                    <div class="icon">&#128228;</div>
+                    Hasil Konversi
+                </div>
+                <span class="result-count" id="resultCount">0 waypoint</span>
+            </div>
+
+            <div class="table-wrap">
                 <table>
-                    <thead>
+                    <thead id="tblHead">
                         <tr>
                             <th>No</th>
                             <th>Lat (DD)</th>
                             <th>Lon (DD)</th>
-                            <th>Latitude DMM</th>
-                            <th>Longitude DMM</th>
-                            <th>Furuno Format</th>
+                            <th>Lat (DMM)</th>
+                            <th>Lon (DMM)</th>
+                            <th>Furuno</th>
                         </tr>
                     </thead>
-                    <tbody id="resultTable"></tbody>
+                    <tbody id="tblBody"></tbody>
                 </table>
             </div>
 
-            <div style="margin-top:20px;">
-                <div class="format-label">📟 Format Furuno GP-32/39 (NMEA DMM):</div>
-                <div class="format-box" id="furunoOutput"></div>
-                <button class="copy-btn" onclick="copyToClipboard('furunoOutput')">📋 Copy Furuno</button>
+            <div class="out-section">
+                <div class="out-header">
+                    <span class="out-label"><span class="dot" style="background:var(--accent);"></span> Furuno GP-32 / GP-39</span>
+                    <button class="copy-btn" onclick="doCopy('outFuruno', this)">Copy</button>
+                </div>
+                <div class="out-box" id="outFuruno"></div>
             </div>
 
-            <div style="margin-top:15px;">
-                <div class="format-label">🗺️ Format Navionics (DMM with symbols):</div>
-                <div class="format-box" id="navionicsOutput"></div>
-                <button class="copy-btn" onclick="copyToClipboard('navionicsOutput')">📋 Copy Navionics</button>
+            <div class="out-section">
+                <div class="out-header">
+                    <span class="out-label"><span class="dot" style="background:var(--cyan);"></span> Navionics</span>
+                    <button class="copy-btn" onclick="doCopy('outNavionics', this)">Copy</button>
+                </div>
+                <div class="out-box" id="outNavionics"></div>
             </div>
 
-            <div style="margin-top:15px;">
-                <div class="format-label">📄 Format Plain Text (Waypoint):</div>
-                <div class="format-box" id="plainOutput"></div>
-                <button class="copy-btn" onclick="copyToClipboard('plainOutput')">📋 Copy Plain</button>
+            <div class="out-section">
+                <div class="out-header">
+                    <span class="out-label"><span class="dot" style="background:#a78bfa;"></span> Plain Text</span>
+                    <button class="copy-btn" onclick="doCopy('outPlain', this)">Copy</button>
+                </div>
+                <div class="out-box" id="outPlain"></div>
             </div>
         </div>
 
-        <div class="card" style="margin-top:20px;">
-            <h2>ℹ️ Panduan Format</h2>
-            <div style="font-size:0.85rem; line-height:1.8; color:#bbb;">
-                <p><strong style="color:#e94560;">Decimal Degrees (DD):</strong> -5.412° (angka desimal penuh)</p>
-                <p><strong style="color:#4ecca3;">Degrees Decimal Minutes (DMM):</strong> 05°24.720'S (derajat + menit desimal)</p>
-                <br>
-                <p><strong>Furuno GP-32/39:</strong> Input sebagai <code>05024.72 S</code> atau <code>11909.84 E</code></p>
-                <p><strong>Navionics:</strong> Input sebagai <code>05°24.720'S</code> atau langsung paste koordinat</p>
-                <br>
-                <p style="font-size:0.75rem; color:#888;">💡 Tips: Latitude negatif = Selatan (S), Longitude positif = Timur (E) untuk wilayah Indonesia.</p>
+        <!-- INFO CARD -->
+        <div class="card">
+            <div class="card-title">
+                <div class="icon">&#8505;</div>
+                Panduan Format
+            </div>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="label">Decimal Degrees</div>
+                    <div class="value">
+                        <code>-5.412&#176;</code><br>
+                        <code>119.164&#176;</code>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Deg. Dec. Minutes</div>
+                    <div class="value">
+                        <code>05&#176;24.720'S</code><br>
+                        <code>119&#176;09.840'E</code>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Furuno GP-32/39</div>
+                    <div class="value">
+                        <code>05024.72 S</code><br>
+                        <code>11909.84 E</code>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="label">Navionics</div>
+                    <div class="value">
+                        <code>05&#176;24.720'S</code><br>
+                        <code>119&#176;09.840'E</code>
+                    </div>
+                </div>
+            </div>
+            <div class="info-tip">
+                <p>
+                    <strong>DD &rarr; DMM:</strong> <code>Menit = (|DD| - Derajat) &times; 60</code><br>
+                    <strong>DMM &rarr; DD:</strong> <code>DD = Derajat + (Menit / 60)</code> &times; arah (+/-)<br><br>
+                    Latitude negatif = Selatan (S). Longitude positif = Timur (E) untuk wilayah Indonesia.
+                </p>
             </div>
         </div>
     </div>
 
-    <div class="toast" id="toast">✅ Disalin ke clipboard!</div>
+    <div class="toast" id="toast">&#10003; Disalin ke clipboard!</div>
 
     <script>
+        // ===================== UTILS =====================
+        function toggleDir() {
+            var dir = document.querySelector('input[name="direction"]:checked').value;
+            document.getElementById('secDD2DMM').classList.toggle('hidden', dir !== 'dd2dmm');
+            document.getElementById('secDMM2DD').classList.toggle('hidden', dir !== 'dmm2dd');
+            doClear();
+        }
+
         function toggleMode() {
-            const mode = document.querySelector('input[name="inputMode"]:checked').value;
-            document.getElementById('batchInput').classList.toggle('hidden', mode !== 'batch');
-            document.getElementById('singleInput').classList.toggle('hidden', mode !== 'single');
-        }
+            var mode = document.querySelector('input[name="inputMode"]:checked').value;
+            var dir = document.querySelector('input[name="direction"]:checked').value;
 
-        function ddToDMM(dd, isLat) {
-            const absVal = Math.abs(dd);
-            const degrees = Math.floor(absVal);
-            const minutes = (absVal - degrees) * 60;
-            const direction = isLat 
-                ? (dd < 0 ? 'S' : 'N')
-                : (dd < 0 ? 'W' : 'E');
-            return {
-                degrees: degrees,
-                minutes: minutes,
-                direction: direction,
-                dd: dd
-            };
-        }
-
-        function formatDMM(dmm, style) {
-            const minStr = dmm.minutes.toFixed(3).padStart(6, '0');
-            const degStr = dmm.degrees.toString().padStart(2, '0');
-
-            if (style === 'navionics') {
-                return `${degStr}°${minStr}'${dmm.direction}`;
-            } else if (style === 'furuno') {
-                return `${degStr}${minStr} ${dmm.direction}`;
+            if (dir === 'dd2dmm') {
+                document.getElementById('batchDD').classList.toggle('hidden', mode !== 'batch');
+                document.getElementById('singleDD').classList.toggle('hidden', mode !== 'single');
             } else {
-                return `${degStr}° ${minStr}' ${dmm.direction}`;
+                document.getElementById('batchDMM').classList.toggle('hidden', mode !== 'batch');
+                document.getElementById('singleDMM').classList.toggle('hidden', mode !== 'single');
             }
         }
 
-        function extractCoordinates(text) {
-            const coords = [];
-            // Remove common prefixes and clean up
-            const cleanText = text.replace(/lat[:\s]*/gi, '')
-                                  .replace(/lon[:\s]*/gi, ',')
-                                  .replace(/longitude[:\s]*/gi, ',')
-                                  .replace(/latitude[:\s]*/gi, '');
+        // ===================== DD TO DMM =====================
+        function ddToDMM(dd, isLat) {
+            var absVal = Math.abs(dd);
+            var deg = Math.floor(absVal);
+            var min = (absVal - deg) * 60;
+            var dir = isLat ? (dd < 0 ? 'S' : 'N') : (dd < 0 ? 'W' : 'E');
+            return { deg: deg, min: min, dir: dir };
+        }
 
-            // Try to find pairs of numbers that look like coordinates
-            const lines = cleanText.split(/[
+        function fmtDMM(dmm, style) {
+            var minStr = dmm.min.toFixed(3);
+            while (minStr.length < 6) minStr = '0' + minStr;
+            var degStr = dmm.deg.toString();
+            while (degStr.length < 2) degStr = '0' + degStr;
 
-]+/);
+            if (style === 'navionics') return degStr + '\u00B0' + minStr + '\'' + dmm.dir;
+            if (style === 'furuno') return degStr + minStr + ' ' + dmm.dir;
+            return degStr + '\u00B0 ' + minStr + '\' ' + dmm.dir;
+        }
 
-            for (let line of lines) {
-                line = line.trim();
+        // ===================== DMM TO DD =====================
+        function parseDMM(text) {
+            var clean = text.toUpperCase();
+            // Normalize symbols
+            clean = clean.replace(/[\u00B0\u02DA\u030A\u2218]/g, ' ');
+            clean = clean.replace(/[\u0027\u2019\u2032\u0060]/g, ' ');
+            clean = clean.replace(/[,/;|]/g, ' ');
+            clean = clean.replace(/\s+/g, ' ').trim();
+
+            // Find direction
+            var dir = '';
+            var dirs = ['N', 'S', 'E', 'W'];
+            for (var i = 0; i < dirs.length; i++) {
+                if (clean.indexOf(dirs[i]) !== -1) {
+                    dir = dirs[i];
+                    break;
+                }
+            }
+            if (!dir) return null;
+
+            var numPart = clean.replace(new RegExp(dir, 'g'), '').trim();
+
+            // Extract number strings (preserve leading zeros!)
+            var matches = numPart.match(/\d+\.?\d*/g);
+            if (!matches || matches.length === 0) return null;
+
+            var deg = 0, min = 0;
+
+            if (matches.length === 1) {
+                // Furuno style: e.g. "0055.500"
+                var s = matches[0];
+                var isLon = (dir === 'E' || dir === 'W');
+                var degDigits = isLon ? 3 : 2;
+
+                if (s.indexOf('.') !== -1) {
+                    var dotPos = s.indexOf('.');
+                    var intPart = s.substring(0, dotPos);
+                    if (intPart.length > degDigits) {
+                        deg = parseInt(intPart.substring(0, degDigits));
+                        min = parseFloat(intPart.substring(degDigits) + s.substring(dotPos));
+                    } else {
+                        deg = intPart ? parseInt(intPart) : 0;
+                        min = parseFloat('0' + s.substring(dotPos));
+                    }
+                } else {
+                    if (s.length > degDigits) {
+                        deg = parseInt(s.substring(0, degDigits));
+                        min = parseFloat(s.substring(degDigits));
+                    } else {
+                        deg = s ? parseInt(s) : 0;
+                    }
+                }
+            } else {
+                deg = matches[0] ? parseInt(matches[0]) : 0;
+                min = parseFloat(matches[1]);
+            }
+
+            if (min >= 60) return null;
+
+            var dd = deg + (min / 60);
+            if (dir === 'S' || dir === 'W') dd = -dd;
+            return dd;
+        }
+
+        function extractDD(text) {
+            var coords = [];
+            var clean = text.replace(/lat[:\s]*/gi, '').replace(/lon[:\s]*/gi, ',')
+                           .replace(/longitude[:\s]*/gi, ',').replace(/latitude[:\s]*/gi, '');
+            var lines = clean.split(/[\n\r]+/);
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
                 if (!line) continue;
-
-                // Extract all floating point numbers
-                const numbers = line.match(/-?\d+\.\d+/g);
-                if (numbers && numbers.length >= 2) {
-                    const lat = parseFloat(numbers[0]);
-                    const lon = parseFloat(numbers[1]);
-
-                    // Validate coordinate ranges
+                var nums = line.match(/-?\d+\.\d+/g);
+                if (nums && nums.length >= 2) {
+                    var lat = parseFloat(nums[0]);
+                    var lon = parseFloat(nums[1]);
                     if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
-                        coords.push({ lat, lon });
+                        coords.push({ lat: lat, lon: lon });
                     }
                 }
             }
 
-            // If no line-by-line match, try global pattern
             if (coords.length === 0) {
-                const allNumbers = cleanText.match(/-?\d+\.\d+/g);
-                if (allNumbers) {
-                    for (let i = 0; i < allNumbers.length - 1; i += 2) {
-                        const lat = parseFloat(allNumbers[i]);
-                        const lon = parseFloat(allNumbers[i+1]);
-                        if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
-                            coords.push({ lat, lon });
+                var all = clean.match(/-?\d+\.\d+/g);
+                if (all) {
+                    for (var j = 0; j < all.length - 1; j += 2) {
+                        var lat2 = parseFloat(all[j]);
+                        var lon2 = parseFloat(all[j+1]);
+                        if (Math.abs(lat2) <= 90 && Math.abs(lon2) <= 180) {
+                            coords.push({ lat: lat2, lon: lon2 });
                         }
                     }
                 }
             }
-
             return coords;
         }
 
-        function convert() {
-            const mode = document.querySelector('input[name="inputMode"]:checked').value;
-            let coords = [];
+        function extractDMM(text) {
+            var coords = [];
+            var lines = text.split(/[\n\r]+/);
 
-            if (mode === 'batch') {
-                const text = document.getElementById('batchText').value;
-                coords = extractCoordinates(text);
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+
+                // Try split by slash or comma
+                var parts = line.split(/[\/,;|]/);
+                if (parts.length >= 2) {
+                    var lat = parseDMM(parts[0].trim());
+                    var lon = parseDMM(parts[1].trim());
+                    if (lat !== null && lon !== null) {
+                        var latDir = (lat < 0) ? 'S' : 'N';
+                        var lonDir = (lon < 0) ? 'W' : 'E';
+                        if ((latDir === 'S' || latDir === 'N') && (lonDir === 'E' || lonDir === 'W')) {
+                            coords.push({ lat: lat, lon: lon });
+                            continue;
+                        }
+                    }
+                }
+
+                // Fallback: find two coordinate-like patterns
+                var dmmPattern = /(\d+[\s\u00B0]?\d+\.\d+[\s\']?[NSEWnsew])/gi;
+                var matches = line.match(dmmPattern);
+                if (matches && matches.length >= 2) {
+                    var lat2 = parseDMM(matches[0]);
+                    var lon2 = parseDMM(matches[1]);
+                    if (lat2 !== null && lon2 !== null) {
+                        coords.push({ lat: lat2, lon: lon2 });
+                    }
+                }
+            }
+            return coords;
+        }
+
+        // ===================== CONVERT =====================
+        function doConvert() {
+            var dir = document.querySelector('input[name="direction"]:checked').value;
+            var mode = document.querySelector('input[name="inputMode"]:checked').value;
+            var coords = [];
+
+            if (dir === 'dd2dmm') {
+                if (mode === 'batch') {
+                    coords = extractDD(document.getElementById('txtBatchDD').value);
+                } else {
+                    var lat = parseFloat(document.getElementById('inLatDD').value);
+                    var lon = parseFloat(document.getElementById('inLonDD').value);
+                    if (!isNaN(lat) && !isNaN(lon)) coords.push({ lat: lat, lon: lon });
+                }
             } else {
-                const lat = parseFloat(document.getElementById('latInput').value);
-                const lon = parseFloat(document.getElementById('lonInput').value);
-                if (!isNaN(lat) && !isNaN(lon)) {
-                    coords.push({ lat, lon });
+                if (mode === 'batch') {
+                    coords = extractDMM(document.getElementById('txtBatchDMM').value);
+                } else {
+                    var latStr = document.getElementById('inLatDMM').value;
+                    var lonStr = document.getElementById('inLonDMM').value;
+                    var lat = parseDMM(latStr);
+                    var lon = parseDMM(lonStr);
+                    if (lat !== null && lon !== null) coords.push({ lat: lat, lon: lon });
                 }
             }
 
             if (coords.length === 0) {
-                alert('Tidak ada koordinat valid ditemukan. Periksa input Anda.');
+                alert('Tidak ada koordinat valid ditemukan. Periksa format input.');
                 return;
             }
 
-            displayResults(coords);
+            showResults(coords, dir);
         }
 
-        function displayResults(coords) {
-            const tbody = document.getElementById('resultTable');
+        function showResults(coords, dir) {
+            var tbody = document.getElementById('tblBody');
             tbody.innerHTML = '';
 
-            let furunoLines = [];
-            let navionicsLines = [];
-            let plainLines = [];
+            var furunoLines = [];
+            var navionicsLines = [];
+            var plainLines = [];
 
-            coords.forEach((c, idx) => {
-                const latDMM = ddToDMM(c.lat, true);
-                const lonDMM = ddToDMM(c.lon, false);
+            // Update header
+            var thead = document.getElementById('tblHead');
+            if (dir === 'dmm2dd') {
+                thead.innerHTML = '<tr><th>No</th><th>Lat (DMM)</th><th>Lon (DMM)</th><th>Lat (DD)</th><th>Lon (DD)</th><th>Furuno</th></tr>';
+            } else {
+                thead.innerHTML = '<tr><th>No</th><th>Lat (DD)</th><th>Lon (DD)</th><th>Lat (DMM)</th><th>Lon (DMM)</th><th>Furuno</th></tr>';
+            }
 
-                const latNav = formatDMM(latDMM, 'navionics');
-                const lonNav = formatDMM(lonDMM, 'navionics');
-                const latFur = formatDMM(latDMM, 'furuno');
-                const lonFur = formatDMM(lonDMM, 'furuno');
+            for (var i = 0; i < coords.length; i++) {
+                var c = coords[i];
+                var latDMM = ddToDMM(c.lat, true);
+                var lonDMM = ddToDMM(c.lon, false);
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${idx + 1}</td>
-                    <td class="coord-cell">${c.lat.toFixed(6)}</td>
-                    <td class="coord-cell">${c.lon.toFixed(6)}</td>
-                    <td class="coord-cell">${latNav}</td>
-                    <td class="coord-cell">${lonNav}</td>
-                    <td class="coord-cell">${latFur} / ${lonFur}</td>
-                `;
+                var latNav = fmtDMM(latDMM, 'navionics');
+                var lonNav = fmtDMM(lonDMM, 'navionics');
+                var latFur = fmtDMM(latDMM, 'furuno');
+                var lonFur = fmtDMM(lonDMM, 'furuno');
+
+                var row = document.createElement('tr');
+                if (dir === 'dmm2dd') {
+                    row.innerHTML = '<td><span class="row-num">' + (i+1) + '</span></td>' +
+                        '<td class="cell-dmm">' + latNav + '</td>' +
+                        '<td class="cell-dmm">' + lonNav + '</td>' +
+                        '<td class="cell-dd">' + c.lat.toFixed(6) + '</td>' +
+                        '<td class="cell-dd">' + c.lon.toFixed(6) + '</td>' +
+                        '<td class="cell-furuno">' + latFur + '<br>' + lonFur + '</td>';
+                } else {
+                    row.innerHTML = '<td><span class="row-num">' + (i+1) + '</span></td>' +
+                        '<td class="cell-dd">' + c.lat.toFixed(6) + '</td>' +
+                        '<td class="cell-dd">' + c.lon.toFixed(6) + '</td>' +
+                        '<td class="cell-dmm">' + latNav + '</td>' +
+                        '<td class="cell-dmm">' + lonNav + '</td>' +
+                        '<td class="cell-furuno">' + latFur + '<br>' + lonFur + '</td>';
+                }
                 tbody.appendChild(row);
 
-                furunoLines.push(`WP${idx+1}: ${latFur} ${lonFur}`);
-                navionicsLines.push(`${latNav} ${lonNav}`);
-                plainLines.push(`${idx+1}. ${latNav} - ${lonNav}`);
-            });
+                furunoLines.push('WP' + (i+1) + ': ' + latFur + ' ' + lonFur);
+                navionicsLines.push(latNav + ' ' + lonNav);
+                plainLines.push((i+1) + '. ' + latNav + ' - ' + lonNav);
+            }
 
-            document.getElementById('furunoOutput').textContent = furunoLines.join('\n');
-            document.getElementById('navionicsOutput').textContent = navionicsLines.join('\n');
-            document.getElementById('plainOutput').textContent = plainLines.join('\n');
+            document.getElementById('outFuruno').textContent = furunoLines.join('\n');
+            document.getElementById('outNavionics').textContent = navionicsLines.join('\n');
+            document.getElementById('outPlain').textContent = plainLines.join('\n');
+            document.getElementById('resultCount').textContent = coords.length + ' waypoint' + (coords.length > 1 ? 's' : '');
 
-            document.getElementById('resultCard').classList.remove('hidden');
-            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+            var rc = document.getElementById('resultCard');
+            rc.classList.remove('hidden');
+            rc.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function clearAll() {
-            document.getElementById('batchText').value = '';
-            document.getElementById('latInput').value = '';
-            document.getElementById('lonInput').value = '';
+        function doClear() {
+            document.getElementById('txtBatchDD').value = '';
+            document.getElementById('inLatDD').value = '';
+            document.getElementById('inLonDD').value = '';
+            document.getElementById('txtBatchDMM').value = '';
+            document.getElementById('inLatDMM').value = '';
+            document.getElementById('inLonDMM').value = '';
             document.getElementById('resultCard').classList.add('hidden');
         }
 
         function loadDemo() {
-            const demo = `1. -5.412, 119.164
-2. -4.049, 119.047
-3. -4.067, 118.465
-4. -2.122, 116.861
-5. -0.925, 117.393`;
-            document.getElementById('batchText').value = demo;
-            document.querySelector('input[value="batch"]').checked = true;
+            var dir = document.querySelector('input[name="direction"]:checked').value;
+            if (dir === 'dd2dmm') {
+                document.getElementById('txtBatchDD').value = '-5.412, 119.164\n-4.049, 119.047\n-4.067, 118.465\n-2.122, 116.861\n-0.925, 117.393';
+                document.getElementById('modeBatch').checked = true;
+            } else {
+                document.getElementById('txtBatchDMM').value = "00\u00B055.500'S / 117\u00B023.580'E\n05\u00B024.720'S / 119\u00B009.840'E\n04\u00B002.940'S / 119\u00B002.820'E\n04\u00B004.020'S / 118\u00B027.900'E\n02\u00B007.320'S / 116\u00B051.660'E";
+                document.getElementById('modeBatch').checked = true;
+            }
             toggleMode();
         }
 
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast();
-            }).catch(() => {
-                // Fallback
-                const el = document.createElement('textarea');
-                el.value = text;
-                document.body.appendChild(el);
-                el.select();
+        function doCopy(id, btn) {
+            var text = document.getElementById(id).textContent;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() {
+                    copyFeedback(btn);
+                }).catch(function() {
+                    fallbackCopy(text, btn);
+                });
+            } else {
+                fallbackCopy(text, btn);
+            }
+        }
+
+        function fallbackCopy(text, btn) {
+            var el = document.createElement('textarea');
+            el.value = text;
+            el.style.position = 'fixed';
+            el.style.left = '-9999px';
+            document.body.appendChild(el);
+            el.select();
+            try {
                 document.execCommand('copy');
-                document.body.removeChild(el);
-                showToast();
-            });
+                copyFeedback(btn);
+            } catch(e) {}
+            document.body.removeChild(el);
+        }
+
+        function copyFeedback(btn) {
+            var orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            showToast();
+            setTimeout(function() {
+                btn.textContent = orig;
+                btn.classList.remove('copied');
+            }, 2000);
         }
 
         function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+            var t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(function() { t.classList.remove('show'); }, 2200);
         }
     </script>
 </body>
