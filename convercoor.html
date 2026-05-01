@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konverter Koordinat DD → DMM | Maritime Navigator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid #e94560;
+            margin-bottom: 25px;
+        }
+        header h1 {
+            font-size: 1.6rem;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        header p {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .card h2 {
+            font-size: 1rem;
+            color: #e94560;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #bbb;
+            margin-bottom: 6px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        textarea {
+            min-height: 120px;
+        }
+        .hint {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        .btn {
+            background: #e94560;
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn:hover {
+            background: #ff6b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            margin-left: 10px;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+        th {
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #e94560;
+        }
+        td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+        .coord-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #4ecca3;
+        }
+        .format-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #4ecca3;
+            border-left: 3px solid #4ecca3;
+            word-break: break-all;
+        }
+        .format-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .copy-btn {
+            background: rgba(78, 204, 163, 0.15);
+            color: #4ecca3;
+            border: 1px solid rgba(78, 204, 163, 0.3);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: rgba(78, 204, 163, 0.3);
+        }
+        .hidden {
+            display: none;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4ecca3;
+            color: #1a1a2e;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transform: translateY(100px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateY(0);
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: #ccc;
+        }
+        .radio-group input[type="radio"] {
+            accent-color: #e94560;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            header h1 { font-size: 1.2rem; }
+            th, td { padding: 8px 4px; font-size: 0.75rem; }
+            .btn-group { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚓ KONVERTER KOORDINAT MARITIM</h1>
+            <p>Decimal Degrees (DD) → Degrees Decimal Minutes (DMM)</p>
+            <p style="font-size:0.75rem; margin-top:8px; color:#e94560;">Compatible: Navionics | Furuno GP-32/39 | Standard GPS</p>
+        </header>
+
+        <div class="card">
+            <h2>📥 Input Koordinat</h2>
+            <div class="radio-group">
+                <label><input type="radio" name="inputMode" value="batch" checked onchange="toggleMode()"> Batch (Banyak)</label>
+                <label><input type="radio" name="inputMode" value="single" onchange="toggleMode()"> Single (Satu per satu)</label>
+            </div>
+
+            <div id="batchInput">
+                <div class="input-group">
+                    <label>Tempel data koordinat (format bebas):</label>
+                    <textarea id="batchText" placeholder="Contoh:
+1. -5.412, 119.164
+2. -4.049 119.047
+lat: -4.067, lon: 118.465
+-2.122, 116.861"></textarea>
+                    <div class="hint">Bisa paste dari Excel, Navionics, screenshot OCR, dll. Sistem akan otomatis ekstrak angka.</div>
+                </div>
+            </div>
+
+            <div id="singleInput" class="hidden">
+                <div class="input-group">
+                    <label>Latitude (DD):</label>
+                    <input type="text" id="latInput" placeholder="Contoh: -5.412 atau 5.412 S">
+                </div>
+                <div class="input-group">
+                    <label>Longitude (DD):</label>
+                    <input type="text" id="lonInput" placeholder="Contoh: 119.164 atau 119.164 E">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" onclick="convert()">🔄 KONVERSI</button>
+                <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear</button>
+                <button class="btn btn-secondary" onclick="loadDemo()">📋 Demo Data</button>
+            </div>
+        </div>
+
+        <div id="resultCard" class="card hidden">
+            <h2>📤 Hasil Konversi</h2>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Lat (DD)</th>
+                            <th>Lon (DD)</th>
+                            <th>Latitude DMM</th>
+                            <th>Longitude DMM</th>
+                            <th>Furuno Format</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTable"></tbody>
+                </table>
+            </div>
+
+            <div style="margin-top:20px;">
+                <div class="format-label">📟 Format Furuno GP-32/39 (NMEA DMM):</div>
+                <div class="format-box" id="furunoOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard('furunoOutput')">📋 Copy Furuno</button>
+            </div>
+
+            <div style="margin-top:15px;">
+                <div class="format-label">🗺️ Format Navionics (DMM with symbols):</div>
+                <div class="format-box" id="navionicsOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard('navionicsOutput')">📋 Copy Navionics</button>
+            </div>
+
+            <div style="margin-top:15px;">
+                <div class="format-label">📄 Format Plain Text (Waypoint):</div>
+                <div class="format-box" id="plainOutput"></div>
+                <button class="copy-btn" onclick="copyToClipboard('plainOutput')">📋 Copy Plain</button>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h2>ℹ️ Panduan Format</h2>
+            <div style="font-size:0.85rem; line-height:1.8; color:#bbb;">
+                <p><strong style="color:#e94560;">Decimal Degrees (DD):</strong> -5.412° (angka desimal penuh)</p>
+                <p><strong style="color:#4ecca3;">Degrees Decimal Minutes (DMM):</strong> 05°24.720'S (derajat + menit desimal)</p>
+                <br>
+                <p><strong>Furuno GP-32/39:</strong> Input sebagai <code>05024.72 S</code> atau <code>11909.84 E</code></p>
+                <p><strong>Navionics:</strong> Input sebagai <code>05°24.720'S</code> atau langsung paste koordinat</p>
+                <br>
+                <p style="font-size:0.75rem; color:#888;">💡 Tips: Latitude negatif = Selatan (S), Longitude positif = Timur (E) untuk wilayah Indonesia.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">✅ Disalin ke clipboard!</div>
+
+    <script>
+        function toggleMode() {
+            const mode = document.querySelector('input[name="inputMode"]:checked').value;
+            document.getElementById('batchInput').classList.toggle('hidden', mode !== 'batch');
+            document.getElementById('singleInput').classList.toggle('hidden', mode !== 'single');
+        }
+
+        function ddToDMM(dd, isLat) {
+            const absVal = Math.abs(dd);
+            const degrees = Math.floor(absVal);
+            const minutes = (absVal - degrees) * 60;
+            const direction = isLat 
+                ? (dd < 0 ? 'S' : 'N')
+                : (dd < 0 ? 'W' : 'E');
+            return {
+                degrees: degrees,
+                minutes: minutes,
+                direction: direction,
+                dd: dd
+            };
+        }
+
+        function formatDMM(dmm, style) {
+            const minStr = dmm.minutes.toFixed(3).padStart(6, '0');
+            const degStr = dmm.degrees.toString().padStart(2, '0');
+
+            if (style === 'navionics') {
+                return `${degStr}°${minStr}'${dmm.direction}`;
+            } else if (style === 'furuno') {
+                return `${degStr}${minStr} ${dmm.direction}`;
+            } else {
+                return `${degStr}° ${minStr}' ${dmm.direction}`;
+            }
+        }
+
+        function extractCoordinates(text) {
+            const coords = [];
+            // Remove common prefixes and clean up
+            const cleanText = text.replace(/lat[:\s]*/gi, '')
+                                  .replace(/lon[:\s]*/gi, ',')
+                                  .replace(/longitude[:\s]*/gi, ',')
+                                  .replace(/latitude[:\s]*/gi, '');
+
+            // Try to find pairs of numbers that look like coordinates
+            const lines = cleanText.split(/[
+
+]+/);
+
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+
+                // Extract all floating point numbers
+                const numbers = line.match(/-?\d+\.\d+/g);
+                if (numbers && numbers.length >= 2) {
+                    const lat = parseFloat(numbers[0]);
+                    const lon = parseFloat(numbers[1]);
+
+                    // Validate coordinate ranges
+                    if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+                        coords.push({ lat, lon });
+                    }
+                }
+            }
+
+            // If no line-by-line match, try global pattern
+            if (coords.length === 0) {
+                const allNumbers = cleanText.match(/-?\d+\.\d+/g);
+                if (allNumbers) {
+                    for (let i = 0; i < allNumbers.length - 1; i += 2) {
+                        const lat = parseFloat(allNumbers[i]);
+                        const lon = parseFloat(allNumbers[i+1]);
+                        if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+                            coords.push({ lat, lon });
+                        }
+                    }
+                }
+            }
+
+            return coords;
+        }
+
+        function convert() {
+            const mode = document.querySelector('input[name="inputMode"]:checked').value;
+            let coords = [];
+
+            if (mode === 'batch') {
+                const text = document.getElementById('batchText').value;
+                coords = extractCoordinates(text);
+            } else {
+                const lat = parseFloat(document.getElementById('latInput').value);
+                const lon = parseFloat(document.getElementById('lonInput').value);
+                if (!isNaN(lat) && !isNaN(lon)) {
+                    coords.push({ lat, lon });
+                }
+            }
+
+            if (coords.length === 0) {
+                alert('Tidak ada koordinat valid ditemukan. Periksa input Anda.');
+                return;
+            }
+
+            displayResults(coords);
+        }
+
+        function displayResults(coords) {
+            const tbody = document.getElementById('resultTable');
+            tbody.innerHTML = '';
+
+            let furunoLines = [];
+            let navionicsLines = [];
+            let plainLines = [];
+
+            coords.forEach((c, idx) => {
+                const latDMM = ddToDMM(c.lat, true);
+                const lonDMM = ddToDMM(c.lon, false);
+
+                const latNav = formatDMM(latDMM, 'navionics');
+                const lonNav = formatDMM(lonDMM, 'navionics');
+                const latFur = formatDMM(latDMM, 'furuno');
+                const lonFur = formatDMM(lonDMM, 'furuno');
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td class="coord-cell">${c.lat.toFixed(6)}</td>
+                    <td class="coord-cell">${c.lon.toFixed(6)}</td>
+                    <td class="coord-cell">${latNav}</td>
+                    <td class="coord-cell">${lonNav}</td>
+                    <td class="coord-cell">${latFur} / ${lonFur}</td>
+                `;
+                tbody.appendChild(row);
+
+                furunoLines.push(`WP${idx+1}: ${latFur} ${lonFur}`);
+                navionicsLines.push(`${latNav} ${lonNav}`);
+                plainLines.push(`${idx+1}. ${latNav} - ${lonNav}`);
+            });
+
+            document.getElementById('furunoOutput').textContent = furunoLines.join('\n');
+            document.getElementById('navionicsOutput').textContent = navionicsLines.join('\n');
+            document.getElementById('plainOutput').textContent = plainLines.join('\n');
+
+            document.getElementById('resultCard').classList.remove('hidden');
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearAll() {
+            document.getElementById('batchText').value = '';
+            document.getElementById('latInput').value = '';
+            document.getElementById('lonInput').value = '';
+            document.getElementById('resultCard').classList.add('hidden');
+        }
+
+        function loadDemo() {
+            const demo = `1. -5.412, 119.164
+2. -4.049, 119.047
+3. -4.067, 118.465
+4. -2.122, 116.861
+5. -0.925, 117.393`;
+            document.getElementById('batchText').value = demo;
+            document.querySelector('input[value="batch"]').checked = true;
+            toggleMode();
+        }
+
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            }).catch(() => {
+                // Fallback
+                const el = document.createElement('textarea');
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+</body>
+</html>
