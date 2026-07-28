@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster Oper Baterai - TB. ARK DAN</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d1b2a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+  }
+  .poster {
+    width: 595px;
+    height: 842px;
+    background: #1a237e;
+    border: 5px solid #ffc107;
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+  }
+  /* Header */
+  .header {
+    background: #0d47a1;
+    border: 3px solid #ffc107;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .header .bolt {
+    font-size: 42px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .header h2 {
+    color: #ffc107;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* Box style */
+  .box {
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .box-yellow {
+    background: rgba(255,255,255,0.08);
+    border: 2.5px solid #ffc107;
+  }
+  .box-blue {
+    background: rgba(66,165,245,0.15);
+    border: 2.5px solid #42a5f5;
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  .box-red {
+    background: #ff5722;
+    border: 2.5px solid #ffffff;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  /* Circle number */
+  .circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    flex-shrink: 0;
+    border: 2.5px solid #ffffff;
+  }
+  .circle-yellow { background: #ffc107; color: #1a237e; }
+  .circle-red { background: #ff5722; color: #ffffff; }
+
+  /* Text inside box */
+  .box-content { display: flex; flex-direction: column; gap: 3px; }
+  .label {
+    color: #90caf9;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .title-text {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .highlight {
+    color: #ffc107;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .highlight-red {
+    color: #ff5722;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .sub-red {
+    color: #ffab91;
+    font-size: 13px;
+  }
+
+  /* Blue box specific */
+  .blue-title {
+    color: #42a5f5;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .blue-text {
+    color: #ffffff;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .blue-note {
+    color: #ffab91;
+    font-size: 11px;
+  }
+
+  /* Warning box */
+  .warning-tri {
+    font-size: 18px;
+    color: #ffc107;
+  }
+  .warning-text {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: auto;
+    padding-bottom: 6px;
+  }
+  .footer-vessel {
+    color: #90caf9;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .footer-note {
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+  .footer-year {
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #0d1b2a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .poster { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="poster">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="bolt">⚡</div>
+    <h1>INSTRUKSI OPERASI BATERAI</h1>
+    <h2>DC 24V POWER PANEL</h2>
+  </div>
+
+  <!-- BOX 1: PAGI -->
+  <div class="box box-yellow">
+    <div class="circle circle-yellow">1</div>
+    <div class="box-content">
+      <div class="label">PAGI</div>
+      <div class="title-text">Oper Baterai Jam</div>
+      <div class="highlight">08.00</div>
+    </div>
+  </div>
+
+  <!-- BOX 2: MALAM -->
+  <div class="box box-yellow">
+    <div class="circle circle-yellow">2</div>
+    <div class="box-content">
+      <div class="label">MALAM</div>
+      <div class="title-text">Oper Baterai Jam</div>
+      <div class="highlight">20.00</div>
+    </div>
+  </div>
+
+  <!-- BOX 3: WAJIB -->
+  <div class="box box-yellow">
+    <div class="circle circle-red">!</div>
+    <div class="box-content">
+      <div class="label">WAJIB</div>
+      <div class="title-text">Charging Switch</div>
+      <div class="highlight-red">"ON" jika indikator kurang</div>
+    </div>
+  </div>
+
+  <!-- BOX 4: BATTERY BANK SELECT SWITCH -->
+  <div class="box box-blue">
+    <div class="blue-title">BATTERY BANK SELECT SWITCH</div>
+    <div class="blue-text">Pilih yang voltagenya 24V</div>
+    <div class="blue-text">Posisi 1 → Charge Batt.1 + Load Batt.2</div>
+    <div class="blue-text">Posisi 2 → Charge Batt.2 + Load Batt.1</div>
+    <div class="blue-note">Catatan: Saat ada pengelasan, posisi "0"</div>
+  </div>
+
+  <!-- BOX 5: WARNING -->
+  <div class="box box-red">
+    <span class="warning-tri">⚠️</span>
+    <span class="warning-text">PASTIKAN SWITCH CHARGER AKI MENYALA</span>
+    <span class="warning-tri">⚠️</span>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-vessel">TB. ARK DAN</div>
+    <div class="footer-note">Dilarang mengoperasikan peralatan navigasi tanpa baterai cadangan aktif</div>
+    <div class="footer-year">@2026</div>
+  </div>
+
+</div>
+
+</body>
+</html>
