@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Poster Rencana Kerja</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@400;700&display=swap');
+body { background:#e0e0e0; margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.poster { width:210mm; min-height:297mm; background:#f4f1ea; padding:28px 32px; box-shadow:0 8px 32px rgba(0,0,0,0.2); font-family:'Roboto Condensed',sans-serif; color:#2c2c2c; }
+.header { background:#1a1a1a; color:#fff; padding:18px 24px; margin:-28px -32px 24px -32px; display:flex; justify-content:space-between; align-items:center; }
+.header-title { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:3px; }
+.header-sub { font-size:13px; text-transform:uppercase; letter-spacing:2px; opacity:0.8; text-align:right; }
+.vessel { background:#c9a227; color:#1a1a1a; display:inline-block; padding:6px 18px; font-weight:700; font-size:15px; margin-bottom:20px; }
+.datebox { background:#2d5a3d; color:#fff; padding:14px 20px; margin-bottom:24px; border-left:6px solid #c9a227; }
+.datelabel { font-size:12px; text-transform:uppercase; letter-spacing:2px; opacity:0.9; margin-bottom:4px; }
+.dateval { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:1px; }
+.prep { background:#e8e4db; padding:12px 16px; font-size:13px; color:#555; margin-bottom:20px; border-left:4px solid #888; }
+.sectitle { font-family:'Bebas Neue',sans-serif; font-size:22px; color:#1a1a1a; border-bottom:3px solid #c9a227; padding-bottom:6px; margin-bottom:16px; letter-spacing:1px; }
+.task { background:#fff; border:2px solid; border-left:8px solid; padding:18px 20px; margin-bottom:16px; }
+.task.morning { border-color:#c9a227; }
+.task.noon { border-color:#2d5a3d; }
+.tasktime { font-family:'Bebas Neue',sans-serif; font-size:20px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+.dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.taskdesc { font-size:15px; line-height:1.7; color:#333; }
+.taskdesc strong { color:#1a1a1a; }
+.condition { background:#fff8e1; border:2px solid #c9a227; padding:14px 18px; margin-bottom:20px; font-size:14px; color:#5d4a1a; }
+.warning { background:#8b1a1a; color:#fff; padding:20px 24px; margin-top:24px; border:3px dashed #c9a227; }
+.warntitle { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; margin-bottom:10px; }
+.footer { margin-top:32px; padding-top:20px; border-top:2px solid #ccc; display:flex; justify-content:space-between; align-items:flex-end; }
+.stamp { border:2px solid #1a1a1a; padding:10px 16px; text-align:center; min-width:140px; }
+.stamplabel { font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.stampline { border-bottom:1px solid #1a1a1a; height:28px; }
+@media print { body { background:#fff; } .poster { box-shadow:none; margin:0; } }
+</style>
+</head>
+<body>
+<div class="poster">
+<div class="header">
+<div class="header-title">RENCANA KERJA HARIAN</div>
+<div class="header-sub">DECK DEPARTEMENT<br>TB. ARK DAN</div>
+</div>
+<div class="vessel">TB. ARK DAN — DECK MAINTENANCE PROGRAM</div>
+<div class="datebox">
+<div class="datelabel">Diterbitkan: Senin, 10 Agustus 2026</div>
+<div class="dateval">RENCANA UNTUK: SELASA, 11 AGUSTUS 2026</div>
+</div>
+<div class="prep"><strong>Catatan Persiapan:</strong> Area deck kiri telah diberi primer pada hari Senin, 10 Agustus 2026. Rencana berikut disusun berdasarkan kondisi cuaca dan jadwal operasional yang normal.</div>
+<div class="sectitle">AGENDA PEKERJAAN</div>
+<div class="task morning">
+<div class="tasktime"><span class="dot" style="background:#c9a227;"></span> PAGI — WASHING & PREPARATION</div>
+<div class="taskdesc">Membersihkan dengan <strong>air tawar</strong> pada area <strong>deck kiri</strong> yang telah diberi primer coating pada hari sebelumnya (Senin, 10 Agustus). Pembersihan ini merupakan persiapan untuk proses <strong>pengecatan warna hijau</strong> yang akan dilaksanakan pada siang hari.</div>
+</div>
+<div class="task noon">
+<div class="tasktime"><span class="dot" style="background:#2d5a3d;"></span> SIANG — PRIMER COATING (LANJUTAN)</div>
+<div class="taskdesc">Sambil menunggu area hasil washing benar-benar kering, melanjutkan aktivitas <strong>brushing dan primer coating</strong> pada area <strong>deck buritan</strong> hingga <strong>deck sebelah kanan</strong>, dengan catatan jika kondisi dan waktu memungkinkan.</div>
+</div>
+<div class="condition"><strong>Kondisi Pelaksanaan:</strong> Rencana kerja ini berlaku <strong>jika tidak ada jadwal operasional</strong> (towing, made fast, dll) dan <strong>tidak terdapat kendala cuaca</strong> (hujan, gelombang tinggi, kelembaban ekstrem).</div>
+<div class="warning">
+<div class="warntitle">⚠ PERINGATAN PENTING</div>
+<div>Mohon untuk <strong>tidak membuka kran air di luar area kerja.</strong> Hal ini bertujuan untuk menjaga agar area deck yang sedang dalam proses pengerjaan coating tetap kering dan tidak terkontaminasi air sebelum cat benar-benar mengering sempurna.</div>
+</div>
+<div class="footer">
+<div style="font-size:12px;color:#666;line-height:1.6;">Dokumen ini ditempelkan di ruang informasi crew<br>sebagai pengumuman rencana kerja harian deck.</div>
+<div class="stamp"><div class="stamplabel">Disusun Oleh</div><div class="stampline"></div><div style="font-size:11px;margin-top:4px;">Chief Officer / Deck PIC</div></div>
+</div>
+</div>
+</body>
+</html>
